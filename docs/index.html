@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tomi Akisanya">
+<meta name="dcterms.date" content="2024-07-24">
+
+<title>Independent Projects - FFS GV PUF - Identifying HNHC Patients - Part 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Independent Projects</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data-set" id="toc-data-set" class="nav-link" data-scroll-target="#data-set">Data Set</a></li>
+  <li><a href="#explicit-adjustments-and-standardization" id="toc-explicit-adjustments-and-standardization" class="nav-link" data-scroll-target="#explicit-adjustments-and-standardization">Explicit Adjustments and Standardization</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#objective" id="toc-objective" class="nav-link" data-scroll-target="#objective">Objective</a></li>
+  <li><a href="#key-variables" id="toc-key-variables" class="nav-link" data-scroll-target="#key-variables">Key Variables</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#data-manipulation" id="toc-data-manipulation" class="nav-link" data-scroll-target="#data-manipulation">Data Manipulation</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix">Appendix</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">FFS GV PUF - Identifying HNHC Patients - Part 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tomi Akisanya </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 24, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Amount and quality of health services received vary substantially across different regions and subgroups within. The cause of this variation does not appear to be a result of differences in social-determinants, and estimates show that 33% of expenditures are unnecessary nor improve population health<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Moreover, in 2021, 5% of the population accounted for nearly half (48.4%) of total health expenditures in the United States<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. High-Need High-Cost Patients have been the focus of utilization tracking by all stakeholders. There has been no formal definition to this population, but it is understood by most health experts that 1) they represent a small subset of the population and 2) disproportionately have higher spending than their counterparts. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>The ability to clearly define this subset of the population, observe their health needs, and analyze differences in utilization, spending, and quality of care across various factors and geographic regions can provide additional insight to US health expenditures, drive actionable change, and produce targeted initiatives. The Fee for Service Geographic Variation User File was created by the CMS in efforts to explain the underlying variation in resource use among Medicare beneficiaries across regions and physician practice patterns. It is foundational on CMS’ Chronic Conditions Data Warehouse (CCW), a data set containing 100% of Medicare beneficiaries’ enrolled in the fee-for-service claims as well as other enrollment types from 2014-2022. For this reason, it is acknowledged that this is census data. Therefore, generalizations in the form of hypothesis testing and statistical inferences are not used in this analysis. Any observable differences in the graphics or summary statistics have been concluded as differences in the population; standard error(s) measurements have been subsequently omitted.</p>
+</section>
+<section id="data-set" class="level1">
+<h1>Data Set</h1>
+<p>FFS GV PUF // CMS Chronic Conditions Data Warehouse (CCW)</p>
+<p><em>Year:</em> 2014 - 2022</p>
+<p><em>Scope:</em> The data set contains 100% of Medicare beneficiaries’ claim data for those enrolled in the fee-for-service program and other enrollment and eligibility data. This data is available at the national, state, and county level.</p>
+<ul>
+<li>The data scopes chronically ill beneficiaries and therefore includes explicit features such as unique identifiers for each beneficiary types to enable analysis on spending and utilization for individual beneficiaries over time. The granularity of this data set along with its unique features allows us to:</li>
+</ul>
+<ol type="1">
+<li>Analyze differences in cost and utilization across different care settings and service lines.
+<ul>
+<li>The care settings are inclusive of inpatient and outpatient hospitals, multiple post-acute care settings, hospice, physicians, laboratories, and suppliers of durable medical equipment.</li>
+</ul></li>
+</ol>
+<ul>
+<li><p>Physician services are scoped and defined under the Restructured BETOS Classification System (RBCS) which groups services into these eight classifications: evaluation and management (E&amp;M), procedures, treatments, imaging, laboratory tests, durable medical equipment (DME), anesthesia, and other.</p></li>
+<li><p>The data scopes two types of quality measures and quantifies them in the form of utilization or by score</p>
+<ul>
+<li><p>Quality measurements are given in utilization by 1) hospital admission rates for ambulatory care sensitive conditions, 2) hospital ED visits and 3) 30-day hospital readmission.</p></li>
+<li><p>Quality measurements are also measured by PQI scores calculated by AHRQ. These are the ratio of total hospitalizations for a principal diagnosis given by the specified ICD-10-CM to the total population 18 and older in the metropolitan area of the patient’s residence<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. Specific exclusion criteria for each quality indicator can be found <a href="https://qualityindicators.ahrq.gov/measures/list_ahrq_qi">here</a>.</p></li>
+</ul></li>
+<li><p>The data is scoped to exclude certain beneficiaries across all time periods to make further within/between group analysis easier, as whether or not individuals qualified or enrolled for Medicare change year over year. Criterion has been applied to those individuals to prevent bias and the same criterion is applied for all years across the scope of this data set. The exclusion criteria for those groups are defined below:</p>
+<ul>
+<li><p>Beneficiaries who had both Part A and Part B coverage and were enrolled at any point during the year in a Medicare Advantage (MA) plan are excluded.</p></li>
+<li><p>Beneficiaries who were enrolled in Part A only or Part B only were also excluded<br>
+</p>
+<p>The study population is subsequently defined as:</p></li>
+</ul></li>
+</ul>
+<p><strong>Study Population</strong><em>:</em> The study population for the FFS GV PUF is comprised of individuals who have both Part A and Part B coverage and are fully enrolled in Medicare’s FFS program</p>
+<ul>
+<li>Additionally, all Medicare beneficiaries have been included in the data set but are not a part of the CMS’ intended study population. The beneficiaries in the data set are
+<ul>
+<li>Total Medicare Beneficiaries</li>
+<li>Beneficiaries with Parts A and B</li>
+<li>FFS Study Population</li>
+<li>MA-Equivalent Study Population</li>
+<li>Both FFS and MA Enrollment</li>
+<li>Other (e.g., Part A only or Part B only)</li>
+<li>Beneficiaries in Study Population that Died during the Year</li>
+</ul></li>
+</ul>
+<p>The FFS Study Population includes those that died during the calendar year as long as they do not follow the population exclusion criteria above.</p>
+</section>
+<section id="explicit-adjustments-and-standardization" class="level1">
+<h1>Explicit Adjustments and Standardization</h1>
+<p><strong>Standardization</strong>: Medicare spending and utilization can vary for reasons that are expected. Medicare reimbursement rates for the same service can vary to account for differences in local wages, input pricing, market conditions, and special payments<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>. Beneficiaries’ health status will also differ based on geographic location. Dollars (where standardized) in the data set have excluded this variability to make the analysis as interpretable as possible. Calculations for standardization methods can be found <a href="https://resdac.org/articles/cms-price-payment-standardization-overview.">here</a> and use the same methodology that CMS leverages to calculate per beneficiary spending (MSPB) for initiatives such as the hospital value-based purchasing program. Standardization methods still retain variability due to differences in practice care settings, physician tendencies, and differences in health status due to geographic location.</p>
+<p><strong>Average Risk Core:</strong> Forecasts FFS spending per beneficiaries compared to total Medicare spending, factoring age, sex, eligibility for Medicaid, and prior diagnoses. The risk adjustment model was developed by CMS which uses hierarchical condition categories (HCC). This analysis will be focused on patient population and will omit risk scores.</p>
+<p><strong>Payment Reduction (Years 2017-2022 only):</strong> To account for differences in spending after the fact (i.e deduction in base pay in provider by Medicare but later paid out to ACO) these variables were created: <code>Total Population Based Payment Reduction Costs</code> - the total payment reform amount that was not paid to the provider, but rather was paid to the ACO or PBP program <code>Total Population Based Payment Reduction Costs Per Capita</code></p>
+</section>
+<section id="parameters" class="level1">
+<h1>Parameters</h1>
+<p>The parameters for each observation/row can be inferred by the column names. The data dictionary in conjunction with the user file documentation was used to interpret the definition of each parameter. The parameters describe spending, utilization, demographics, or quality measures at a certain level. That level is defined by <code>BENE_GEO_LVL</code> and can represent the total count, amount, standardized amount, standardized amount as a percent of actual, standardized amount per capita, or standardized amount per user for a specific parameter at the county, state, or national level. The totals at each level should sum to any aggregated geographic level. Depending on that level, some parameters may be limited/omitted by the CMS -</p>
+<ul>
+<li><p>PQIs are not present at the county level</p></li>
+<li><p>Age &lt;65|65&gt; split is not available at the county level</p></li>
+</ul>
+<p><em>Utilization:</em> CCW Claims data was used to calculate metrics on all-cause hospital readmission and ER use. They are generated for 17 major service categories (using claim type code, Medicare provider number for Part A services, bill types, claim type code and RBCS codes):</p>
+<ul>
+<li><p><code>Total number of all-cause hospital readmissions</code></p></li>
+<li><p><code>All-cause hospital 30-day readmission rate</code> (i.e., the number of readmission divided by the total number of admissions where the beneficiary was discharged alive)</p></li>
+<li><p><code>ER Visits</code></p></li>
+</ul>
+<p><em>Utilization Types:</em> 1) Number of times 2) Number of beneficiaries 3) Percentage of Beneficiaries measures are available for the following:</p>
+<p><code>Number of covered days (Part A),</code> <code>Number of stays (Part A),</code> <code>Number of Episodes,</code> <code>Number of visits</code>, <code>Number of events (Part B)</code></p>
+<p>The focus of this independent project is to explain the variability in <code>TOT_MDCR_STDZD_PYMT_PC,</code> total standardized medicare spending per capita, and use the explained variability to identify high-need high cost patients of the Fee-For-Service Medicare Beneficiaries study population. Medicare reimbursement rates for the same service can vary across regions over time due to local market conditions and inflation. The dollars in the response variable have been standardized to exclude this variability and other variables with the <code>STDZD</code> schema denotes this exclusion. Variability due to other factors are implicit within the data set.</p>
+</section>
+<section id="objective" class="level1">
+<h1>Objective</h1>
+<ul>
+<li><p>Understand the relationship between the quality, use, and cost of health care</p></li>
+<li><p>Examine issues related to the quality of care such as continuity and access to primary care.</p></li>
+<li><p>Examine patterns in different types of care settings.</p></li>
+<li><p>Identify high-need high cost individuals</p></li>
+</ul>
+</section>
+<section id="key-variables" class="level1">
+<h1>Key Variables</h1>
+<p><em>Quality // PREVENTION QUALITY INITIATIVES (Volume/Scores)</em></p>
+<p><code>ACUTE_HOSP_READMSN_PCT</code> // <code>BENES_ER_VISITS_PCT</code> // <code>ER_VISITS_PER_1000_BENES</code></p>
+<p><code>PQI07_HYPRTNSN_AGE_LT_65</code>: PQI07 Hypertension Admission Rate (age &lt; 65)<br>
+<code>PQI07_HYPRTNSN_AGE_65_74</code>: PQI07 Hypertension Admission Rate (age 65‐74)<br>
+<code>PQI07_HYPRTNSN_AGE_GE_75</code>: PQI07 Hypertension Admission Rate (age 75+)<br>
+<code>ACUTE_HOSP_READMSN_PCT</code>: Hospital Readmission Rate<br>
+<code>ER_VISITS_PER_1000_BENES</code>: Emergency Department Visits per 1,000 Beneficiaries<br>
+<code>BENES_ER_VISITS_PCT</code>: % of Beneficiaries with an ED Visit</p>
+<p><em>Use // UTIIZATION</em></p>
+<p><code>PRCDRS_MDCR_STDZD_PYMT_AMT</code>: Procedures Standardized Medicare Payment <code>PRCDRS_MDCR_STDZD_PYMT_PCT</code>: Procedures Standardized Medicare Payment as % of Total Standardized Medicare Payment <code>PRCDRS_MDCR_STDZD_PYMT_PC</code>: Procedures Per Capita Standardized Medicare Payment <code>PRCDRS_MDCR_STDZD_PYMT_PER_USER</code>: Procedures Per User Standardized Medicare Payment <code>BENES_PRCDRS_CNT</code>: # Procedure Users <code>BENES_PRCDRS_PCT</code>: % of Beneficiaries Using Procedures <code>PRCDR_EVNTS_PER_1000_BENES</code>: Procedure Events Per 1,000 Beneficiaries</p>
+<p><em>Cost // EXPENDITURES</em></p>
+<p><code>TOT_MDCR_STDZD_PYMT_PC</code> = Y<br>
+<code>IP_MDCR_STDZD_PYMT_AMT</code><br>
+<code>IP_MDCR_PYMT_PER_USER</code><br>
+<code>OP_MDCR_STDZD_PYMT_PCTOP_MDCR_STDZD_PER_USER</code></p>
+<p><em>Population // DEMOGRAPHIC</em></p>
+<p>FFS Beneficiaries<br>
+<code>BENE_GEO_LVL:</code> National/State/County<br>
+<code>BENE_AGE_LVL:</code> &lt;65;&gt;=65<br>
+<code>BENE_MALE_PCT:</code> % Male<br>
+<code>BENE_FEML_PCT:</code> % Female<br>
+<code>BENE_RACE_BLACK_PCT:</code> % Black<br>
+<code>BENE_AVG_AGE:</code> Avg Age</p>
+<p>*<em>Variables names are not all inclusive and are shown as inferences to schema used throughout the project</em></p>
+</section>
+<section id="setup" class="level1">
+<h1>Setup</h1>
+</section>
+<section id="data-manipulation" class="level1">
+<h1>Data Manipulation</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mydata[mydata <span class="sc">==</span> <span class="st">"*"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span> <span class="co"># * used as NAs/~0 cell values</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(mydata)){</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  mydata[,i] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mydata[,i]) </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">record_id =</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="fu">dim</span>(mydata)[<span class="dv">1</span>],<span class="dv">100000</span>,<span class="dv">900000</span>)), <span class="at">.before =</span> YEAR)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#assign unique identifiers to each record</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">record_id =</span> <span class="fu">as.character</span>(record_id),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">STATE =</span> <span class="fu">substr</span>(BENE_GEO_DESC,<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">.before =</span> BENE_GEO_DESC)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="fu">c</span>(<span class="st">"record"</span>,<span class="st">"YEAR"</span>,<span class="st">"TOT_MDCR_STDZD_PYMT_PC"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"BENES_FFS_CNT"</span>,<span class="st">"BENE_GEO_LVL"</span>,<span class="st">"BENE_GEO_DESC"</span>,<span class="st">"BENE_AGE_LVL"</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"BENE_AVG_AGE"</span>,<span class="st">"IP_MDCR_STDZD_PYMT_AMT"</span>,<span class="st">"IP_MDCR_PYMT_PER_USER"</span>,<span class="st">"OP_MDCR_STDZD_PYMT_PCT"</span>,<span class="st">"OP_MDCR_STDZD_PER_USER"</span>,<span class="st">"BENE_GEO_LVL"</span>,<span class="st">"BENE_AGE_LVL"</span>,<span class="st">"BENE_AVG_AGE"</span>,<span class="st">"BENE_MALE_PCT"</span>,<span class="st">"BENE_FEML_PCT"</span>,<span class="st">"BENE_RACE"</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"MDCR_STDZD_PYMT"</span>,<span class="st">"PQI"</span>,<span class="st">"HOSP_READMSN_PCT"</span>,<span class="st">"ER_VISITS"</span>,<span class="st">"BENES_ER"</span>), <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate_if</span>(is.character,as.factor)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># str(waterfall) </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>waterfall_national <span class="ot">&lt;-</span> waterfall[waterfall<span class="sc">$</span>BENE_GEO_LVL <span class="sc">==</span> <span class="st">"National"</span>,]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>waterfall_state <span class="ot">&lt;-</span> waterfall[waterfall<span class="sc">$</span>BENE_GEO_LVL <span class="sc">==</span> <span class="st">"State"</span>,] <span class="co">#PQIs and 65 age split available</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>waterfall_county <span class="ot">&lt;-</span> waterfall[waterfall<span class="sc">$</span>BENE_GEO_LVL <span class="sc">==</span> <span class="st">"County"</span>,] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="analysis" class="level1">
+<h1>Analysis</h1>
+<p>Fee For Service Medicare patients enrolled in both Part A and Part B for the calendar year is explicitly split by the CMS to separate age groups 65 and up from groups younger than 65, as these age groups inherently differ in health needs and subsequently exhibit different health utilization and spending patterns. It is important to note that these descriptions are not mutually exclusive; while high-need patients are also high-cost, the converse is not true<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>. Elder patients by nature require highly intensive care, but so can younger patients dealing with multiple short-term illnesses and acute injuries. The key distinction in this case is these patients may only be ‘high-need’ momentarily if proper treatment and diagnostics results in a stable state - resulting in a small proportion of overall utilization and spending. Characteristics of HNHC patients are identifiable and are loosely defined by experts as individuals with higher out of pocket expenses, multiple chronic conditions, and functional limitations. Due to the complexity of the HNHC population and limitation of this data set to Medicare beneficiaries, providing an exact definition is not practical. However, HNHC patients within the FFS Medicare population can still be identified, in which the results can be utilized to inform findings in other population groups, leading to a more robust definition of who these patients are.</p>
+<p>Consequentially, Medicare spending has steadily increased nationally year over year for both age groups, a total increase of 21.6% by 2022.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> During that same period, beneficiaries younger than 65 spent a total of $1560 per capita more on average (total sd = $814). While the distribution of both groups form a Gaussian distribution, beneficiaries younger than 65 exhibit higher cost per capita and variability.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(BENE_AGE_LVL, YEAR) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(BENE_AGE_LVL <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"&lt;65"</span>,<span class="st">"&gt;=65"</span>), </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>         BENE_GEO_LVL <span class="sc">==</span> <span class="st">"National"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">mean</span>(TOT_MDCR_STDZD_PYMT_PC)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> YEAR, <span class="at">values_from =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+# Groups:   BENE_AGE_LVL [2]
+  BENE_AGE_LVL `2014` `2015` `2016` `2017` `2018` `2019` `2020` `2021` `2022`
+  &lt;fct&gt;         &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 &lt;65          10079. 10372. 10653  10954. 11491. 11937. 11801. 12178. 12276.
+2 &gt;=65          9002.  9266.  9312.  9527.  9843. 10151.  9647. 10493. 10941.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># table for spending YoY</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(BENE_AGE_LVL <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"&lt;65"</span>,<span class="st">"&gt;=65"</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                BENE_GEO_LVL <span class="sc">==</span> <span class="st">"National"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(BENE_AGE_LVL) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(BENE_AGE_LVL,TOT_MDCR_STDZD_PYMT_PC) <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">skim</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">Piped data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">BENE_AGE_LVL</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: left;">BENE_AGE_LVL</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">TOT_MDCR_STDZD_PYMT_PC</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11304.51</td>
+<td style="text-align: right;">814.48</td>
+<td style="text-align: right;">10078.6</td>
+<td style="text-align: right;">10653.00</td>
+<td style="text-align: right;">11491.25</td>
+<td style="text-align: right;">11937.44</td>
+<td style="text-align: right;">12275.82</td>
+<td style="text-align: left;">▅▅▁▅▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TOT_MDCR_STDZD_PYMT_PC</td>
+<td style="text-align: left;">&gt;=65</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9797.83</td>
+<td style="text-align: right;">628.88</td>
+<td style="text-align: right;">9001.8</td>
+<td style="text-align: right;">9311.68</td>
+<td style="text-align: right;">9646.57</td>
+<td style="text-align: right;">10150.65</td>
+<td style="text-align: right;">10940.61</td>
+<td style="text-align: left;">▇▅▅▂▂</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lessR<span class="sc">::</span><span class="fu">SummaryStats</span>(TOT_MDCR_STDZD_PYMT_PC, <span class="at">by =</span> BENE_AGE_LVL, <span class="at">data =</span> waterfall[waterfall<span class="sc">$</span>BENE_GEO_LVL<span class="sc">==</span><span class="st">"National"</span>,])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TOT_MDCR_STDZD_PYMT_PC 
+  - by levels of - 
+BENE_AGE_LVL 
+ 
+       n   miss         mean           sd         skew         krts          min         qrt1          mdn         qrt3          max          IQR 
+&lt;65    9      0    11304.506      814.479       -0.300       -1.587    10078.600    10653.000    11491.250    11937.440    12275.820     1284.440 
+&gt;=65   9      0     9797.834      628.884        0.697       -0.295     9001.800     9311.680     9646.570    10150.650    10940.610      838.970 
+All    9      0    10015.889      619.793        0.496       -0.618     9190.600     9532.680     9931.220    10403.810    11087.430      871.130 
+
+No (Box plot) outliers </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1824"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="1824"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>FFS Beneficiaries younger than 65 would potentially be considered ‘higher cost’ than those older, but to acknowledge the delineation of the terms and the ultimate goal of identifying <strong>high-need high-cost</strong> patients, the process of identifying such would take two logical progressions:</p>
+<ol type="1">
+<li><p>Identify subgroups that exhibit extremities/outliers in <em>spending</em>, then identify extremities/outliers in <em>utilization</em></p></li>
+<li><p>Identify subgroups that exhibit extremities/outliers in <em>utilization</em>, then identify extremities/outliers in <em>spending</em></p></li>
+</ol>
+<p>Both approaches were examined to determine the more efficient and practical method. Subgroups that are high-need of services for mental health, rehabilitation, substance-use, etc. may likely spend less than those in need of multiple physician services for evasive surgeries or complex health issues. The proceeding methodology is a performance of both methods separately. The results will then be utilized to determine the prevalence of observable trends within groups and help identify the HNHC of the patient population. Beginning with the first method, observations outside of three z scores from the mean were used as a proxy to define <em>extremities</em> in spending. Observations outside 1.75x the interquartile range were defined as outliers. After quantifying proxies, the subset of observations to isolate were outlined. To maintain the accuracy of conclusions, comparisons were only made for observations that occurred within the same year. Exploratory data analysis on the state or county level data have its respective benefits. While county level data allows for the most granularity, the county level data does not contain PQIs nor differentiates between groups older/younger than 65. To realize both of these benefits, a waterfall approach was used, starting with the sub population 65 and older in 2022 at the State level. Comparisons within groups younger than 65 during the same year were then made. Lastly, both groups aggregated at the county level were analyzed.</p>
+<p><strong>Group 1 - FFS Benefeciaries 65 and older in 2022 (state level comparisons)</strong></p>
+<p>Correlation coefficients were obtained for total standardized dollars per capita. Values were deemed <em>practically</em> significant for correlation coefficients larger than .70 (i.e.&nbsp;if the variable alone can be predictive of more than 50% of total variability in spending).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># starting with State level data in 2022 for age groups 65 and older</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># μ1 = 10941</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>waterfall_means <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">variable=</span><span class="fu">rep</span>(<span class="cn">NA</span>,<span class="dv">107</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>waterfall_means<span class="sc">$</span>variable <span class="ot">&lt;-</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(BENE_AGE_LVL<span class="sc">==</span><span class="st">"&gt;=65"</span>,BENE_GEO_LVL<span class="sc">==</span><span class="st">"State"</span>,YEAR<span class="sc">==</span><span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">variable.names</span>()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>waterfall_means<span class="sc">$</span>under_65 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">filter</span>(BENE_AGE_LVL<span class="sc">==</span><span class="st">"&gt;=65"</span>,BENE_GEO_LVL<span class="sc">==</span><span class="st">"State"</span>,YEAR<span class="sc">==</span><span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>waterfall_means<span class="sc">$</span>over_65 <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">filter</span>(BENE_AGE_LVL<span class="sc">==</span><span class="st">"&gt;=65"</span>,BENE_GEO_LVL<span class="sc">==</span><span class="st">"State"</span>,YEAR<span class="sc">==</span><span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>waterfall_state <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(BENE_AGE_LVL<span class="sc">==</span><span class="st">"&gt;=65"</span>,BENE_GEO_LVL<span class="sc">==</span><span class="st">"State"</span>,YEAR<span class="sc">==</span><span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(waterfall_state<span class="sc">$</span>TOT_MDCR_STDZD_PYMT_PC,<span class="at">y =</span>  waterfall_state, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  corrplot<span class="sc">::</span><span class="fu">corrplot</span>() <span class="co">#corrplot </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>group1_cor_table <span class="ot">&lt;-</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="at">y =</span> waterfall_state<span class="sc">$</span>TOT_MDCR_STDZD_PYMT_PC, waterfall_state, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>group1_cor_table<span class="sc">$</span>name <span class="ot">&lt;-</span>  <span class="fu">rownames</span>(group1_cor_table)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(group1_cor_table) <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NULL</span>,<span class="dv">107</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(group1_cor_table) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"cor_"</span>,<span class="st">"name"</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>group1_cor_table <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">name_ =</span> name, <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>group1_cor_table <span class="ot">&lt;-</span> group1_cor_table[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)]</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>group1_cor_table <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cor_)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n=</span><span class="dv">5</span>) <span class="co">#correlation table</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 107 × 2
+  name_                      cor_
+  &lt;chr&gt;                     &lt;dbl&gt;
+1 TOT_MDCR_STDZD_PYMT_PC    1    
+2 IP_MDCR_STDZD_PYMT_PC     0.889
+3 SNF_MDCR_STDZD_PYMT_PC    0.760
+4 PRCDRS_MDCR_STDZD_PYMT_PC 0.732
+5 BENES_ER_VISITS_PCT       0.727
+# ℹ 102 more rows</code></pre>
+</div>
+</div>
+<p>Inpatient standardized dollars were highly correlated (r = .889), resulting in 79.03% of total variability in per capita spending that could be attributed to inpatient spending. Although this variation is likely a characteristic of elder groups, inpatient hospital care only accounted for 36% of spending for the noninstitutional population in the top 5% of the nation’s spending distribution in 2018<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a>. FFS Medicare payment for skilled nursing facility, home health, and durable medical equipment were significant factors in total spending, implying the potential presence of underlying colinearity between the elder population and the utilization of intensive health services. The use of multidimensional health services combined with the strong relationship for both the percentage of beneficiaries with at least one ER visit, and payments for services in the procedures category, may suggest that Medicare beneficiaries 65 and older exhibit multiple chronic conditions simultaneously that require careful coordinated care over an extended period of time. <strong>To test the validity of this, further analysis must be completed for number and percent of beneficiaries using different types of services and their associated PQI score.</strong></p>
+<p>The values were then normalized by subtracting each observation from its group mean, and then dividing the resulting value from its group standard deviation. The 1.75x the IQR were used as outliers for total Medicare spending per capita, and was calculated to be any observation excluding the range between [-2.244357, 2.340497]. Extremes were any observations where total Medicare spending per capita were +/- three z scores from the mean. For observations in spending that were identified, the extreme z scores for other parameters were compared to analyze observable similarities or differences. For this part of the comparison, only extreme values were isolated. For each successive sub population group, group means and standard deviations are recalculated based on the sequential subset of data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>waterfall_scaled <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  mydata <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(BENE_AGE_LVL <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"&gt;=65"</span>),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         BENE_GEO_LVL<span class="sc">==</span><span class="st">"State"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>         YEAR <span class="sc">==</span> <span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="fu">c</span>(<span class="st">"record_id"</span>,<span class="st">"STATE"</span>,<span class="st">"TOT_MDCR_STDZD_PYMT_PC"</span>, <span class="st">"BENE_GEO_DESC"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"STDZD_PYMT_PER_USER"</span>,<span class="st">"STDZD_PYMT_PC"</span>,<span class="st">"PQI"</span>,<span class="st">"PER_1000_BENES"</span>,<span class="st">"BENES_ER_VISITS_PCT"</span>,<span class="st">"ER_VISITS_PER_1000_BENES"</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.numeric, scale.default)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>outlier <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  lb <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="at">probs =</span> .<span class="dv">25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)<span class="sc">-</span>(<span class="fl">1.75</span><span class="sc">*</span><span class="fu">IQR</span>(x, <span class="at">na.rm =</span><span class="cn">TRUE</span>))</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  ub <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="at">probs =</span> .<span class="dv">75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)<span class="sc">+</span>(<span class="fl">1.75</span><span class="sc">*</span><span class="fu">IQR</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(<span class="st">"Range Excluding [%f, %f]"</span>,lb,ub)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">outlier</span>(waterfall_scaled<span class="sc">$</span>TOT_MDCR_STDZD_PYMT_PC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Range Excluding [-2.244357, 2.340497]"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>waterfall_scaled <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(TOT_MDCR_STDZD_PYMT_PC &lt;= -3 | TOT_MDCR_STDZD_PYMT_PC &gt;= 3) %&gt;%  #extremes </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TOT_MDCR_STDZD_PYMT_PC <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.244357</span> <span class="sc">|</span> TOT_MDCR_STDZD_PYMT_PC <span class="sc">&gt;=</span> <span class="fl">2.340497</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 101
+  record_id STATE TOT_MDCR_STDZD_PYMT_PC[…¹ BENE_GEO_DESC IP_MDCR_STDZD_PYMT_P…²
+  &lt;chr&gt;     &lt;chr&gt;                     &lt;dbl&gt; &lt;chr&gt;                          &lt;dbl&gt;
+1 123227    PR                        -2.77 PR                            -3.58 
+2 113478    VI                        -3.33 VI                            -0.672
+# ℹ abbreviated names: ¹​TOT_MDCR_STDZD_PYMT_PC[,1],
+#   ²​IP_MDCR_STDZD_PYMT_PER_USER[,1]
+# ℹ 96 more variables: OP_MDCR_STDZD_PYMT_PER_USER &lt;dbl[,1]&gt;,
+#   ASC_MDCR_STDZD_PYMT_PER_USER &lt;dbl[,1]&gt;,
+#   SNF_MDCR_STDZD_PYMT_PER_USER &lt;dbl[,1]&gt;,
+#   IRF_MDCR_STDZD_PYMT_PER_USER &lt;dbl[,1]&gt;,
+#   LTCH_MDCR_STDZD_PYMT_PER_USER &lt;dbl[,1]&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(record_id <span class="sc">==</span> <span class="st">"113478"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 249
+  record_id  YEAR BENE_GEO_LVL STATE BENE_GEO_DESC BENE_GEO_CD BENE_AGE_LVL
+  &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;       
+1 113478     2022 State        VI    VI            &lt;NA&gt;        &gt;=65        
+# ℹ 242 more variables: BENES_TOTAL_CNT &lt;dbl&gt;, BENES_WTH_PTAPTB_CNT &lt;dbl&gt;,
+#   BENES_FFS_CNT &lt;dbl&gt;, BENES_MA_CNT &lt;dbl&gt;, MA_PRTCPTN_RATE &lt;dbl&gt;,
+#   BENE_AVG_AGE &lt;dbl&gt;, BENE_FEML_PCT &lt;dbl&gt;, BENE_MALE_PCT &lt;dbl&gt;,
+#   BENE_RACE_WHT_PCT &lt;dbl&gt;, BENE_RACE_BLACK_PCT &lt;dbl&gt;,
+#   BENE_RACE_HSPNC_PCT &lt;dbl&gt;, BENE_RACE_OTHR_PCT &lt;dbl&gt;, BENE_DUAL_PCT &lt;dbl&gt;,
+#   BENE_AVG_RISK_SCRE &lt;dbl&gt;, TOT_MDCR_PYMT_AMT &lt;dbl&gt;,
+#   TOT_MDCR_STDZD_PYMT_AMT &lt;dbl&gt;, TOT_MDCR_PYMT_PC &lt;dbl&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>extremes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">record_id =</span> <span class="cn">NA</span>, <span class="at">variable =</span> <span class="cn">NA</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># for (j in seq_along(waterfall_scaled)) { #identify extreme characteristics</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   col_name &lt;- colnames(waterfall_scaled)[j]</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   for (i in seq_len(nrow(waterfall_scaled))) {</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     if (!is.na(waterfall_scaled[i,j]) &amp;&amp; (waterfall_scaled[i,j] &gt;= 3 || waterfall_scaled[i,j] &lt;= -3)){</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#       print(col_name)</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#       print(waterfall_scaled$record_id[i])</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#       extremes &lt;- rbind(extremes, data.frame(variable = col_name, record_id = waterfall_scaled$record_id[i]))</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     }</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co"># extremes %&lt;&gt;% filter(variable != "record_id")</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># rm(extremes)</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#TX, AK, FL, CA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Total Medicare per capita spending for FFS Beneficiaries 65 and older in Puerto Rico were significantly lower in comparison to the national average. This group exhibited a significantly low percentage of beneficiaries who had at least one Emergency Department visit during that year. Payment for skilled nursing facility services as a percent of total was extremely low, as was the per user payment for inpatient services. On the higher end of spending and utilization, we see this group exhibits significantly higher Medicare payments for outpatient dialysis, imaging, and tests as a percentage of total Medicare spending. Virginia beneficiaries followed a similar trend with low volumes in ED visits and events in the DME category, while exhibiting higher ambulatory care and dialysis spending. The direction and correlations established above are maintained within this subgroup, highlighting the substantial effect that emergency, skilled nursing, and inpatient services has on total Medicare spending per capita. The significantly high utilization and spending for outpatient dialysis, imaging, and testing, and the observed negative relationship it has on per capita spending for this subgroup implies the existence of underlying patterns that may be attributed to this sub population’s tendency to seek services for preventive care measures, unarguably known to reduce the risk for diseases, disabilities, and death<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a>.</p>
+<section id="section" class="level126">
+<p class="heading"></p>
+</section>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>“Eliminating Waste in US Healthcare,” by Donald M. Berwick and Andrew D. Hackbarth, 2012<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><em>Concentration of Healthcare Expenditures and Selected Characteristics of Persons with High Expenses, United States Civilian Noninstitutionalized Population, 2018-2021</em>, meps.ahrq.gov/data_files/publications/st556/stat556.shtml#:~:text=Persons%20in%20the%20top%205%20percent%20expenditure%20tier%20accounted%20for,97.2)%20of%20total%20healthcare%20expenses. Accessed 16 July 2024.&nbsp;<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>National Academies of Sciences, Engineering, and Medicine; Health and Medicine Division; Board on Population Health and Public Health Practice; Committee on Community-Based Solutions to Promote Health Equity in the United States; Baciu A, Negussie Y, Geller A, et al., editors. Communities in Action: Pathways to Health Equity. Washington (DC): National Academies Press (US); 2017 Jan 11. 2, The State of Health Disparities in the United States. Available from: https://www.ncbi.nlm.nih.gov/books/NBK425844/<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>AHRQ Quality IndicatorsTM (AHRQ QITM) ICD-10-CM/PCS Specification v2022<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Super N. The Geography of Medicare: Explaining Differences in Payment and Costs [Internet]. Washington (DC): National Health Policy Forum; 2003 Jul 3. (Issue Brief, No.&nbsp;792.)&nbsp;Available from: https://www.ncbi.nlm.nih.gov/books/NBK559778/<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>National Academy of Medicine; The Learning Health System Series; Whicher D, Dahlberg ML, Apton KL, et al., editors. Effective Care for High-Need Patients: Opportunities for Improving Outcomes, Value, and Health. Washington (DC): National Academies Press (US); 2017. 2, KEY CHARACTERISTICS OF HIGH-NEED PATIENTS.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>Percent increase is relative to data set: 2014-2022<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Mitchell, E. M. <em>Concentration of Healthcare Expenditures and Selected Characteristics of Persons with High Expenses, U.S. Civilian Noninstitutionalized Population, 2018.</em> Statistical Brief #533. January 2021. Agency for Healthcare Research and Quality, Rockville, MD.&nbsp;<br>
+<a href="http://www.meps.ahrq.gov/mepsweb/data_files/publications/st533/stat533.shtml" class="uri">http://www.meps.ahrq.gov/mepsweb/data_files/publications/st533/stat533.shtml</a><a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>Borksy, A., et al.&nbsp;(2018). Few Americans Receive All High-Priority, Appropriate Clinical Preventive Services. <em>Health Affairs, 37</em>(6). DOI: 10.1377/hlthaff.2017.1248<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
