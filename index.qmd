@@ -158,7 +158,7 @@ library(readr)
 showtext_auto()
 # setwd("/Users/tomiakisanya/Downloads/Northwestern MHA 2")
 
-X2014_2022_Medicare_FFS_Geographic_Variation_Public_Use_File <- read_csv("Medicare Variation/Medicare Geographic Variation - by National, State & County/2022/2014-2022 Medicare FFS Geographic Variation Public Use File.csv")
+X2014_2022_Medicare_FFS_Geographic_Variation_Public_Use_File <- read_csv("Medicare Variation Data/Medicare Geographic Variation - by National, State & County/2022/2014-2022 Medicare FFS Geographic Variation Public Use File.csv")
 
 mydata <- data.frame(X2014_2022_Medicare_FFS_Geographic_Variation_Public_Use_File)
 
