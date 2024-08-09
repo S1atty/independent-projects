@@ -48,7 +48,12 @@ po/*~
 # RStudio Connect folder
 rsconnect
 
-# Data sets
+# Ignore Medicare Variation Data directory
+Medicare Variation Data/
+
+# Ignore datasets within any specific directories
+docs/Medicare Variation Data/
+
 
 
 /.quarto/
