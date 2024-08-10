@@ -7,19 +7,45 @@ execute:
   freeze: auto
 
 website:
-  title: "Independent Projects"
+  title: ""
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
-
+      - text: "Home"
+        href: landing.qmd
+        icon: fa-solid fa-spade
+      # - text: "Independent Projects"
+      #   href: index.qmd
+      - text: "Independent Projects"
+        menu:
+          - text: "Patient Satisfaction"
+            href: ptsatisfaction.qmd
+          - text: "FFS Medicare Benefeciaries"
+            href: index.qmd
+      - text: "Concepts"
+        menu: []
+    right:
+      - text: "About"
+        href: about.qmd
+      - icon: github
+        href: "https://github.com/S1atty"
+      - icon: linkedin
+        href: "https://www.linkedin.com/in/adetomi-akisanya-4b263724a/"
+      - icon: instagram
+        href: "https://www.instagram.com/tomi_a999/"
+        
 format:
-  html:
-    theme: 
-      light: flatly
-      dark: darkly
-    css: styles.css
+  html: 
+    grid:
+      sidebar-width: 200px
+      body-width: 1100px
+      margin-width: 200px
+      gutter-width: 1.5rem
+    theme: cosmo
+    mainfont: Garamond;
     toc: true
+    toc-depth: 2
+    css: styles.css
 
-
+# Home page configuration
+index:
+  file: landing.qmd

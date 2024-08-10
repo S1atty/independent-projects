@@ -1,1 +1,51 @@
-/* css styles */
+/* Custom CSS for the navigation bar background */
+.navbar {
+  background-color: #2c3e50 !important; /* Set your desired navbar background color */
+}
+
+/* Default text color for all navbar links */
+.navbar a {
+  color: #ffffff !important; /* Set your desired text color */
+  padding: 15px;
+  text-decoration: none;
+}
+
+/* Text color on hover for all navbar links */
+.navbar a:hover {
+  color: #b56e7e !important; /* Set your desired hover text color */
+  background: none !important; /* Ensure no background color on hover */
+  border: none !important; /* Ensure no border on hover */
+}
+
+/* Specific styles for the 'Home' link */
+.navbar .navbar-brand {
+  color: #ffffff !important; /* Set your desired default color for 'Home' link */
+}
+
+/* Text color on hover for the 'Home' link */
+.navbar .navbar-brand:hover {
+  color: #ecf0f1 !important; /* Set your desired hover color for 'Home' link */
+  background: none !important; /* Ensure no background color on hover */
+  border: none !important; /* Ensure no border on hover */
+}
+/* Change the background color of the dropdown menu */
+.dropdown-menu {
+  background-color: ##ecf0f1 !important; /* Replace with your desired background color */
+}
+/* Default text color for dropdown menu items */
+.dropdown-menu .dropdown-item {
+  color: #b56e7e; /* Replace with your desired default text color */
+}
+/* Change the background color of dropdown items on hover */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #ecf0f1 !important; /* Replace with your desired hover color */
+}
+/* Default background color for dropdown menu items */
+.dropdown-menu {
+  background-color: #2c3e50; /* Replace with your desired background color */
+}
+
+/* Default text color for dropdown menu items */
+.dropdown-menu .dropdown-item {
+  color: #b56e7e; /* Replace with your desired text color */
+}

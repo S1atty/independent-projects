@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tomi Akisanya">
+
+<title>Predicting Patient Satisfaction for Emergency Department Encounters</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./landing.html"> <i class="bi bi-fa-solid fa-spade" role="img">
+</i> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-independent-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Independent Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-independent-projects">    
+        <li>
+    <a class="dropdown-item" href="./ptsatisfaction.html">
+ <span class="dropdown-text">Patient Satisfaction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./index.html">
+ <span class="dropdown-text">FFS Medicare Benefeciaries</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-concepts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Concepts</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-concepts">    
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/S1atty"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/adetomi-akisanya-4b263724a/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.instagram.com/tomi_a999/"> <i class="bi bi-instagram" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#population-of-interest" id="toc-population-of-interest" class="nav-link" data-scroll-target="#population-of-interest">Population of Interest</a></li>
+  <li><a href="#exclusion-criteria" id="toc-exclusion-criteria" class="nav-link" data-scroll-target="#exclusion-criteria">Exclusion Criteria</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis">Data Analysis</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predicting Patient Satisfaction for Emergency Department Encounters</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tomi Akisanya </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-right">
+<figure class="figure">
+<p><img src="images/ptsatisfaction_image.jpeg" class="img-fluid quarto-figure quarto-figure-right figure-img" width="862"></p>
+</figure>
+</div>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Patient satisfaction can be an indication of quality care and aid in predicting health outcomes and patient retention. Although subjective, it is crucial for healthcare administrators to understand and meet patients’ expectations, translate it to patient-oriented care within delivery models, and improve population health as a result. This project investigates features associated with higher patient satisfaction scores for ER encounters and developing models to predict them.</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>This data set is a patient satisfaction survey administered to patients discharged from ten different entities at NMH over the span of two years. Respondents were discharged from six emergency units. Surveys were delivered either on paper or electronically following their encounter. The patient satisfaction surveys collected, range from discharges starting March of 2016 through January of 2018. Responses were given in either English or Spanish. Five types of payers were used for the encounters and satisfaction scores per response were given on a scale of one (very dissatisfied) to five (very satisfied). No other information on how the data was collected is available.</p>
+<section id="initial-data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="initial-data-cleaning">Initial Data Cleaning</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  KKH  KVWH NMCDH  NMDH   NMH NMLFH 
+ 1381   513  2388  1885  3712  1809 
+
+Internet    Paper 
+    6054     5634 
+
+ENGLISH SPANISH 
+  11561     127 
+
+Female   Male 
+  7225   4462 
+
+Acute 
+11688 
+
+  CDH ED   DCH ED       ED  ED MEZZ    GL ED   KKH ED  KVWH ED    LF ED 
+    2388     1885     2768      941      903     1381      513      900 
+  NMH ED NMLFH ED 
+       3        6 
+
+Commercial   Medicaid   Medicare   Self-pay 
+      6628       1015       3835        210 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="population-of-interest" class="level2">
+<h2 class="anchored" data-anchor-id="population-of-interest">Population of Interest</h2>
+<p>The population of interest is the patient population for emergency encounters at NM with disproportionate social determinants of health.</p>
+</section>
+<section id="exclusion-criteria" class="level2">
+<h2 class="anchored" data-anchor-id="exclusion-criteria">Exclusion Criteria</h2>
+<p>A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes [^1]. Payer type was used as a proxy to define parts of ‘disproportionate’ social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy [^2]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata[mydata<span class="sc">$</span>disdate<span class="sc">!=</span><span class="st">"1900-01-01"</span> <span class="sc">&amp;</span> mydata<span class="sc">$</span>survey_id<span class="sc">!=</span><span class="dv">1418129390</span>,] <span class="co">#erroneous record; clearly incorrect entry </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">16</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                      payor <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Medicare"</span>,<span class="st">"Medicaid"</span>,<span class="st">"Self-Pay"</span>)) <span class="co">#4603</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(er_disch_time)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(er_admit_time))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(waterfall))){</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(waterfall[i,]))<span class="sc">&gt;</span><span class="dv">8</span>){</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    waterfall <span class="ot">&lt;-</span> waterfall[<span class="sc">-</span>i,]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>} <span class="co">#4101</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(<span class="fu">ncol</span>((waterfall)))){</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(waterfall[,i]))<span class="sc">/</span><span class="dv">4101</span><span class="sc">&gt;</span>.<span class="dv">25</span>){</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  print(names(mydata[,i]))</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    waterfall <span class="ot">&lt;-</span> waterfall[,<span class="sc">-</span>i]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># } #44 variable removed A87 / D2 / D52  = 4099 obs of 45 var</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="fu">mean</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>), .)))</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">family_friends =</span> (E1<span class="sc">+</span>E2<span class="sc">+</span>E3)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                      <span class="at">tests =</span> (D4<span class="sc">+</span>D65<span class="sc">+</span>D3)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>                      <span class="at">doctors =</span> (C2<span class="sc">+</span>C4<span class="sc">+</span>C5<span class="sc">+</span>C75)<span class="sc">/</span><span class="dv">4</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nurses =</span> (B1<span class="sc">+</span>B3<span class="sc">+</span>B4<span class="sc">+</span>B5<span class="sc">+</span>B76)<span class="sc">/</span><span class="dv">5</span>, </span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                      <span class="at">arrival =</span> (A4<span class="sc">+</span>A5<span class="sc">+</span>A86<span class="sc">+</span>C1)<span class="sc">/</span><span class="dv">4</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                      <span class="at">personal_issues =</span> (F1<span class="sc">+</span>F2<span class="sc">+</span>F41)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">insurance =</span> (A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">3</span>, </span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                      <span class="at">overall =</span> (E1<span class="sc">+</span>E2<span class="sc">+</span>E3<span class="sc">+</span>D4<span class="sc">+</span>D65<span class="sc">+</span>C1<span class="sc">+</span>C2<span class="sc">+</span>C4<span class="sc">+</span>C5<span class="sc">+</span>C75<span class="sc">+</span>B1<span class="sc">+</span>B3<span class="sc">+</span>B4<span class="sc">+</span>B5<span class="sc">+</span>B76<span class="sc">+</span>A4<span class="sc">+</span>A5<span class="sc">+</span>A86<span class="sc">+</span>F1<span class="sc">+</span>F2<span class="sc">+</span>F41<span class="sc">+</span>A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">25</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># additional variables will most likely remove due to multicollinearity</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">response_time =</span> recdate <span class="sc">-</span> disdate, <span class="at">.before =</span> distrib) <span class="co"># length of time b/w disch and receiving survey</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(response_time<span class="sc">&gt;=</span><span class="dv">0</span>) <span class="co"># filter out retroactive response times </span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(waterfall) <span class="co"># final sample 2875 observations of 51 variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2875   54</code></pre>
+</div>
+</div>
+<p>After cleaning records and additional formatting, observations were then cleaned. Survey ID 1418129390 had missing admit and discharge times and the encounter record for the survey was dated 1900-01-01. The implied erroneous record was removed.</p>
+<p>To maintain the integrity of the data set, observations with missing discharge or admit times were removed.</p>
+<p>Observations were subset to those over the age of 16 who were Medicare, Medicaid, or Self-Pay users to isolate the patient population. No demographic attributes were missing in the rest of the survey data.</p>
+<p>Respondents were asked to survey their satisfaction across different care settings across their encounter. The likert scale of possible responses were 1-5.</p>
+<p>For the non-demographic survey questions, there were a number of questions with missing answers. Survey respondents that had greater than 30% of answers missing were removed from the drop down conditions. Subsequently, survey questions across the sample that had more than 30% of answers missing were also omitted. The questions removed were:</p>
+<p>A87 (Arrival) - Helpfulness of person who first asked you about your condition D2 (Tests) - Courtesy of the person who took your blood D52 (Tests) - Concern shown for your comfort when your blood was drawn</p>
+<p>A new variable was created to measure the length of time between discharge date and the date the survey was received. Survey IDs with negative response times were present, implying that they received the survey before being admitted to the ER. These records were concluded as an error and were also ommitted.</p>
+<p>Surveyors labeled responses based on the following attributes of the patient encounter: Arrival, Personal/Insurance Info, Nurses, Doctors, Tests, Family or Friends, Personal Issues.</p>
+<p>For any missing responses afterwards, the missing values were replaced with the average satisfaction score for that question.</p>
+<section id="model-validation-setup" class="level3">
+<h3 class="anchored" data-anchor-id="model-validation-setup">Model Validation Setup</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 70/30 test split </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">valid =</span> <span class="fu">runif</span>(survey_id,<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&lt;=</span> .<span class="dv">7</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&gt;</span> .<span class="dv">7</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2049   55</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 826  55</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<p>A regression model was selected to predict the overall patient satisfaction variable, <code>F68,</code> and used to estimate the true population relationship. A 70/30 train:test ratio was used for model validation. Regression assumptions were then validated. For residual normality and increased model accuracy, explanatory variables were transformed before model fitting. The sampling distribution forms a left-skew distribution, in which the square root and natural log transformations were applied.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Observing that the root transformation had the greatest shift to normality, it was applied to all explanatory variables. Additional summary variables based on category were calculated to obtain better predictive variables. The new summary variables were the mean averages for each category.</p>
+<p><strong>Pearson’s product correlation matrix</strong> was used for variable selection; starting with the highest coefficient of determination, a regression model was fit in progressive steps with one or two variables at a time. At each step, a combination of diagnostic tests and empirical thresholds were used to assess goodness-of-fit based on the following criteria:</p>
+<p><span class="math display">\[ Δ R^2 = R_f^2 - R_n^2 &gt; .2 \]</span></p>
+<p>Where the additional variable must increase the coefficient of determination by 2% in order for the variable to be retained.</p>
+<p><strong>Turkey’s Nonadditive Test</strong> was used to asses presence of interaction. In the context of regression, fitted values squared are computed post-hoc as a quadratic function to test if the interaction term is significantly different from zero, assuming H<sub>0</sub>: ŷ = 0 and a linear function is modeled with H<sub>a</sub>: ŷ ≠ 0 and a non-linear function is modeled:</p>
+<p><span class="math display">\[\hat{f_n} = (β_1)\hat{x_1} + (β_2)\hat{x_2}+ (β_3)\hat{x_3}...+(\hat{y_n})^2\hat{x_z}\]</span></p>
+<p><span class="math display">\[\hat{y_n} = (β_1)\hat{x_1} + (β_2)\hat{x_2}...+(β_z)\hat{x_z}\]</span></p>
+<p>where ŷ<sub>f</sub> are the full predicted values and ŷ<sub>n</sub> are the nested predicted values, variables were retained if P(F) &lt; .05.</p>
+<p><strong>Difference in fits</strong> was used to measure the influence of individual observations obtained using an empirical threshold of <span class="math inline">\({\small √(p)/n}\)</span>; where p is the number of parameters and n is the number of observations</p>
+<p><strong>Cook’s distance</strong> uses leverage and studentized residuals to measure significance of observation on overall model; threshold of 4/n was considered to be practically influential and was further evaluated</p>
+<p><strong>Wald Statistic</strong>: {<span class="math inline">\(β^2/Var(β)\)</span>} measures the effect size of individual parameters.<strong>Variance Inflation Factors</strong> greater than four were reevaluated; greater than seven are removed.</p>
+<p>The model yielding the optimal Δ R<sup>2</sup> and least RMSE was used as the production model. The questions used to guide the final model were:</p>
+<ol type="1">
+<li>Does the model capture the true population parameters and relationship? Can the model be used to draw generalizations from our target population?</li>
+<li>Is the model an accurate predictor of patient satisfaction?</li>
+</ol>
+<p>The results of the diagnostic post-hoc tests were then used to assess the models capability to generalize to the target population and decide if a different model would be more equipped to capture the relationships found in survey responses to overall patient satisfaction in ER encounters for those with low social determinants of health. In practice, it is acknowledged that <strong>no generalizations can accurately be made on our target population</strong> due to the limited information around how the data was collected. It is unknown if the observations were from a random sample, which is sufficient and necessary to make any population conclusions. Any aforementioned hypothesis to the population is for the sake of statistical inference and this endeavor. However, to validate prediction capabilities, a precision grade was used on our test set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#original model validation setup </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 70/30 test split </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">valid =</span> <span class="fu">runif</span>(survey_id,<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&lt;=</span> .<span class="dv">7</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&gt;</span> .<span class="dv">7</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2049   55</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 826  55</code></pre>
+</div>
+</div>
+</section>
+<section id="data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="data-analysis">Data Analysis</h2>
+<p>Pearson’s product correlation plot showed that overall satisfaction was strongly correlated with how well patients were informed about delays and other responses based on either doctors’ or nurses’ care setting.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Correlation</th>
+<th style="text-align: left;">Category</th>
+<th style="text-align: left;">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">F2</td>
+<td style="text-align: right;">0.796</td>
+<td style="text-align: left;">Personal Issues</td>
+<td style="text-align: left;">How well you were kept informed about delays</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B3</td>
+<td style="text-align: right;">0.734</td>
+<td style="text-align: left;">Nurses</td>
+<td style="text-align: left;">Nurses’ attention to your needs</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">0.733</td>
+<td style="text-align: left;">Nurses</td>
+<td style="text-align: left;">Nurses’ concern to keep you informed about your treatment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C4</td>
+<td style="text-align: right;">0.727</td>
+<td style="text-align: left;">Nurses</td>
+<td style="text-align: left;">Doctor’s concern for your comfort while treating you</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C2</td>
+<td style="text-align: right;">0.674</td>
+<td style="text-align: left;">Doctors</td>
+<td style="text-align: left;">Courtesy of the doctor</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B5</td>
+<td style="text-align: right;">0.655</td>
+<td style="text-align: left;">Doctors</td>
+<td style="text-align: left;">Nurses’ concern for your privacy</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C1</td>
+<td style="text-align: right;">0.629</td>
+<td style="text-align: left;">Doctors</td>
+<td style="text-align: left;">Waiting time in the treatment area, before you were seen by a doctor</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>F2 was therefore used as the initial parameter. Other parameters were added in a ‘stepwise’ manner while assessing the change in R<sup>2</sup> and MSE. Since variables in the same category, specifically nurses and doctors, had high underlying collinearity, summary parameters were used which were the means of the highest two or total responses per group. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, increasing the simplicity of our model and 2) missing responses are a characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># root transformation</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train %&lt;&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(across(c(16:39,41,42,43), ~ sqrt(.), .names = "{col}_rt"), .before = family_friends) </span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="dv">16</span><span class="sc">:</span><span class="dv">46</span>), <span class="sc">~</span> <span class="fu">sqrt</span>(.), <span class="at">.names =</span> <span class="st">"{col}_rt"</span>), <span class="at">.before =</span> family_friends) </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_2 =</span> (A5_rt<span class="sc">+</span>C1_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">doctors_2 =</span> (C4_rt<span class="sc">+</span>C75_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_2 =</span> (E1_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">nurses_2 =</span> (B4_rt<span class="sc">+</span>B3_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_2 =</span> (F2_rt<span class="sc">+</span>F41_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">test_2 =</span> (D3_rt<span class="sc">+</span>D4_rt)<span class="sc">/</span><span class="dv">2</span>) <span class="co">#averages post-trans</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_3 =</span> (A5_rt<span class="sc">+</span>C1_rt<span class="sc">+</span>A86_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">doctors_3 =</span> (C4_rt<span class="sc">+</span>C75_rt<span class="sc">+</span>C5_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_3 =</span> (E1_rt<span class="sc">+</span>E2_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">nurses_3 =</span> (B4_rt<span class="sc">+</span>B3_rt<span class="sc">+</span>B76_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_3 =</span> (F2_rt<span class="sc">+</span>F41_rt<span class="sc">+</span>F1_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">test_3 =</span> (D3_rt<span class="sc">+</span>D4_rt<span class="sc">+</span>D65_rt)<span class="sc">/</span><span class="dv">3</span>) <span class="co">#averages post-trans</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">C75_7_rt =</span> (C75_rt<span class="sc">+</span>C7_rt)<span class="sc">/</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>The final regression is modeled by</p>
+<p><span class="math display">\[ f(x) = -2.96537 + 1.52659*x_1 + 1.14899*x_2 + 0.90659*x_3 \]</span> <span class="math display">\[ MSE = .19 \]</span></p>
+<p>where β<sub>1</sub> describes change in for a one unit change in the root mean satisfaction for the personal issues category, β<sub>2</sub> for a one unit change in the root mean satisfaction for the nurses category, and β<sub>3</sub> for a one unit change in the root indicator for Doctor’s concern for patients comfort while treating them. Interpretations for β<sub>0</sub> is omitted due to transformations and range of the data set. The Adjusted R<sup>2</sup> ~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.</p>
+<p><em>If</em> the data was obtained via random sampling, the model could be used as an estimate for the true target population’s overall satisfaction. Our model produced a MSE = .19 (RMSE = .44) with statistically significant results for all predictors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3<span class="sc">+</span>C4_rt, <span class="at">data =</span> train)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model) <span class="co"># RMSE = .0.4358899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: F68
+                    Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+personal_issues_3    1 952.03  952.03 5062.99 &lt; 2.2e-16 ***
+nurses_3             1  79.94   79.94  425.11 &lt; 2.2e-16 ***
+C4_rt                1  40.25   40.25  214.04 &lt; 2.2e-16 ***
+Residuals         2045 384.54    0.19                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey’s test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residualPlots</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Test stat Pr(&gt;|Test stat|)
+personal_issues_3   -1.2853           0.1988
+nurses_3             1.4115           0.1583
+C4_rt                0.0725           0.9422
+Tukey test           0.5631           0.5734</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">influenceIndexPlot</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(survey_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1344260683</span>,<span class="dv">1439794901</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   survey_id client_short_nm    recdate    disdate er_admit_time er_disch_time
+1 1344260683           NMLFH 2017-06-30 2017-06-30    2017-06-30    2017-06-30
+2 1439794901           NMLFH 2017-11-29 2017-11-27    2017-11-27    2017-11-27
+   distrib language age    sex race_white specialty  unit    payor A4 A5 A86
+1 Internet  ENGLISH  82   Male          1     Acute LF ED Medicare  3  2   4
+2 Internet  ENGLISH  37 Female          0     Acute LF ED Medicaid  5  5   5
+  A87 A2 A3 A28 B1 B3 B4 B5 B76 C1 C2 C4 C5 C75 C7 D2 D3 D4 D52 D65 E1 E2 E3 F4
+1   4  2  2   3  4  3  1  3   3  3  2  1  1   1 NA  4  3  3   3   1  2  1  1  1
+2   5  5  5   5  5  5  5  5   5  5  1  1  1   1  5  5  5  5   5   5  5  5  5  1
+  F68 F1 F2 F41
+1   1 NA NA  NA
+2   1  5  5   1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mydata[mydata<span class="sc">$</span>survey_id<span class="sc">==</span><span class="dv">1344260683</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      survey_id client_short_nm    recdate    disdate er_admit_time
+5194 1344260683           NMLFH 2017-06-30 2017-06-30    2017-06-30
+     er_disch_time  distrib language age  sex race_white specialty  unit
+5194    2017-06-30 Internet  ENGLISH  82 Male          1     Acute LF ED
+        payor A4 A5 A86 A87 A2 A3 A28 B1 B3 B4 B5 B76 C1 C2 C4 C5 C75 C7 D2 D3
+5194 Medicare  3  2   4   4  2  2   3  4  3  1  3   3  3  2  1  1   1 NA  4  3
+     D4 D52 D65 E1 E2 E3 F4 F68 F1 F2 F41
+5194  3   3   1  2  1  1  1   1 NA NA  NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span><span class="sc">/</span><span class="fu">dim</span>(train)[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.001952172</code></pre>
+</div>
+</div>
+<p>Survey IDs 1344260683 and 1439794901 had the highest influence on the overall model in comparison to the global average of Cook’s distance. Looking at the original data, the former had missing responses for four of the seven questions used to produce the model, highlighting a major flaw in this model - its predictive inaccuracy for patients with missing responses - as missing responses were filled with grand means after exclusion criteria were applied. Although missing at random, a better approach would be to fill in with median values or apply more conservative exclusion factors such as omitting observations with greater than 10% of responses missing. The latter was greatly considered, but the trade-off of small sample sizes and subsequent over fitting were outweighed.</p>
+<p>After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x<sub>3</sub>, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) &gt; P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 8.3e-45 (204,2) the affect of x<sub>3</sub> on the model is statistically significant.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'log Lik.' 203.9595 (df=4)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="dv">203</span>,<span class="dv">2</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8.300611e-45</code></pre>
+</div>
+</div>
+<section id="cont." class="level3">
+<h3 class="anchored" data-anchor-id="cont.">(cont.)</h3>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

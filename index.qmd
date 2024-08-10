@@ -1,13 +1,14 @@
 ---
-title: "FFS GV PUF - Identifying HNHC Patients - Part 1"
+title: "Identifying High-Need High Cost Patients within the Fee-For-Service Medicare Benefeciaries Population - Part 1"
 author: "Tomi Akisanya"
 date: "2024-07-24"
 output: html_document
 editor_options: 
+settings:
   chunk_output_type: console
 ---
 
-# Introduction
+# Abstract
 
 Amount and quality of health services received vary substantially across different regions and subgroups within. The cause of this variation does not appear to be a result of differences in social-determinants, and estimates show that 33% of expenditures are unnecessary nor improve population health[^1]. Moreover, in 2021, 5% of the population accounted for nearly half (48.4%) of total health expenditures in the United States[^2]. High-Need High-Cost Patients have been the focus of utilization tracking by all stakeholders. There has been no formal definition to this population, but it is understood by most health experts that 1) they represent a small subset of the population and 2) disproportionately have higher spending than their counterparts. [^3]The ability to clearly define this subset of the population, observe their health needs, and analyze differences in utilization, spending, and quality of care across various factors and geographic regions can provide additional insight to US health expenditures, drive actionable change, and produce targeted initiatives. The Fee for Service Geographic Variation User File was created by the CMS in efforts to explain the underlying variation in resource use among Medicare beneficiaries across regions and physician practice patterns. It is foundational on CMS' Chronic Conditions Data Warehouse (CCW), a data set containing 100% of Medicare beneficiaries' enrolled in the fee-for-service claims as well as other enrollment types from 2014-2022. For this reason, it is acknowledged that this is census data. Therefore, generalizations in the form of hypothesis testing and statistical inferences are not used in this analysis. Any observable differences in the graphics or summary statistics have been concluded as differences in the population; standard error(s) measurements have been subsequently omitted.
 
@@ -113,7 +114,7 @@ The focus of this independent project is to explain the variability in `TOT_MDCR
 `PQI07_HYPRTNSN_AGE_65_74`: PQI07 Hypertension Admission Rate (age 65‐74)\
 `PQI07_HYPRTNSN_AGE_GE_75`: PQI07 Hypertension Admission Rate (age 75+)\
 `ACUTE_HOSP_READMSN_PCT`: Hospital Readmission Rate\
-`ER_VISITS_PER_1000_BENES`: Emergency Department Visits per 1,000 Beneficiaries\
+`ER_VISITS_PER_1000_BENES`: Emergency Depart ment Visits per 1,000 Beneficiaries\
 `BENES_ER_VISITS_PCT`: % of Beneficiaries with an ED Visit
 
 *Use // UTIIZATION*
@@ -367,7 +368,6 @@ Inpatient standardized dollars were highly correlated (r = .889), resulting in 7
 [^8]: Mitchell, E. M. *Concentration of Healthcare Expenditures and Selected Characteristics of Persons with High Expenses, U.S. Civilian Noninstitutionalized Population, 2018.* Statistical Brief #533. January 2021. Agency for Healthcare Research and Quality, Rockville, MD. \
     <http://www.meps.ahrq.gov/mepsweb/data_files/publications/st533/stat533.shtml>
 
-
 The values were then normalized by subtracting each observation from its group mean, and then dividing the resulting value from its group standard deviation. The 1.75x the IQR were used as outliers for total Medicare spending per capita, and was calculated to be any observation excluding the range between \[-2.244357, 2.340497\]. Extremes were any observations where total Medicare spending per capita were +/- three z scores from the mean. For observations in spending that were identified, the extreme z scores for other parameters were compared to analyze observable similarities or differences. For this part of the comparison, only extreme values were isolated. For each successive sub population group, group means and standard deviations are recalculated based on the sequential subset of data.
 
 ```{r}
@@ -419,16 +419,9 @@ extremes <- data.frame(record_id = NA, variable = NA)
 #TX, AK, FL, CA
 ```
 
-Total Medicare per capita spending for FFS Beneficiaries 65 and older in Puerto Rico were significantly lower in comparison to the national average. This group exhibited a significantly low percentage of beneficiaries who had at least one Emergency Department visit during that year. Payment for skilled nursing facility services as a percent of total was extremely low, as was the per user payment for inpatient services. On the higher end of spending and utilization, we see this group exhibits significantly higher Medicare payments for outpatient dialysis, imaging, and tests as a percentage of total Medicare spending. Virginia beneficiaries followed a similar trend with low volumes in ED visits and events in the DME category, while exhibiting higher ambulatory care and dialysis spending. The direction and correlations established above are maintained within this subgroup, highlighting the substantial effect that emergency, skilled nursing, and inpatient services has on total Medicare spending per capita. The significantly high utilization and spending for outpatient dialysis, imaging, and testing, and the observed negative relationship it has on per capita spending for this subgroup implies the existence of underlying patterns that may be attributed to this sub population's tendency to seek services for preventive care measures, unarguably known to reduce the risk for diseases, disabilities, and death[^9]. 
+Total Medicare per capita spending for FFS Beneficiaries 65 and older in Puerto Rico were significantly lower in comparison to the national average. This group exhibited a significantly low percentage of beneficiaries who had at least one Emergency Department visit during that year. Payment for skilled nursing facility services as a percent of total was extremely low, as was the per user payment for inpatient services. On the higher end of spending and utilization, we see this group exhibits significantly higher Medicare payments for outpatient dialysis, imaging, and tests as a percentage of total Medicare spending. Virginia beneficiaries followed a similar trend with low volumes in ED visits and events in the DME category, while exhibiting higher ambulatory care and dialysis spending. The direction and correlations established above are maintained within this subgroup, highlighting the substantial effect that emergency, skilled nursing, and inpatient services has on total Medicare spending per capita. The significantly high utilization and spending for outpatient dialysis, imaging, and testing, and the observed negative relationship it has on per capita spending for this subgroup implies the existence of underlying patterns that may be attributed to this sub population's tendency to seek services for preventive care measures, unarguably known to reduce the risk for diseases, disabilities, and death[^9].
 
 [^9]: Borksy, A., et al. (2018). Few Americans Receive All High-Priority, Appropriate Clinical Preventive Services. *Health Affairs, 37*(6). DOI: 10.1377/hlthaff.2017.1248
-
-
-
-
-
-
-
 
 ############################################################################################################################## 
 
@@ -452,7 +445,6 @@ waterfall_means$over_65 <- colMeans(waterfall %>%
                                        filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
                                        select(where(is.numeric)), na.rm = TRUE)
 ```
-
 
 ```{r, echo = FALSE, eval = FALSE, include = FALSE}
 waterfall_scaled <- 
@@ -502,8 +494,6 @@ outlier <- function(x){
 outlier(waterfall_scaled$TOT_MDCR_STDZD_PYMT_PC)
 ```
 
-
-
 ```{r, echo = FALSE, eval = FALSE, include = FALSE}
 waterfall_scaled %>%
   filter(TOT_MDCR_STDZD_PYMT_PC <= -2.244357 | TOT_MDCR_STDZD_PYMT_PC >= 2.340497) %>% #record_ids: 123227; 113478
@@ -513,8 +503,6 @@ waterfall_scaled %>%
               select(1:6), by = "record_id") 
 
 ```
-
-
 
 ```{r, echo = FALSE, eval = FALSE, include = FALSE}
 waterfall_scaled <- 
@@ -695,4 +683,4 @@ mydata %>%
 
 ```
 
-# Appendix
+# Citations

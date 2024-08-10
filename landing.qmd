@@ -1,0 +1,17 @@
+---
+title: ""
+format:
+  html:
+    page-layout: full
+    canonical: TRUE
+---
+
+::: {style="float: center; margin-top: 200px;"}
+![](images/ace_of_spades_2-03.png){fig-align="center" width="3.65in"}
+:::
+
+::: {style="text-align: center;"}
+[ **Independent Projects & Self-Initiated Concept Work** ]{style="font-size: 20px;"}
+
+[ *Tomi Akisanya* ]{style="font-size: 16px;"}
+:::
