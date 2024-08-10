@@ -54,6 +54,8 @@ Medicare Variation Data/
 # Ignore datasets within any specific directories
 docs/Medicare Variation Data/
 
+Patient Satisfaction Data/
+ptsatisfaction.qmd
 
 
 /.quarto/
