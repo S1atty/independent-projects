@@ -12,7 +12,6 @@ website:
     left:
       - text: "Home"
         href: landing.qmd
-        icon: fa-solid fa-spade
       # - text: "Independent Projects"
       #   href: index.qmd
       - text: "Independent Projects"
