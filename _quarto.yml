@@ -11,7 +11,7 @@ website:
   navbar:
     left:
       - text: "Home"
-        href: a_landing.qmd
+        href: index.qmd
       # - text: "Independent Projects"
       #   href: index.qmd
       - text: "Independent Projects"
@@ -19,7 +19,7 @@ website:
           - text: "Patient Satisfaction"
             href: ptsatisfaction.qmd
           - text: "FFS Medicare Benefeciaries"
-            href: index.qmd
+            href: ffsgvmedicare.qmd
       - text: "Concepts"
         menu: []
     right:
@@ -45,6 +45,3 @@ format:
     toc-depth: 2
     css: styles.css
 
-# Home page configuration
-index:
-  file: landing.qmd

@@ -1,0 +1,686 @@
+---
+title: "Identifying High-Need High Cost Patients within the Fee-For-Service Medicare Benefeciaries Population - Part 1"
+author: "Tomi Akisanya"
+date: "2024-07-24"
+output: html_document
+editor_options: 
+settings:
+  chunk_output_type: console
+---
+
+# Abstract
+
+Amount and quality of health services received vary substantially across different regions and subgroups within. The cause of this variation does not appear to be a result of differences in social-determinants, and estimates show that 33% of expenditures are unnecessary nor improve population health[^1]. Moreover, in 2021, 5% of the population accounted for nearly half (48.4%) of total health expenditures in the United States[^2]. High-Need High-Cost Patients have been the focus of utilization tracking by all stakeholders. There has been no formal definition to this population, but it is understood by most health experts that 1) they represent a small subset of the population and 2) disproportionately have higher spending than their counterparts. [^3]The ability to clearly define this subset of the population, observe their health needs, and analyze differences in utilization, spending, and quality of care across various factors and geographic regions can provide additional insight to US health expenditures, drive actionable change, and produce targeted initiatives. The Fee for Service Geographic Variation User File was created by the CMS in efforts to explain the underlying variation in resource use among Medicare beneficiaries across regions and physician practice patterns. It is foundational on CMS' Chronic Conditions Data Warehouse (CCW), a data set containing 100% of Medicare beneficiaries' enrolled in the fee-for-service claims as well as other enrollment types from 2014-2022. For this reason, it is acknowledged that this is census data. Therefore, generalizations in the form of hypothesis testing and statistical inferences are not used in this analysis. Any observable differences in the graphics or summary statistics have been concluded as differences in the population; standard error(s) measurements have been subsequently omitted.
+
+[^1]: "Eliminating Waste in US Healthcare," by Donald M. Berwick and Andrew D. Hackbarth, 2012
+
+[^2]: *Concentration of Healthcare Expenditures and Selected Characteristics of Persons with High Expenses, United States Civilian Noninstitutionalized Population, 2018-2021*, meps.ahrq.gov/data_files/publications/st556/stat556.shtml#:\~:text=Persons%20in%20the%20top%205%20percent%20expenditure%20tier%20accounted%20for,97.2)%20of%20total%20healthcare%20expenses. Accessed 16 July 2024. 
+
+[^3]: National Academies of Sciences, Engineering, and Medicine; Health and Medicine Division; Board on Population Health and Public Health Practice; Committee on Community-Based Solutions to Promote Health Equity in the United States; Baciu A, Negussie Y, Geller A, et al., editors. Communities in Action: Pathways to Health Equity. Washington (DC): National Academies Press (US); 2017 Jan 11. 2, The State of Health Disparities in the United States. Available from: https://www.ncbi.nlm.nih.gov/books/NBK425844/
+
+# Data Set
+
+FFS GV PUF // CMS Chronic Conditions Data Warehouse (CCW)
+
+*Year:* 2014 - 2022
+
+*Scope:* The data set contains 100% of Medicare beneficiaries' claim data for those enrolled in the fee-for-service program and other enrollment and eligibility data. This data is available at the national, state, and county level.
+
+-   The data scopes chronically ill beneficiaries and therefore includes explicit features such as unique identifiers for each beneficiary types to enable analysis on spending and utilization for individual beneficiaries over time. The granularity of this data set along with its unique features allows us to:
+
+1.  Analyze differences in cost and utilization across different care settings and service lines.
+    -   The care settings are inclusive of inpatient and outpatient hospitals, multiple post-acute care settings, hospice, physicians, laboratories, and suppliers of durable medical equipment.
+
+-   Physician services are scoped and defined under the Restructured BETOS Classification System (RBCS) which groups services into these eight classifications: evaluation and management (E&M), procedures, treatments, imaging, laboratory tests, durable medical equipment (DME), anesthesia, and other.
+
+-   The data scopes two types of quality measures and quantifies them in the form of utilization or by score
+
+    -   Quality measurements are given in utilization by 1) hospital admission rates for ambulatory care sensitive conditions, 2) hospital ED visits and 3) 30-day hospital readmission.
+
+    -   Quality measurements are also measured by PQI scores calculated by AHRQ. These are the ratio of total hospitalizations for a principal diagnosis given by the specified ICD-10-CM to the total population 18 and older in the metropolitan area of the patient's residence[^4]. Specific exclusion criteria for each quality indicator can be found [here](https://qualityindicators.ahrq.gov/measures/list_ahrq_qi).
+
+-   The data is scoped to exclude certain beneficiaries across all time periods to make further within/between group analysis easier, as whether or not individuals qualified or enrolled for Medicare change year over year. Criterion has been applied to those individuals to prevent bias and the same criterion is applied for all years across the scope of this data set. The exclusion criteria for those groups are defined below:
+
+    -   Beneficiaries who had both Part A and Part B coverage and were enrolled at any point during the year in a Medicare Advantage (MA) plan are excluded.
+
+    -   Beneficiaries who were enrolled in Part A only or Part B only were also excluded\
+
+        The study population is subsequently defined as:
+
+[^4]: AHRQ Quality IndicatorsTM (AHRQ QITM) ICD-10-CM/PCS Specification v2022
+
+**Study Population***:* The study population for the FFS GV PUF is comprised of individuals who have both Part A and Part B coverage and are fully enrolled in Medicare’s FFS program
+
+-   Additionally, all Medicare beneficiaries have been included in the data set but are not a part of the CMS' intended study population. The beneficiaries in the data set are
+    -   Total Medicare Beneficiaries
+    -   Beneficiaries with Parts A and B
+    -   FFS Study Population
+    -   MA-Equivalent Study Population
+    -   Both FFS and MA Enrollment
+    -   Other (e.g., Part A only or Part B only)
+    -   Beneficiaries in Study Population that Died during the Year
+
+The FFS Study Population includes those that died during the calendar year as long as they do not follow the population exclusion criteria above.
+
+# Explicit Adjustments and Standardization
+
+**Standardization**: Medicare spending and utilization can vary for reasons that are expected. Medicare reimbursement rates for the same service can vary to account for differences in local wages, input pricing, market conditions, and special payments[^5]. Beneficiaries' health status will also differ based on geographic location. Dollars (where standardized) in the data set have excluded this variability to make the analysis as interpretable as possible. Calculations for standardization methods can be found [here](https://resdac.org/articles/cms-price-payment-standardization-overview.) and use the same methodology that CMS leverages to calculate per beneficiary spending (MSPB) for initiatives such as the hospital value-based purchasing program. Standardization methods still retain variability due to differences in practice care settings, physician tendencies, and differences in health status due to geographic location.
+
+[^5]: Super N. The Geography of Medicare: Explaining Differences in Payment and Costs \[Internet\]. Washington (DC): National Health Policy Forum; 2003 Jul 3. (Issue Brief, No. 792.) Available from: https://www.ncbi.nlm.nih.gov/books/NBK559778/
+
+**Average Risk Core:** Forecasts FFS spending per beneficiaries compared to total Medicare spending, factoring age, sex, eligibility for Medicaid, and prior diagnoses. The risk adjustment model was developed by CMS which uses hierarchical condition categories (HCC). This analysis will be focused on patient population and will omit risk scores.
+
+**Payment Reduction (Years 2017-2022 only):** To account for differences in spending after the fact (i.e deduction in base pay in provider by Medicare but later paid out to ACO) these variables were created: `Total Population Based Payment Reduction Costs` - the total payment reform amount that was not paid to the provider, but rather was paid to the ACO or PBP program `Total Population Based Payment Reduction Costs Per Capita`
+
+# Parameters
+
+The parameters for each observation/row can be inferred by the column names. The data dictionary in conjunction with the user file documentation was used to interpret the definition of each parameter. The parameters describe spending, utilization, demographics, or quality measures at a certain level. That level is defined by `BENE_GEO_LVL` and can represent the total count, amount, standardized amount, standardized amount as a percent of actual, standardized amount per capita, or standardized amount per user for a specific parameter at the county, state, or national level. The totals at each level should sum to any aggregated geographic level. Depending on that level, some parameters may be limited/omitted by the CMS -
+
+-   PQIs are not present at the county level
+
+-   Age \<65\|65\> split is not available at the county level
+
+*Utilization:* CCW Claims data was used to calculate metrics on all-cause hospital readmission and ER use. They are generated for 17 major service categories (using claim type code, Medicare provider number for Part A services, bill types, claim type code and RBCS codes):
+
+-   `Total number of all-cause hospital readmissions`
+
+-   `All-cause hospital 30-day readmission rate` (i.e., the number of readmission divided by the total number of admissions where the beneficiary was discharged alive)
+
+-   `ER Visits`
+
+*Utilization Types:* 1) Number of times 2) Number of beneficiaries 3) Percentage of Beneficiaries measures are available for the following:
+
+`Number of covered days (Part A),` `Number of stays (Part A),` `Number of Episodes,` `Number of visits`, `Number of events (Part B)`
+
+The focus of this independent project is to explain the variability in `TOT_MDCR_STDZD_PYMT_PC,` total standardized medicare spending per capita, and use the explained variability to identify high-need high cost patients of the Fee-For-Service Medicare Beneficiaries study population. Medicare reimbursement rates for the same service can vary across regions over time due to local market conditions and inflation. The dollars in the response variable have been standardized to exclude this variability and other variables with the `STDZD` schema denotes this exclusion. Variability due to other factors are implicit within the data set.
+
+# Objective
+
+-   Understand the relationship between the quality, use, and cost of health care
+
+-   Examine issues related to the quality of care such as continuity and access to primary care.
+
+-   Examine patterns in different types of care settings.
+
+-   Identify high-need high cost individuals
+
+# Key Variables
+
+*Quality // PREVENTION QUALITY INITIATIVES (Volume/Scores)*
+
+`ACUTE_HOSP_READMSN_PCT` // `BENES_ER_VISITS_PCT` // `ER_VISITS_PER_1000_BENES`
+
+`PQI07_HYPRTNSN_AGE_LT_65`: PQI07 Hypertension Admission Rate (age \< 65)\
+`PQI07_HYPRTNSN_AGE_65_74`: PQI07 Hypertension Admission Rate (age 65‐74)\
+`PQI07_HYPRTNSN_AGE_GE_75`: PQI07 Hypertension Admission Rate (age 75+)\
+`ACUTE_HOSP_READMSN_PCT`: Hospital Readmission Rate\
+`ER_VISITS_PER_1000_BENES`: Emergency Depart ment Visits per 1,000 Beneficiaries\
+`BENES_ER_VISITS_PCT`: % of Beneficiaries with an ED Visit
+
+*Use // UTIIZATION*
+
+`PRCDRS_MDCR_STDZD_PYMT_AMT`: Procedures Standardized Medicare Payment `PRCDRS_MDCR_STDZD_PYMT_PCT`: Procedures Standardized Medicare Payment as % of Total Standardized Medicare Payment `PRCDRS_MDCR_STDZD_PYMT_PC`: Procedures Per Capita Standardized Medicare Payment `PRCDRS_MDCR_STDZD_PYMT_PER_USER`: Procedures Per User Standardized Medicare Payment `BENES_PRCDRS_CNT`: \# Procedure Users `BENES_PRCDRS_PCT`: % of Beneficiaries Using Procedures `PRCDR_EVNTS_PER_1000_BENES`: Procedure Events Per 1,000 Beneficiaries
+
+*Cost // EXPENDITURES*
+
+`TOT_MDCR_STDZD_PYMT_PC` = Y\
+`IP_MDCR_STDZD_PYMT_AMT`\
+`IP_MDCR_PYMT_PER_USER`\
+`OP_MDCR_STDZD_PYMT_PCTOP_MDCR_STDZD_PER_USER`
+
+*Population // DEMOGRAPHIC*
+
+FFS Beneficiaries\
+`BENE_GEO_LVL:` National/State/County\
+`BENE_AGE_LVL:` \<65;\>=65\
+`BENE_MALE_PCT:` % Male\
+`BENE_FEML_PCT:` % Female\
+`BENE_RACE_BLACK_PCT:` % Black\
+`BENE_AVG_AGE:` Avg Age
+
+\**Variables names are not all inclusive and are shown as inferences to schema used throughout the project*
+
+# Setup
+
+```{r, echo = TRUE, eval = TRUE, include=FALSE}
+library(tidyverse)
+library(lessR)
+library(dplyr)
+library(GGally)
+library(magrittr)
+library(skimr)
+library(showtext)
+library(colorspace)
+library(RColorBrewer)
+library(sysfonts)
+library(ggplot2)
+library(readr)
+
+showtext_auto()
+# setwd("/Users/tomiakisanya/Downloads/Northwestern MHA 2")
+
+X2014_2022_Medicare_FFS_Geographic_Variation_Public_Use_File <- read_csv("Medicare Variation Data/Medicare Geographic Variation - by National, State & County/2022/2014-2022 Medicare FFS Geographic Variation Public Use File.csv")
+
+mydata <- data.frame(X2014_2022_Medicare_FFS_Geographic_Variation_Public_Use_File)
+
+
+
+```
+
+# Data Manipulation
+
+```{r echo=TRUE,eval = TRUE, include = TRUE, message=FALSE, warning=FALSE}
+
+
+set.seed(123)
+
+mydata[mydata == "*"] <- NA # * used as NAs/~0 cell values
+
+for (i in 6:ncol(mydata)){
+  mydata[,i] <- as.numeric(mydata[,i]) 
+}
+
+mydata %<>% mutate(record_id = round(runif(dim(mydata)[1],100000,900000)), .before = YEAR)
+#assign unique identifiers to each record
+
+mydata %<>% mutate(record_id = as.character(record_id),
+                   STATE = substr(BENE_GEO_DESC,1,2), .before = BENE_GEO_DESC)
+
+waterfall <- mydata %>%
+  select(contains(c("record","YEAR","TOT_MDCR_STDZD_PYMT_PC",
+                    "BENES_FFS_CNT","BENE_GEO_LVL","BENE_GEO_DESC","BENE_AGE_LVL",
+                    "BENE_AVG_AGE","IP_MDCR_STDZD_PYMT_AMT","IP_MDCR_PYMT_PER_USER","OP_MDCR_STDZD_PYMT_PCT","OP_MDCR_STDZD_PER_USER","BENE_GEO_LVL","BENE_AGE_LVL","BENE_AVG_AGE","BENE_MALE_PCT","BENE_FEML_PCT","BENE_RACE",
+                    "MDCR_STDZD_PYMT","PQI","HOSP_READMSN_PCT","ER_VISITS","BENES_ER"), ignore.case = TRUE))
+
+waterfall %<>% mutate_if(is.character,as.factor)
+# str(waterfall) 
+
+waterfall_national <- waterfall[waterfall$BENE_GEO_LVL == "National",]
+waterfall_state <- waterfall[waterfall$BENE_GEO_LVL == "State",] #PQIs and 65 age split available
+waterfall_county <- waterfall[waterfall$BENE_GEO_LVL == "County",] 
+
+```
+
+# Analysis
+
+Fee For Service Medicare patients enrolled in both Part A and Part B for the calendar year is explicitly split by the CMS to separate age groups 65 and up from groups younger than 65, as these age groups inherently differ in health needs and subsequently exhibit different health utilization and spending patterns. It is important to note that these descriptions are not mutually exclusive; while high-need patients are also high-cost, the converse is not true[^6]. Elder patients by nature require highly intensive care, but so can younger patients dealing with multiple short-term illnesses and acute injuries. The key distinction in this case is these patients may only be 'high-need' momentarily if proper treatment and diagnostics results in a stable state - resulting in a small proportion of overall utilization and spending. Characteristics of HNHC patients are identifiable and are loosely defined by experts as individuals with higher out of pocket expenses, multiple chronic conditions, and functional limitations. Due to the complexity of the HNHC population and limitation of this data set to Medicare beneficiaries, providing an exact definition is not practical. However, HNHC patients within the FFS Medicare population can still be identified, in which the results can be utilized to inform findings in other population groups, leading to a more robust definition of who these patients are.
+
+[^6]: National Academy of Medicine; The Learning Health System Series; Whicher D, Dahlberg ML, Apton KL, et al., editors. Effective Care for High-Need Patients: Opportunities for Improving Outcomes, Value, and Health. Washington (DC): National Academies Press (US); 2017. 2, KEY CHARACTERISTICS OF HIGH-NEED PATIENTS.
+
+Consequentially, Medicare spending has steadily increased nationally year over year for both age groups, a total increase of 21.6% by 2022.[^7] During that same period, beneficiaries younger than 65 spent a total of \$1560 per capita more on average (total sd = \$814). While the distribution of both groups form a Gaussian distribution, beneficiaries younger than 65 exhibit higher cost per capita and variability.
+
+[^7]: Percent increase is relative to data set: 2014-2022
+
+```{r, warning=FALSE, message=FALSE}
+
+waterfall %>%
+  group_by(BENE_AGE_LVL, YEAR) %>%
+  filter(BENE_AGE_LVL %in% c("<65",">=65"), 
+         BENE_GEO_LVL == "National") %>%
+  summarize(n = mean(TOT_MDCR_STDZD_PYMT_PC)) %>%
+  pivot_wider(names_from = YEAR, values_from = n)
+# table for spending YoY
+
+
+waterfall %>%
+  dplyr::filter(BENE_AGE_LVL %in% c("<65",">=65"),
+                BENE_GEO_LVL == "National") %>%
+  group_by(BENE_AGE_LVL) %>%
+  select(BENE_AGE_LVL,TOT_MDCR_STDZD_PYMT_PC) %>%
+  skim() 
+
+lessR::SummaryStats(TOT_MDCR_STDZD_PYMT_PC, by = BENE_AGE_LVL, data = waterfall[waterfall$BENE_GEO_LVL=="National",])
+
+```
+
+```{r, fig.width = 19, fig.height = 14, echo = FALSE, eval = TRUE,  include = TRUE}
+
+waterfall %>%
+  filter(BENE_AGE_LVL %in% c("<65",">=65"),
+         BENE_GEO_LVL == "National") %>%
+  ggplot(aes(x = YEAR, y = TOT_MDCR_STDZD_PYMT_PC, color = BENE_AGE_LVL))+
+  geom_point() +
+  geom_line(size=.5)+
+  scale_x_continuous()+
+  scale_y_continuous(labels=scales::label_dollar(), breaks=c(11305,9798))+
+  scale_color_manual(labels=c("<65"="65 and younger",">=65"="65 and older"), values = c("<65"="#fdbf11",">=65"="#1696d2"),
+                    name=c("BENE_AGE_LVL"="Age Group"))+
+   geom_segment(y = 11305, x = 2022, xend = 2022.3, yend = 11305, color = "#fdbf11", linetype = "dotted")+
+   geom_segment(y = 9798, x = 2022, yend = 9798, xend = 2022.3, color = "#1696d2", linetype = "dotted") +
+   annotate(geom="text", label = "Beneficiaries 65 and younger ",
+          color = "grey80", size = 7, x = 2015.1, y = 11500, face = "bold") +
+   annotate(geom="text", label = "spent $1560",
+          color = "#fdbf11", size = 7, x = 2015, y = 11400, face = "bold") +
+   annotate(geom="text", label = "more on average",
+          color = "grey80", size = 7, x = 2015, y = 11300, face = "bold") +
+   annotate(geom="text", label = "group mean", x = 2022,y = 9760, color = "#1696d2")+
+   annotate(geom="text", label = "group mean", x = 2022,y = 11267, color = "#fdbf11")+
+   labs(title = "FFS Medicare Benefeciaries Total Expenditures by Age Group (2014-2022)",
+       subtitle = "Dollars have been standardized to exclude known variation (e.g. input pricing, local wages) by Medicare",
+       x = "Year", y = "Per Capita Spending")+
+   theme(plot.title = element_text(family = "EB Garamond",face = "bold", size = 22),
+        plot.subtitle = element_text(color = "black", size = 14, face = "italic", family ="EB Garamond"),
+        axis.title = element_text(family = "EB Garamond", size = 14),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_line(linetype = "dotted", color = "grey80", linewidth = .3),
+        panel.grid.major = element_line(linetype = "dotted",color="grey80", linewidth = .3),
+        axis.ticks = element_line(linetype = "solid",lineend = "round",linewidth = .8),
+        axis.text.y = element_text(family = "EB Garamond", color = "black", size = 12),
+        axis.text.x = element_text(family = "EB Garamond", color = "black", size = 12),
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white"),
+        legend.background = element_rect(fill = "white"),
+        legend.position = "top") 
+
+
+
+waterfall %>%
+  filter(BENE_AGE_LVL %in% c("<65",">=65"),
+         BENE_GEO_LVL == "State") %>%
+  ggplot(aes(x=TOT_MDCR_STDZD_PYMT_PC, fill = BENE_AGE_LVL))+
+  geom_histogram(binwidth = 175, alpha = .5)+
+  scale_x_continuous(labels=scales::label_dollar(),n.breaks=7)+
+  scale_y_continuous()+
+ # coord_fixed()+
+  scale_fill_manual(labels=c("<65"="65 and younger",">=65"="65 and older"), values = c("<65"="#fdbf11",">=65"="#1696d2"),
+                    name=c("BENE_AGE_LVL"="Age Group"))+
+  labs(title = "Distribution of Total FFS Medicare Benefeciary Spending per Capita by Age Group: 2014 to 2022",
+       subtitle = "Dollars have been standardized to exclude known variation (e.g. input pricing, local wages) by Medicare", x = "Dollars (per Capita)", y = "Count")+
+  theme(plot.title = element_text(family = "EB Garamond",face = "bold", size = 20),
+        plot.subtitle = element_text(family = "EB Garamond", face = "italic", size = 16),
+        axis.title = element_text(family = "EB Garamond", size = 14),
+        axis.text = element_text(family = "EB Garamond", size = 12),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_line(linetype = "dotted", color = "grey80", linewidth = .3),
+        panel.grid.major = element_line(linetype = "dotted",color="grey80", linewidth = .3),
+        axis.ticks = element_line(linetype = "solid",lineend = "round",linewidth = .8),
+        panel.background = element_rect(fill = "white"),
+        plot.background = element_rect(fill = "white"),
+        legend.background = element_rect(fill = "white"),
+       # axis.line = element_line(linetype = "dotted", color = "grey90", linewidth =1),
+        legend.position = "top")
+```
+
+FFS Beneficiaries younger than 65 would potentially be considered 'higher cost' than those older, but to acknowledge the delineation of the terms and the ultimate goal of identifying **high-need high-cost** patients, the process of identifying such would take two logical progressions:
+
+1.  Identify subgroups that exhibit extremities/outliers in *spending*, then identify extremities/outliers in *utilization*
+
+2.  Identify subgroups that exhibit extremities/outliers in *utilization*, then identify extremities/outliers in *spending*
+
+Both approaches were examined to determine the more efficient and practical method. Subgroups that are high-need of services for mental health, rehabilitation, substance-use, etc. may likely spend less than those in need of multiple physician services for evasive surgeries or complex health issues. The proceeding methodology is a performance of both methods separately. The results will then be utilized to determine the prevalence of observable trends within groups and help identify the HNHC of the patient population. Beginning with the first method, observations outside of three z scores from the mean were used as a proxy to define *extremities* in spending. Observations outside 1.75x the interquartile range were defined as outliers. After quantifying proxies, the subset of observations to isolate were outlined. To maintain the accuracy of conclusions, comparisons were only made for observations that occurred within the same year. Exploratory data analysis on the state or county level data have its respective benefits. While county level data allows for the most granularity, the county level data does not contain PQIs nor differentiates between groups older/younger than 65. To realize both of these benefits, a waterfall approach was used, starting with the sub population 65 and older in 2022 at the State level. Comparisons within groups younger than 65 during the same year were then made. Lastly, both groups aggregated at the county level were analyzed.
+
+**Group 1 - FFS Benefeciaries 65 and older in 2022 (state level comparisons)**
+
+Correlation coefficients were obtained for total standardized dollars per capita. Values were deemed *practically* significant for correlation coefficients larger than .70 (i.e. if the variable alone can be predictive of more than 50% of total variability in spending).
+
+```{r}
+# starting with State level data in 2022 for age groups 65 and older
+ # μ1 = 10941
+
+waterfall_means <- data.frame(variable=rep(NA,107))
+
+waterfall_means$variable <- 
+waterfall %>%
+  filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+  select(where(is.numeric)) %>%
+  variable.names()
+
+waterfall_means$under_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+                                       select(where(is.numeric)), na.rm = TRUE)
+
+
+waterfall_means$over_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+                                       select(where(is.numeric)), na.rm = TRUE)
+
+
+```
+
+```{r, fig.width = 15, fig.height = 10}
+waterfall_state %<>% filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+  select(where(is.numeric))
+
+
+cor(waterfall_state$TOT_MDCR_STDZD_PYMT_PC,y =  waterfall_state, method = "pearson", use = "pairwise.complete.obs") %>%
+  corrplot::corrplot() #corrplot 
+
+group1_cor_table <- 
+cor(y = waterfall_state$TOT_MDCR_STDZD_PYMT_PC, waterfall_state, method = "pearson", use = "pairwise.complete.obs") %>%
+  data.frame()
+
+
+group1_cor_table$name <-  rownames(group1_cor_table)
+rownames(group1_cor_table) <- rep(NULL,107)
+names(group1_cor_table) <- c("cor_","name")
+group1_cor_table %<>% mutate(name_ = name, .before = 1)
+group1_cor_table <- group1_cor_table[,c(1:2)]
+group1_cor_table %>%
+  tibble() %>%
+  arrange(desc(cor_)) %>%
+  print(n=5) #correlation table
+
+
+```
+
+Inpatient standardized dollars were highly correlated (r = .889), resulting in 79.03% of total variability in per capita spending that could be attributed to inpatient spending. Although this variation is likely a characteristic of elder groups, inpatient hospital care only accounted for 36% of spending for the noninstitutional population in the top 5% of the nation's spending distribution in 2018[^8]. FFS Medicare payment for skilled nursing facility, home health, and durable medical equipment were significant factors in total spending, implying the potential presence of underlying colinearity between the elder population and the utilization of intensive health services. The use of multidimensional health services combined with the strong relationship for both the percentage of beneficiaries with at least one ER visit, and payments for services in the procedures category, may suggest that Medicare beneficiaries 65 and older exhibit multiple chronic conditions simultaneously that require careful coordinated care over an extended period of time. **To test the validity of this, further analysis must be completed for number and percent of beneficiaries using different types of services and their associated PQI score.**
+
+[^8]: Mitchell, E. M. *Concentration of Healthcare Expenditures and Selected Characteristics of Persons with High Expenses, U.S. Civilian Noninstitutionalized Population, 2018.* Statistical Brief #533. January 2021. Agency for Healthcare Research and Quality, Rockville, MD. \
+    <http://www.meps.ahrq.gov/mepsweb/data_files/publications/st533/stat533.shtml>
+
+The values were then normalized by subtracting each observation from its group mean, and then dividing the resulting value from its group standard deviation. The 1.75x the IQR were used as outliers for total Medicare spending per capita, and was calculated to be any observation excluding the range between \[-2.244357, 2.340497\]. Extremes were any observations where total Medicare spending per capita were +/- three z scores from the mean. For observations in spending that were identified, the extreme z scores for other parameters were compared to analyze observable similarities or differences. For this part of the comparison, only extreme values were isolated. For each successive sub population group, group means and standard deviations are recalculated based on the sequential subset of data.
+
+```{r}
+
+waterfall_scaled <- 
+  mydata %>%
+  filter(BENE_AGE_LVL %in% c(">=65"),
+         BENE_GEO_LVL=="State",
+         YEAR == "2022") %>%
+  select(contains(c("record_id","STATE","TOT_MDCR_STDZD_PYMT_PC", "BENE_GEO_DESC",
+                    "STDZD_PYMT_PER_USER","STDZD_PYMT_PC","PQI","PER_1000_BENES","BENES_ER_VISITS_PCT","ER_VISITS_PER_1000_BENES"),
+                  ignore.case = TRUE)) %>%
+  mutate_if(is.numeric, scale.default)
+
+
+outlier <- function(x){
+  lb <- quantile(x, probs = .25, na.rm = TRUE)-(1.75*IQR(x, na.rm =TRUE))
+  ub <- quantile(x, probs = .75, na.rm = TRUE)+(1.75*IQR(x, na.rm = TRUE))
+  sprintf("Range Excluding [%f, %f]",lb,ub)
+}
+
+outlier(waterfall_scaled$TOT_MDCR_STDZD_PYMT_PC)
+
+waterfall_scaled %>%
+  #filter(TOT_MDCR_STDZD_PYMT_PC <= -3 | TOT_MDCR_STDZD_PYMT_PC >= 3) %>%  #extremes 
+  filter(TOT_MDCR_STDZD_PYMT_PC <= -2.244357 | TOT_MDCR_STDZD_PYMT_PC >= 2.340497) %>%
+  tibble()
+
+mydata %>%
+  filter(record_id == "113478") %>%
+  tibble()
+
+extremes <- data.frame(record_id = NA, variable = NA)
+
+# for (j in seq_along(waterfall_scaled)) { #identify extreme characteristics
+#   col_name <- colnames(waterfall_scaled)[j]
+#   for (i in seq_len(nrow(waterfall_scaled))) {
+#     if (!is.na(waterfall_scaled[i,j]) && (waterfall_scaled[i,j] >= 3 || waterfall_scaled[i,j] <= -3)){
+#       print(col_name)
+#       print(waterfall_scaled$record_id[i])
+#       extremes <- rbind(extremes, data.frame(variable = col_name, record_id = waterfall_scaled$record_id[i]))
+#     }
+#   }
+# }
+
+# extremes %<>% filter(variable != "record_id")
+# rm(extremes)
+
+#TX, AK, FL, CA
+```
+
+Total Medicare per capita spending for FFS Beneficiaries 65 and older in Puerto Rico were significantly lower in comparison to the national average. This group exhibited a significantly low percentage of beneficiaries who had at least one Emergency Department visit during that year. Payment for skilled nursing facility services as a percent of total was extremely low, as was the per user payment for inpatient services. On the higher end of spending and utilization, we see this group exhibits significantly higher Medicare payments for outpatient dialysis, imaging, and tests as a percentage of total Medicare spending. Virginia beneficiaries followed a similar trend with low volumes in ED visits and events in the DME category, while exhibiting higher ambulatory care and dialysis spending. The direction and correlations established above are maintained within this subgroup, highlighting the substantial effect that emergency, skilled nursing, and inpatient services has on total Medicare spending per capita. The significantly high utilization and spending for outpatient dialysis, imaging, and testing, and the observed negative relationship it has on per capita spending for this subgroup implies the existence of underlying patterns that may be attributed to this sub population's tendency to seek services for preventive care measures, unarguably known to reduce the risk for diseases, disabilities, and death[^9].
+
+[^9]: Borksy, A., et al. (2018). Few Americans Receive All High-Priority, Appropriate Clinical Preventive Services. *Health Affairs, 37*(6). DOI: 10.1377/hlthaff.2017.1248
+
+############################################################################################################################## 
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+# from table 1, mean for <65 == 12276; >=65 == 10941
+# starting with State level data for 2022
+waterfall_means <- data.frame(variable=rep(NA,107))
+
+waterfall_means$variable <- 
+waterfall %>%
+  filter(BENE_AGE_LVL=="<65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+  select(where(is.numeric)) %>%
+  variable.names()
+
+waterfall_means$under_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL=="<65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+                                       select(where(is.numeric)), na.rm = TRUE)
+
+
+waterfall_means$over_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="State",YEAR=="2022") %>%
+                                       select(where(is.numeric)), na.rm = TRUE)
+```
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+waterfall_scaled <- 
+  mydata %>%
+  filter(BENE_AGE_LVL %in% c(">=65"),
+         BENE_GEO_LVL=="State",
+         YEAR == "2022") %>%
+  select(contains(c("record_id","TOT_MDCR_STDZD_PYMT_PC",
+                    "STDZD_PYMT_PER_USER","STDZD_PYMT_PC","PQI","PER_1000_BENES","BENES_ER_VISITS_PCT","ER_VISITS_PER_1000_BENES"),
+                  ignore.case = TRUE)) %>%
+  mutate_if(is.numeric, scale.default)
+
+extremes <- data.frame(record_id = NA, variable = NA)
+
+for (j in seq_along(waterfall_scaled)) {
+  col_name <- colnames(waterfall_scaled)[j]
+  for (i in seq_len(nrow(waterfall_scaled))) {
+    if (!is.na(waterfall_scaled[i,j]) && (waterfall_scaled[i,j] >= 3 || waterfall_scaled[i,j] <= -3)){
+      print(col_name)
+      print(waterfall_scaled$record_id[i])
+      extremes <- rbind(extremes, data.frame(variable = col_name, record_id = waterfall_scaled$record_id[i]))
+    }
+  }
+}
+
+extremes %<>% filter(variable != "record_id")
+outlier(waterfall_scaled$TOT_MDCR_STDZD_PYMT_PC)
+extremes %>%
+  left_join(mydata %>%
+              select(1:7), by = "record_id") %>%
+  left_join(waterfall_scaled, by = "record_id") %>%
+  select(BENE_GEO_DESC) %>%
+  table()
+
+waterfall_scaled %>%
+  filter(TOT_MDCR_STDZD_PYMT_PC <= -2.244357 | TOT_MDCR_STDZD_PYMT_PC >= 2.340497) 
+
+waterfall_scaled %>%
+  
+
+outlier <- function(x){
+  lb <- quantile(x, probs = .25, na.rm = TRUE)-(1.75*IQR(x, na.rm =TRUE))
+  ub <- quantile(x, probs = .75, na.rm = TRUE)+(1.75*IQR(x, na.rm = TRUE))
+  sprintf("Range Excluding [%f, %f]",lb,ub)
+}
+
+outlier(waterfall_scaled$TOT_MDCR_STDZD_PYMT_PC)
+```
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+waterfall_scaled %>%
+  filter(TOT_MDCR_STDZD_PYMT_PC <= -2.244357 | TOT_MDCR_STDZD_PYMT_PC >= 2.340497) %>% #record_ids: 123227; 113478
+  select(record_id,TOT_MDCR_STDZD_PYMT_PC, BENES_ER_VISITS_PCT,DME_EVNTS_PER_1000_BENES,AMBLNC_MDCR_STDZD_PYMT_PCT,OP_DLYS_MDCR_STDZD_PYMT_PCT,
+         IMGNG_MDCR_STDZD_PYMT_PCT,TESTS_MDCR_STDZD_PYMT_PCT,SNF_MDCR_STDZD_PYMT_PCT,IP_MDCR_STDZD_PYMT_PER_USER) %>%
+  left_join(mydata %>%
+              select(1:6), by = "record_id") 
+
+```
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+waterfall_scaled <- 
+  mydata %>%
+  filter(BENE_GEO_LVL=="County",
+         YEAR == "2022") %>%
+  select(contains(c("record_id","TOT_MDCR_STDZD_PYMT_PC",
+                    "STDZD_PYMT_PER_USER","STDZD_PYMT_PC","PQI","PER_1000_BENES","BENES_ER_VISITS_PCT","ER_VISITS_PER_1000_BENES"),
+                  ignore.case = TRUE)) %>%
+  mutate_if(is.numeric, scale.default)
+
+outlier(waterfall_scaled$TOT_MDCR_STDZD_PYMT_PC)
+
+waterfall_scaled %>%
+  filter(TOT_MDCR_STDZD_PYMT_PC <= -3 | TOT_MDCR_STDZD_PYMT_PC >= 3) %>%
+  tibble() %>%
+  print(n=30) %>%
+  left_join(mydata %>%
+              select(1:18), by = "record_id") %>%
+  mutate(STATE = substr(BENE_GEO_DESC, 1, 2), .before = TOT_MDCR_STDZD_PYMT_PC) %>%
+  arrange(desc(TOT_MDCR_STDZD_PYMT_PC)) 
+
+extremes %>%
+  filter(record_id == "427682") %>%
+  left_join(waterfall_scaled, by = "record_id") %>%
+  select(IP_MDCR_STDZD_PYMT_PCT)
+  
+
+for (j in seq_along(waterfall_scaled)) {
+  col_name <- colnames(waterfall_scaled)[j]
+  for (i in seq_len(nrow(waterfall_scaled))) {
+    if (!is.na(waterfall_scaled[i,j]) && (waterfall_scaled[i,j] >= 3 || waterfall_scaled[i,j] <= -3)){
+      print(col_name)
+      print(waterfall_scaled$record_id[i])
+      extremes <- rbind(extremes, data.frame(variable = col_name, record_id = waterfall_scaled$record_id[i]))
+    }
+  }
+}
+
+extremes %<>% filter(variable != "record_id")
+
+
+dim(extremes) #2482
+
+# waterfall_scaled %>% 
+#   filter(TOT_MDCR_STDZD_PYMT_PC <= -3 | TOT_MDCR_STDZD_PYMT_PC >= 3) %>%
+#   select(record_id) %>%
+#   anti_join(waterfall_scaled, by = "record_id") %>%
+#   tibble()
+#validate every record with extreme values in other variables also have extreme values in Y
+
+waterfall_scaled %>%
+  filter(TOT_MDCR_STDZD_PYMT_PC <= -3 | TOT_MDCR_STDZD_PYMT_PC >= 3) %>%
+  tibble() %>%
+  print(n=30) %>%
+  left_join(mydata %>%
+              select(1:18), by = "record_id") %>%
+  mutate(STATE = substr(BENE_GEO_DESC,1,2), .before = 2) %>%
+  arrange(desc(TOT_MDCR_STDZD_PYMT_PC)) %>%
+  # select(STATE) %>%
+  # table()
+  filter(STATE %in% c("AK","TX","LA")) %>%
+  ggplot(aes(y = BENE_GEO_DESC, x = TOT_MDCR_STDZD_PYMT_PC, fill = BENES_ER_VISITS_PCT))+
+  geom_col()
+
+
+
+waterfall_scaled 
+
+extremes %>%
+  filter(record_id %in% c("104961","189073","216022","359844"))
+
+mydata %>%
+  mutate(STATE = substr(BENE_GEO_DESC,1,2)) %>%
+  group_by(STATE) %>%
+  mutate(n = mean(TOT_MDCR_STDZD_PYMT_PC, na.rm = TRUE),n2 = record_id) %>%
+  filter(BENE_GEO_LVL=="County",
+         BENE_AGE_LVL=="All",
+         YEAR == "2022",
+         STATE %in% c("TX","AK")) %>%
+  mutate_if(is.numeric,scale.default) %>%
+  ggplot(aes(y = STATE, x = TOT_MDCR_STDZD_PYMT_PC)) +
+  geom_col()
+  
+str(mydata)
+
+ 
+
+
+
+```
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+
+waterfall_means <- tibble(variable=rep(NA,107))
+
+waterfall_means$variable <- 
+waterfall %>%
+  filter(BENE_AGE_LVL=="<65",BENE_GEO_LVL=="National") %>%
+  select(where(is.numeric)) %>%
+  variable.names()
+
+waterfall_means$under_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL=="<65",BENE_GEO_LVL=="National") %>%
+                                       select(where(is.numeric)) %>%
+                                       scale(center = TRUE, scale = TRUE), na.rm = TRUE)
+
+
+waterfall_means$over_65 <- colMeans(waterfall %>%
+                                       filter(BENE_AGE_LVL==">=65",BENE_GEO_LVL=="National") %>%
+                                       select(where(is.numeric)) %>%
+                                       scale(center = TRUE, scale = TRUE), na.rm = TRUE)
+
+
+waterfall %>%
+  filter(BENE_AGE_LVL %in% c("65",">=65"),
+         BENE_GEO_LVL=="National", .preserve  = "unused") %>%
+  mutate_if(is.numeric, scale) %>%
+  pivot_longer(everything(), names_to = "variable",values_to = "value")
+
+
+
+waterfall_means %>%
+  filter(under_65 > over_65) %>%
+  mutate(meandiff = under_65 - over_65) %>%
+  filter_all(~. >= 3)
+
+
+#tidymodels
+#shiny 
+#plotly
+#install.packages("plotly")
+#Hadley Wickem
+
+waterfall_county %<>% select(where(is.numeric))
+waterfall_county %<>% complete.cases(waterfall_county)
+waterfall_county <- waterfall[waterfall$BENE_GEO_LVL == "County" & waterfall$YEAR == "2022",]
+
+cor(waterfall_county, waterfall_county$TOT_MDCR_STDZD_PYMT_PC, method = "pearson", use = "pairwise.complete.obs") 
+
+mydata %>%
+  filter(BENE_GEO_LVL == "State", 
+         BENE_AGE_LVL == ">=65",
+         YEAR == "2022") %>%
+  group_by(BENE_GEO_DESC, BENE_AGE_LVL) %>%
+  summarize(n = TOT_MDCR_STDZD_PYMT_PC, 
+            n1 = TOT_MDCR_STDZD_PYMT_AMT/BENES_FFS_CNT) %>%
+  arrange(desc(n1)) %>%
+  print(n=55)
+
+mydata %>%
+  filter(BENE_GEO_LVL == "State", 
+         BENE_AGE_LVL == ">=65",
+         YEAR == "2022") %>%
+  group_by(BENE_GEO_DESC) %>%
+  summarize(n = var(TOT_MDCR_STDZD_PYMT_PC, na.rm = TRUE))
+
+waterfall_county %<>%
+mutate(STATE = substr(BENE_GEO_DESC,1,2))
+
+rm(waterfall_county_)
+
+
+psych::describeBy(waterfall_county$TOT_MDCR_STDZD_PYMT_PC, group = waterfall_county$STATE, na.rm = TRUE)
+
+
+  
+lessR::SummaryStats(waterfall_county$TOT_MDCR_STDZD_PYMT_PC, group = waterfall_county$BENE_GEO_DESC, na.rm = FALSE)
+
+library(dplyr)
+mydata %>% 
+  filter(BENE_GEO_LVL=="County") %>%
+  group_by(BENE_GEO_DESC) %>%
+  summarize(n=n()) %>%
+  print(n=100)
+
+
+
+```
+
+# Citations
