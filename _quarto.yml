@@ -11,7 +11,7 @@ website:
   navbar:
     left:
       - text: "Home"
-        href: landing.qmd
+        href: a_landing.qmd
       # - text: "Independent Projects"
       #   href: index.qmd
       - text: "Independent Projects"
