@@ -682,5 +682,3 @@ mydata %>%
 
 
 ```
-
-# Citations

@@ -14,7 +14,7 @@ website:
         href: index.qmd
       # - text: "Independent Projects"
       #   href: index.qmd
-      - text: "Independent Projects"
+      - text: "Analytical Projects"
         menu:
           - text: "Patient Satisfaction"
             href: ptsatisfaction.qmd

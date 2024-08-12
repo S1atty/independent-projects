@@ -68,7 +68,11 @@ The population of interest is the patient population for emergency encounters at
 
 ## Exclusion Criteria
 
-A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes \[\^1\]. Payer type was used as a proxy to define parts of 'disproportionate' social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy \[\^2\]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.
+A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes[^1]. Payer type was used as a proxy to define parts of 'disproportionate' social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy[^2]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.
+
+[^1]: Williams JN, Drenkard C, Lim SS. The impact of social determinants of health on the presentation, management and outcomes of systemic lupus erythematosus. Rheumatology (Oxford). 2023 Mar 29;62(Suppl 1):i10-i14. doi: 10.1093/rheumatology/keac613. PMID: 36987604; PMCID: PMC10050938.
+
+[^2]: Naouri D, Ranchon G, Vuagnat A, Schmidt J, El Khoury C, Yordanov Y; French Society of Emergency Medicine. Factors associated with inappropriate use of emergency departments: findings from a cross-sectional national study in France. BMJ Qual Saf. 2020 Jun;29(6):449-464. doi: 10.1136/bmjqs-2019-009396. Epub 2019 Oct 30. PMID: 31666304; PMCID: PMC7323738.
 
 ```{r}
 waterfall <- mydata[mydata$disdate!="1900-01-01" & mydata$survey_id!=1418129390,] #erroneous record; clearly incorrect entry 
@@ -232,7 +236,7 @@ The model yielding the optimal Δ R^2^ and least RMSE was used as the production
 
 The results of the diagnostic post-hoc tests were then used to assess the models capability to generalize to the target population and decide if a different model would be more equipped to capture the relationships found in survey responses to overall patient satisfaction in ER encounters for those with low social determinants of health. In practice, it is acknowledged that **no generalizations can accurately be made on our target population** due to the limited information around how the data was collected. It is unknown if the observations were from a random sample, which is sufficient and necessary to make any population conclusions. Any aforementioned hypothesis to the population is for the sake of statistical inference and this endeavor. However, to validate prediction capabilities, a precision grade was used on our test set.
 
-```{r, eval = TRUE, echo = TRUE, include = TRUE}
+```{r, eval = FALSE, echo = FALSE, include = FALSE}
 
 #original model validation setup 
 set.seed(555)

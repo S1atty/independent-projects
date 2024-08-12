@@ -297,7 +297,7 @@ Commercial   Medicaid   Medicare   Self-pay
 </section>
 <section id="exclusion-criteria" class="level2">
 <h2 class="anchored" data-anchor-id="exclusion-criteria">Exclusion Criteria</h2>
-<p>A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes [^1]. Payer type was used as a proxy to define parts of ‘disproportionate’ social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy [^2]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.</p>
+<p>A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Payer type was used as a proxy to define parts of ‘disproportionate’ social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata[mydata<span class="sc">$</span>disdate<span class="sc">!=</span><span class="st">"1900-01-01"</span> <span class="sc">&amp;</span> mydata<span class="sc">$</span>survey_id<span class="sc">!=</span><span class="dv">1418129390</span>,] <span class="co">#erroneous record; clearly incorrect entry </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">16</span>, </span>
@@ -619,7 +619,14 @@ Tukey test           0.5631           0.5734</code></pre>
 </section>
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Williams JN, Drenkard C, Lim SS. The impact of social determinants of health on the presentation, management and outcomes of systemic lupus erythematosus. Rheumatology (Oxford). 2023 Mar 29;62(Suppl 1):i10-i14. doi: 10.1093/rheumatology/keac613. PMID: 36987604; PMCID: PMC10050938.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Naouri D, Ranchon G, Vuagnat A, Schmidt J, El Khoury C, Yordanov Y; French Society of Emergency Medicine. Factors associated with inappropriate use of emergency departments: findings from a cross-sectional national study in France. BMJ Qual Saf. 2020 Jun;29(6):449-464. doi: 10.1136/bmjqs-2019-009396. Epub 2019 Oct 30. PMID: 31666304; PMCID: PMC7323738.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
