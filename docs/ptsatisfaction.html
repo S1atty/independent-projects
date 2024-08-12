@@ -152,10 +152,10 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-independent-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Independent Projects</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-analytical-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Analytical Projects</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-independent-projects">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-analytical-projects">    
         <li>
     <a class="dropdown-item" href="./ptsatisfaction.html">
  <span class="dropdown-text">Patient Satisfaction</span></a>
@@ -215,7 +215,7 @@ window.Quarto = {
   <li><a href="#population-of-interest" id="toc-population-of-interest" class="nav-link" data-scroll-target="#population-of-interest">Population of Interest</a></li>
   <li><a href="#exclusion-criteria" id="toc-exclusion-criteria" class="nav-link" data-scroll-target="#exclusion-criteria">Exclusion Criteria</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
-  <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis">Data Analysis</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
   </ul>
 </nav>
@@ -260,8 +260,8 @@ window.Quarto = {
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <p>This data set is a patient satisfaction survey administered to patients discharged from ten different entities at NMH over the span of two years. Respondents were discharged from six emergency units. Surveys were delivered either on paper or electronically following their encounter. The patient satisfaction surveys collected, range from discharges starting March of 2016 through January of 2018. Responses were given in either English or Spanish. Five types of payers were used for the encounters and satisfaction scores per response were given on a scale of one (very dissatisfied) to five (very satisfied). No other information on how the data was collected is available.</p>
-<section id="initial-data-cleaning" class="level3">
-<h3 class="anchored" data-anchor-id="initial-data-cleaning">Initial Data Cleaning</h3>
+<section id="patient-demographics" class="level3">
+<h3 class="anchored" data-anchor-id="patient-demographics">Patient Demographics</h3>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -276,9 +276,6 @@ ENGLISH SPANISH
 
 Female   Male 
   7225   4462 
-
-Acute 
-11688 
 
   CDH ED   DCH ED       ED  ED MEZZ    GL ED   KKH ED  KVWH ED    LF ED 
     2388     1885     2768      941      903     1381      513      900 
@@ -385,7 +382,7 @@ Commercial   Medicaid   Medicare   Self-pay
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
@@ -400,37 +397,17 @@ Commercial   Medicaid   Medicare   Self-pay
 <p>where ŷ<sub>f</sub> are the full predicted values and ŷ<sub>n</sub> are the nested predicted values, variables were retained if P(F) &lt; .05.</p>
 <p><strong>Difference in fits</strong> was used to measure the influence of individual observations obtained using an empirical threshold of <span class="math inline">\({\small √(p)/n}\)</span>; where p is the number of parameters and n is the number of observations</p>
 <p><strong>Cook’s distance</strong> uses leverage and studentized residuals to measure significance of observation on overall model; threshold of 4/n was considered to be practically influential and was further evaluated</p>
-<p><strong>Wald Statistic</strong>: {<span class="math inline">\(β^2/Var(β)\)</span>} measures the effect size of individual parameters.<strong>Variance Inflation Factors</strong> greater than four were reevaluated; greater than seven are removed.</p>
+<p><strong>Wald Statistic</strong>: {<span class="math inline">\(β^2/Var(β)\)</span>} measures the effect size of individual parameters.</p>
+<p><strong>Variance Inflation Factors</strong> greater than four were reevaluated; greater than seven are removed.</p>
 <p>The model yielding the optimal Δ R<sup>2</sup> and least RMSE was used as the production model. The questions used to guide the final model were:</p>
 <ol type="1">
 <li>Does the model capture the true population parameters and relationship? Can the model be used to draw generalizations from our target population?</li>
 <li>Is the model an accurate predictor of patient satisfaction?</li>
 </ol>
 <p>The results of the diagnostic post-hoc tests were then used to assess the models capability to generalize to the target population and decide if a different model would be more equipped to capture the relationships found in survey responses to overall patient satisfaction in ER encounters for those with low social determinants of health. In practice, it is acknowledged that <strong>no generalizations can accurately be made on our target population</strong> due to the limited information around how the data was collected. It is unknown if the observations were from a random sample, which is sufficient and necessary to make any population conclusions. Any aforementioned hypothesis to the population is for the sake of statistical inference and this endeavor. However, to validate prediction capabilities, a precision grade was used on our test set.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#original model validation setup </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 70/30 test split </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">valid =</span> <span class="fu">runif</span>(survey_id,<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&lt;=</span> .<span class="dv">7</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&gt;</span> .<span class="dv">7</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2049   55</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 826  55</code></pre>
-</div>
-</div>
 </section>
-<section id="data-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="data-analysis">Data Analysis</h2>
+<section id="analysis" class="level2">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
 <p>Pearson’s product correlation plot showed that overall satisfaction was strongly correlated with how well patients were informed about delays and other responses based on either doctors’ or nurses’ care setting.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -498,24 +475,24 @@ Commercial   Medicaid   Medicare   Self-pay
 </div>
 <p>F2 was therefore used as the initial parameter. Other parameters were added in a ‘stepwise’ manner while assessing the change in R<sup>2</sup> and MSE. Since variables in the same category, specifically nurses and doctors, had high underlying collinearity, summary parameters were used which were the means of the highest two or total responses per group. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, increasing the simplicity of our model and 2) missing responses are a characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># root transformation</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train %&lt;&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(across(c(16:39,41,42,43), ~ sqrt(.), .names = "{col}_rt"), .before = family_friends) </span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="dv">16</span><span class="sc">:</span><span class="dv">46</span>), <span class="sc">~</span> <span class="fu">sqrt</span>(.), <span class="at">.names =</span> <span class="st">"{col}_rt"</span>), <span class="at">.before =</span> family_friends) </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_2 =</span> (A5_rt<span class="sc">+</span>C1_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">doctors_2 =</span> (C4_rt<span class="sc">+</span>C75_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_2 =</span> (E1_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">nurses_2 =</span> (B4_rt<span class="sc">+</span>B3_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_2 =</span> (F2_rt<span class="sc">+</span>F41_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">test_2 =</span> (D3_rt<span class="sc">+</span>D4_rt)<span class="sc">/</span><span class="dv">2</span>) <span class="co">#averages post-trans</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_3 =</span> (A5_rt<span class="sc">+</span>C1_rt<span class="sc">+</span>A86_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">doctors_3 =</span> (C4_rt<span class="sc">+</span>C75_rt<span class="sc">+</span>C5_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_3 =</span> (E1_rt<span class="sc">+</span>E2_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">nurses_3 =</span> (B4_rt<span class="sc">+</span>B3_rt<span class="sc">+</span>B76_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_3 =</span> (F2_rt<span class="sc">+</span>F41_rt<span class="sc">+</span>F1_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">test_3 =</span> (D3_rt<span class="sc">+</span>D4_rt<span class="sc">+</span>D65_rt)<span class="sc">/</span><span class="dv">3</span>) <span class="co">#averages post-trans</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">C75_7_rt =</span> (C75_rt<span class="sc">+</span>C7_rt)<span class="sc">/</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># root transformation</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train %&lt;&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(across(c(16:39,41,42,43), ~ sqrt(.), .names = "{col}_rt"), .before = family_friends) </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="dv">16</span><span class="sc">:</span><span class="dv">46</span>), <span class="sc">~</span> <span class="fu">sqrt</span>(.), <span class="at">.names =</span> <span class="st">"{col}_rt"</span>), <span class="at">.before =</span> family_friends) </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_2 =</span> (A5_rt<span class="sc">+</span>C1_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">doctors_2 =</span> (C4_rt<span class="sc">+</span>C75_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_2 =</span> (E1_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">nurses_2 =</span> (B4_rt<span class="sc">+</span>B3_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_2 =</span> (F2_rt<span class="sc">+</span>F41_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">test_2 =</span> (D3_rt<span class="sc">+</span>D4_rt)<span class="sc">/</span><span class="dv">2</span>) <span class="co">#averages post-trans</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_3 =</span> (A5_rt<span class="sc">+</span>C1_rt<span class="sc">+</span>A86_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">doctors_3 =</span> (C4_rt<span class="sc">+</span>C75_rt<span class="sc">+</span>C5_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_3 =</span> (E1_rt<span class="sc">+</span>E2_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">nurses_3 =</span> (B4_rt<span class="sc">+</span>B3_rt<span class="sc">+</span>B76_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_3 =</span> (F2_rt<span class="sc">+</span>F41_rt<span class="sc">+</span>F1_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">test_3 =</span> (D3_rt<span class="sc">+</span>D4_rt<span class="sc">+</span>D65_rt)<span class="sc">/</span><span class="dv">3</span>) <span class="co">#averages post-trans</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">C75_7_rt =</span> (C75_rt<span class="sc">+</span>C7_rt)<span class="sc">/</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="results" class="level2">
@@ -525,8 +502,8 @@ Commercial   Medicaid   Medicare   Self-pay
 <p>where β<sub>1</sub> describes change in for a one unit change in the root mean satisfaction for the personal issues category, β<sub>2</sub> for a one unit change in the root mean satisfaction for the nurses category, and β<sub>3</sub> for a one unit change in the root indicator for Doctor’s concern for patients comfort while treating them. Interpretations for β<sub>0</sub> is omitted due to transformations and range of the data set. The Adjusted R<sup>2</sup> ~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.</p>
 <p><em>If</em> the data was obtained via random sampling, the model could be used as an estimate for the true target population’s overall satisfaction. Our model produced a MSE = .19 (RMSE = .44) with statistically significant results for all predictors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3<span class="sc">+</span>C4_rt, <span class="at">data =</span> train)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model) <span class="co"># RMSE = .0.4358899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3<span class="sc">+</span>C4_rt, <span class="at">data =</span> train)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model) <span class="co"># RMSE = .0.4358899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -542,11 +519,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey’s test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residualPlots</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residualPlots</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -559,16 +536,16 @@ Tukey test           0.5631           0.5734</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">influenceIndexPlot</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">influenceIndexPlot</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="1440"></p>
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(survey_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1344260683</span>,<span class="dv">1439794901</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mydata <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(survey_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1344260683</span>,<span class="dv">1439794901</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   survey_id client_short_nm    recdate    disdate er_admit_time er_disch_time
 1 1344260683           NMLFH 2017-06-30 2017-06-30    2017-06-30    2017-06-30
@@ -583,7 +560,7 @@ Tukey test           0.5631           0.5734</code></pre>
 1   1 NA NA  NA
 2   1  5  5   1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mydata[mydata<span class="sc">$</span>survey_id<span class="sc">==</span><span class="dv">1344260683</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mydata[mydata<span class="sc">$</span>survey_id<span class="sc">==</span><span class="dv">1344260683</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      survey_id client_short_nm    recdate    disdate er_admit_time
 5194 1344260683           NMLFH 2017-06-30 2017-06-30    2017-06-30
@@ -594,7 +571,7 @@ Tukey test           0.5631           0.5734</code></pre>
      D4 D52 D65 E1 E2 E3 F4 F68 F1 F2 F41
 5194  3   3   1  2  1  1  1   1 NA NA  NA</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span><span class="sc">/</span><span class="fu">dim</span>(train)[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span><span class="sc">/</span><span class="fu">dim</span>(train)[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.001952172</code></pre>
 </div>
@@ -602,12 +579,12 @@ Tukey test           0.5631           0.5734</code></pre>
 <p>Survey IDs 1344260683 and 1439794901 had the highest influence on the overall model in comparison to the global average of Cook’s distance. Looking at the original data, the former had missing responses for four of the seven questions used to produce the model, highlighting a major flaw in this model - its predictive inaccuracy for patients with missing responses - as missing responses were filled with grand means after exclusion criteria were applied. Although missing at random, a better approach would be to fill in with median values or apply more conservative exclusion factors such as omitting observations with greater than 10% of responses missing. The latter was greatly considered, but the trade-off of small sample sizes and subsequent over fitting were outweighed.</p>
 <p>After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x<sub>3</sub>, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) &gt; P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 8.3e-45 (204,2) the affect of x<sub>3</sub> on the model is statistically significant.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'log Lik.' 203.9595 (df=4)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="dv">203</span>,<span class="dv">2</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="dv">203</span>,<span class="dv">2</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.300611e-45</code></pre>
 </div>

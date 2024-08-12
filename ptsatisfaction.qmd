@@ -28,7 +28,7 @@ Patient satisfaction can be an indication of quality care and aid in predicting 
 
 This data set is a patient satisfaction survey administered to patients discharged from ten different entities at NMH over the span of two years. Respondents were discharged from six emergency units. Surveys were delivered either on paper or electronically following their encounter. The patient satisfaction surveys collected, range from discharges starting March of 2016 through January of 2018. Responses were given in either English or Spanish. Five types of payers were used for the encounters and satisfaction scores per response were given on a scale of one (very dissatisfied) to five (very satisfied). No other information on how the data was collected is available.
 
-### Initial Data Cleaning
+### Patient Demographics
 
 ```{r echo=FALSE,eval=TRUE, message=FALSE, warning=FALSE}
 
@@ -41,9 +41,8 @@ mydata %<>% mutate(er_admit_time = date(er_admit_time),
 
 # check initial demographic structures
 
-
 for (i in 1:ncol(mydata)){
-  if (is.character(mydata[,i]) && i != 5 && i != 6){
+  if (is.character(mydata[,i]) && i != 5 && i != 6 && i != 12){
    print(table(mydata[,i]))
   }
 }
@@ -161,7 +160,7 @@ dim(test)
 
 A regression model was selected to predict the overall patient satisfaction variable, `F68,` and used to estimate the true population relationship. A 70/30 train:test ratio was used for model validation. Regression assumptions were then validated. For residual normality and increased model accuracy, explanatory variables were transformed before model fitting. The sampling distribution forms a left-skew distribution, in which the square root and natural log transformations were applied.
 
-```{r, eval = TRUE, echo = FALSE, include = TRUE, message=FALSE, fig.width = 15, fig.height=10}
+```{r, eval = TRUE, echo = FALSE, include = TRUE, message=FALSE, fig.width = 10, fig.height=10}
 
 d1 <- 
 train %>%
@@ -227,7 +226,9 @@ where ŷ~f~ are the full predicted values and ŷ~n~ are the nested predicted v
 
 **Cook's distance** uses leverage and studentized residuals to measure significance of observation on overall model; threshold of 4/n was considered to be practically influential and was further evaluated
 
-**Wald Statistic**: {\large $β^2/Var(β)$} measures the effect size of individual parameters.**Variance Inflation Factors** greater than four were reevaluated; greater than seven are removed.
+**Wald Statistic**: {\large $β^2/Var(β)$} measures the effect size of individual parameters.
+
+**Variance Inflation Factors** greater than four were reevaluated; greater than seven are removed.
 
 The model yielding the optimal Δ R^2^ and least RMSE was used as the production model. The questions used to guide the final model were:
 
@@ -254,7 +255,7 @@ dim(test)
 
 ```
 
-## Data Analysis
+## Analysis
 
 Pearson's product correlation plot showed that overall satisfaction was strongly correlated with how well patients were informed about delays and other responses based on either doctors' or nurses' care setting.
 
@@ -325,13 +326,13 @@ anova(model) # RMSE = .0.4358899
 
 Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey's test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.
 
-```{r, fig.width = 15, fig.height=10}
+```{r}
 
 residualPlots(model)
 
 ```
 
-```{r, fig.width = 15, fig.height=10}
+```{r}
 influenceIndexPlot(model)
 
 mydata %>%
