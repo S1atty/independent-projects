@@ -8,7 +8,7 @@
 
 <meta name="author" content="Tomi Akisanya">
 
-<title>Predicting Patient Satisfaction for Emergency Department Encounters</title>
+<title>Forecasting Patient Satisfaction for Emergency Department Encounters</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -225,7 +225,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Predicting Patient Satisfaction for Emergency Department Encounters</h1>
+<h1 class="title">Forecasting Patient Satisfaction for Emergency Department Encounters</h1>
 </div>
 
 
@@ -499,7 +499,7 @@ Commercial   Medicaid   Medicare   Self-pay
 <h2 class="anchored" data-anchor-id="results">Results</h2>
 <p>The final regression is modeled by</p>
 <p><span class="math display">\[ f(x) = -2.96537 + 1.52659*x_1 + 1.14899*x_2 + 0.90659*x_3 \]</span> <span class="math display">\[ MSE = .19 \]</span></p>
-<p>where β<sub>1</sub> describes change in for a one unit change in the root mean satisfaction for the personal issues category, β<sub>2</sub> for a one unit change in the root mean satisfaction for the nurses category, and β<sub>3</sub> for a one unit change in the root indicator for Doctor’s concern for patients comfort while treating them. Interpretations for β<sub>0</sub> is omitted due to transformations and range of the data set. The Adjusted R<sup>2</sup> ~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.</p>
+<p>where β<sub>1</sub> describes change in ŷ for a one unit change in the root mean satisfaction for the personal issues category, β<sub>2</sub> for a one unit change in the root mean satisfaction for the nurses category, and β<sub>3</sub> for a one unit change in the root indicator for Doctor’s concern for patients comfort while treating them. Interpretations for β<sub>0</sub> is omitted due to transformations and range of the data set. The Adjusted R<sup>2</sup> ~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.</p>
 <p><em>If</em> the data was obtained via random sampling, the model could be used as an estimate for the true target population’s overall satisfaction. Our model produced a MSE = .19 (RMSE = .44) with statistically significant results for all predictors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3<span class="sc">+</span>C4_rt, <span class="at">data =</span> train)</span>

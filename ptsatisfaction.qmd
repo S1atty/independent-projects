@@ -1,5 +1,5 @@
 ---
-title: "Predicting Patient Satisfaction for Emergency Department Encounters"
+title: "Forecasting Patient Satisfaction for Emergency Department Encounters"
 author: "Tomi Akisanya"
 output: html_document
 editor_options: 
@@ -313,7 +313,7 @@ The final regression is modeled by
 
 $$ f(x) = -2.96537 + 1.52659*x_1 + 1.14899*x_2 + 0.90659*x_3 $$ $$ MSE = .19 $$
 
-where β~1~ describes change in \hat{y_1} for a one unit change in the root mean satisfaction for the personal issues category, β~2~ for a one unit change in the root mean satisfaction for the nurses category, and β~3~ for a one unit change in the root indicator for Doctor's concern for patients comfort while treating them. Interpretations for β~0~ is omitted due to transformations and range of the data set. The Adjusted R^2^ \~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.
+where β~1~ describes change in ŷ for a one unit change in the root mean satisfaction for the personal issues category, β~2~ for a one unit change in the root mean satisfaction for the nurses category, and β~3~ for a one unit change in the root indicator for Doctor's concern for patients comfort while treating them. Interpretations for β~0~ is omitted due to transformations and range of the data set. The Adjusted R^2^ \~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.
 
 *If* the data was obtained via random sampling, the model could be used as an estimate for the true target population's overall satisfaction. Our model produced a MSE = .19 (RMSE = .44) with statistically significant results for all predictors.
 
