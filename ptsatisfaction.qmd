@@ -285,7 +285,7 @@ knitr::kable(r_table1)
 
 ```
 
-```{r, eval = FALSE, echo = FALSE, include = FALSE, fig.width = 10, fig.height = 10}
+```{r, eval = FALSE, echo = FALSE, include = FALSE}
 
 train %>%
   select(where(is.numeric)) %>%
