@@ -51,7 +51,7 @@ for (i in 1:ncol(mydata)){
 
 # sum(diff(mydata$disdate), na.rm = TRUE) # date of discharge
 # sum(diff(mydata$recdate), na.rm = TRUE) # date survey sent
-# 
+
 # range(mydata$disdate) #DATE SURVEY WAS ADMINISTERED
 # range(mydata$recdate) #DATE OF DISCHARGE FROM THE HOSPITAL SURVEY FOR THE ENCOUNTER SURVEYED
 # range(mydata$er_admit_time, na.rm = TRUE) # ER arrival time stamp
@@ -249,24 +249,6 @@ The model yielding the optimal Δ R^2^ and least RMSE was used as the production
 
 The results of the diagnostic post-hoc tests were then used to assess the models capability to generalize to the target population and decide if a different model would be more equipped to capture the relationships found in survey responses to overall patient satisfaction in ER encounters for those with low social determinants of health. In practice, it is acknowledged that **no generalizations can accurately be made on our target population** due to the limited information around how the data was collected. It is unknown if the observations were from a random sample, which is sufficient and necessary to make any population conclusions. Any aforementioned hypothesis to the population is for the sake of statistical inference and this endeavor. However, to validate prediction capabilities, a precision grade was used on our test set.
 
-```{r, eval = FALSE, echo = FALSE, include = FALSE}
-
-#original model validation setup 
-set.seed(555)
-
-# 70/30 test split 
-
-waterfall %<>% mutate(valid = runif(survey_id,0,1))
-train <- waterfall %>%
-  filter(valid <= .7)
-test <- waterfall %>%
-  filter(valid > .7)
-
-dim(train)
-dim(test)
-
-```
-
 ## Analysis
 
 Pearson's product correlation plot showed that overall satisfaction was strongly correlated with how well patients were informed about delays and other responses based on either doctors' or nurses' care setting.
@@ -363,13 +345,13 @@ mydata[mydata$survey_id==1344260683,]
 
 Survey IDs 1344260683 and 1439794901 had the highest influence on the overall model in comparison to the global average of Cook's distance. Looking at the original data, the former had missing responses for four of the seven questions used to produce the model, highlighting a major flaw in this model - its predictive inaccuracy for patients with missing responses - as missing responses were filled with grand means after exclusion criteria were applied. Although missing at random, a better approach would be to fill in with median values or apply more conservative exclusion factors such as omitting observations with greater than 10% of responses missing. The latter was greatly considered, but the trade-off of small sample sizes and subsequent over fitting were outweighed.
 
-After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x~3~, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) \> P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 8.3e-45 (204,2) the affect of x~3~ on the model is statistically significant.
+After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x~3~, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) \> P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 1.2e-48 (215,1) the affect of x~3~ on the model is statistically significant.
 
 ```{r}
 
-modelx <- lm(F68~personal_issues_3+nurses_3, data = train)
--2*(logLik(modelx)-logLik(model))
-pchisq(203,2,lower.tail = FALSE)
+modelx <- lm(F68_rt~personal_issues_3+nurses_3, data = train)
+-2*(logLik(modelx)-logLik(model)) # 5455.716, df = 4
+pchisq(214.9064,1,lower.tail = FALSE)
 
 ```
 

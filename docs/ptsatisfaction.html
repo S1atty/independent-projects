@@ -446,15 +446,6 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
 <p>F2 was therefore used as the initial predictive variable and subsequent variables were added in a ‘stepwise’ fashion while assessing the change in R<sup>2</sup> and MSE. Variables within the same category exhibited a high degree of underlying collinearity and summary statistics were calculated for the means of the top two responses or the total responses per group to remediate covariance. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, decreasing the Alkaline Information Criterion while maintaining parsimony and 2) missing responses are a notable characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
@@ -502,7 +493,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -519,7 +510,7 @@ Tukey test              0.3667           0.7138</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="ptsatisfaction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -556,16 +547,16 @@ Tukey test              0.3667           0.7138</code></pre>
 </div>
 </div>
 <p>Survey IDs 1344260683 and 1439794901 had the highest influence on the overall model in comparison to the global average of Cook’s distance. Looking at the original data, the former had missing responses for four of the seven questions used to produce the model, highlighting a major flaw in this model - its predictive inaccuracy for patients with missing responses - as missing responses were filled with grand means after exclusion criteria were applied. Although missing at random, a better approach would be to fill in with median values or apply more conservative exclusion factors such as omitting observations with greater than 10% of responses missing. The latter was greatly considered, but the trade-off of small sample sizes and subsequent over fitting were outweighed.</p>
-<p>After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x<sub>3</sub>, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) &gt; P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 8.3e-45 (204,2) the affect of x<sub>3</sub> on the model is statistically significant.</p>
+<p>After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x<sub>3</sub>, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) &gt; P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 1.2e-48 (215,1) the affect of x<sub>3</sub> on the model is statistically significant.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68_rt<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model)) <span class="co"># 5455.716, df = 4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'log Lik.' 5455.716 (df=4)</code></pre>
+<pre><code>'log Lik.' 214.9064 (df=4)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="dv">203</span>,<span class="dv">2</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="fl">214.9064</span>,<span class="dv">1</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 8.300611e-45</code></pre>
+<pre><code>[1] 1.168115e-48</code></pre>
 </div>
 </div>
 <section id="cont." class="level3">
