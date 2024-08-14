@@ -28,9 +28,10 @@ Patient satisfaction can be an indication of quality care and aid in predicting 
 
 This data set is a patient satisfaction survey administered to patients discharged from ten different entities at NMH over the span of two years. Respondents were discharged from six emergency units. Surveys were delivered either on paper or electronically following their encounter. The patient satisfaction surveys collected, range from discharges starting March of 2016 through January of 2018. Responses were given in either English or Spanish. Five types of payers were used for the encounters and satisfaction scores per response were given on a scale of one (very dissatisfied) to five (very satisfied). No other information on how the data was collected is available.
 
-### Patient Demographics
 
-```{r echo=FALSE,eval=TRUE, message=FALSE, warning=FALSE}
+
+```{r echo=FALSE,eval=TRUE, message=FALSE, warning=FALSE, include = FALSE}
+### Patient Demographics
 
 MHSA_NM_DATA_PTEXP_ER <- read_excel("Patient Satisfaction Data/MHSA_NM_DATA_PTEXP_ER.xlsx") #11688 obs of 45 questions
 MHSA_NM_DATA_PTEXP_ER_DICTIONARY <- read_excel("Patient Satisfaction Data/MHSA Datasets Dictionary (2).xlsx")
@@ -67,7 +68,7 @@ The population of interest is the patient population for emergency encounters at
 
 ## Exclusion Criteria
 
-A waterfall approach was used to define the population of interest. Social-determinants are environmental and non-health related needs such as socio-economic status, that can be attributed to 30-55% of health outcomes[^1]. Payer type was used as a proxy to define parts of 'disproportionate' social-determinants, as financial payers like Medicaid insure low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, since this subset of the target population tend to misuse the ER for non-urgent care - a viable proxy for lower health literacy[^2]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race was whether or not the patient was white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event race was used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.
+A waterfall approach was used to define the population of interest. Social determinants, which include environmental and non-health related factors such as socio-economic status, can account for 30-55% of health outcomes[^1]. Payer type was used as a proxy to define subsets of the population with disproportionate social determinants, with financial payers like Medicaid typically insuring low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, as this subset tends to misuse the ER for non-urgent care, serving as a viable proxy for lower health literacy.[^2]. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race were responses indicating white or non-white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event covariates are used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.
 
 [^1]: Williams JN, Drenkard C, Lim SS. The impact of social determinants of health on the presentation, management and outcomes of systemic lupus erythematosus. Rheumatology (Oxford). 2023 Mar 29;62(Suppl 1):i10-i14. doi: 10.1093/rheumatology/keac613. PMID: 36987604; PMCID: PMC10050938.
 
@@ -119,21 +120,21 @@ dim(waterfall) # final sample 2875 observations of 51 variables
 
 ```
 
-After cleaning records and additional formatting, observations were then cleaned. Survey ID 1418129390 had missing admit and discharge times and the encounter record for the survey was dated 1900-01-01. The implied erroneous record was removed.
+After cleaning records and additional formatting, observations were then cleaned. Survey ID 1418129390 had missing admit and discharge times and the encounter record for the survey was dated 1900-01-01. The implicit erroneous record was removed.
 
 To maintain the integrity of the data set, observations with missing discharge or admit times were removed.
 
-Observations were subset to those over the age of 16 who were Medicare, Medicaid, or Self-Pay users to isolate the patient population. No demographic attributes were missing in the rest of the survey data.
+Observations were subset to those over the age of 16 who were Medicare, Medicaid, or Self-Pay users to isolate the patient population. No demographic attributes were missing thereafter.
 
-Respondents were asked to survey their satisfaction across different care settings across their encounter. The likert scale of possible responses were 1-5.
+Respondents were asked to survey their satisfaction across different care settings during their encounter. The Likert scale of possible responses were 1-5.
 
-For the non-demographic survey questions, there were a number of questions with missing answers. Survey respondents that had greater than 30% of answers missing were removed from the drop down conditions. Subsequently, survey questions across the sample that had more than 30% of answers missing were also omitted. The questions removed were:
+For the non-demographic survey questions, there were a number of missing responses. Survey respondents that had greater than 30% of answers missing were removed from the drop down conditions. Subsequently, survey questions across the sample that had more than 30% of responses missing were also omitted. The questions removed were:
 
 A87 (Arrival) - Helpfulness of person who first asked you about your condition D2 (Tests) - Courtesy of the person who took your blood D52 (Tests) - Concern shown for your comfort when your blood was drawn
 
-A new variable was created to measure the length of time between discharge date and the date the survey was received. Survey IDs with negative response times were present, implying that they received the survey before being admitted to the ER. These records were concluded as an error and were also ommitted.
+A new variable was created to measure the length of time between discharge date and the date the survey was received. Survey IDs with negative response times were present, implying that they received the survey before being admitted to the ER. These records were concluded as an error and were also omitted.
 
-Surveyors labeled responses based on the following attributes of the patient encounter: Arrival, Personal/Insurance Info, Nurses, Doctors, Tests, Family or Friends, Personal Issues.
+Survey responses could be grouped into one of the following care setting categories: Arrival, Personal/Insurance Info, Nurses, Doctors, Tests, Family or Friends, Personal Issues.
 
 For any missing responses afterwards, the missing values were replaced with the average satisfaction score for that question.
 
@@ -158,9 +159,9 @@ dim(test)
 
 ## Methods
 
-A regression model was selected to predict the overall patient satisfaction variable, `F68,` and used to estimate the true population relationship. A 70/30 train:test ratio was used for model validation. Regression assumptions were then validated. For residual normality and increased model accuracy, explanatory variables were transformed before model fitting. The sampling distribution forms a left-skew distribution, in which the square root and natural log transformations were applied.
+A regression model was fit to predict the overall patient satisfaction variable, `F68,` and used to estimate the true population parameters. A 70/30 train:test ratio was used for model validation. Regression assumptions were then validated. For residual normality and increased model accuracy, explanatory variables were transformed before model fitting. The sampling distribution forms a left-skew distribution, in which the sixth root and natural log transformations were applied.
 
-```{r, eval = TRUE, echo = FALSE, include = TRUE, message=FALSE, fig.width = 10, fig.height=10}
+```{r, eval = TRUE, echo = FALSE, include = TRUE, message=FALSE, fig.width = 8, fig.height=8}
 
 d1 <- 
 train %>%
@@ -190,23 +191,34 @@ train %>%
 
 # psych::describe(log(train$F68))
 
-d3 <- 
+# d3 <- 
+# train %>%
+#   filter(F68 %in% c(1,2,3,4,5)) %>%
+#   ggplot(aes(x=sqrt(F68)))+
+#   geom_density()+
+#   geom_histogram(aes(y=after_stat(count)/sum(after_stat(count))))+
+#   scale_x_continuous(name = "Overall Satisfaction")+
+#   scale_y_continuous(name = "Density", limits = c(0,1.5))+
+#   theme_bw()
+# lines(density(sqrt(train$F68)))
+# psych::describe(sqrt(train$F68))
+
+d4 <- 
 train %>%
   filter(F68 %in% c(1,2,3,4,5)) %>%
-  ggplot(aes(x=sqrt(F68)))+
+  ggplot(aes(x=F68^(1/6)))+
   geom_density()+
   geom_histogram(aes(y=after_stat(count)/sum(after_stat(count))))+
   scale_x_continuous(name = "Overall Satisfaction")+
   scale_y_continuous(name = "Density", limits = c(0,1.5))+
   theme_bw()
-# lines(density(sqrt(train$F68)))
-# psych::describe(sqrt(train$F68))
 
-gridExtra::grid.arrange(d1,d2,d3, newpage = TRUE)
+
+gridExtra::grid.arrange(d1,d2,d4, ncol=1, newpage = TRUE)
 
 ```
 
-Observing that the root transformation had the greatest shift to normality, it was applied to all explanatory variables. Additional summary variables based on category were calculated to obtain better predictive variables. The new summary variables were the mean averages for each category.
+Observing that the root transformation resulted in the greatest shift towards normality, it was applied to all explanatory variables. Additionally, summary variables based on category were calculated to enhance predictive power, specifically by computing the mean averages for each category. Several transformations were performed on the predictor variable F68 to improve the overall coefficient of determination and model fit. Consequently, the final explanatory parameters are based on the root of F68.
 
 **Pearson's product correlation matrix** was used for variable selection; starting with the highest coefficient of determination, a regression model was fit in progressive steps with one or two variables at a time. At each step, a combination of diagnostic tests and empirical thresholds were used to assess goodness-of-fit based on the following criteria:
 
@@ -273,25 +285,22 @@ knitr::kable(r_table1)
 
 ```
 
-```{r, eval = TRUE, echo = TRUE, include = FALSE}
+```{r, eval = FALSE, echo = FALSE, include = FALSE, fig.width = 10, fig.height = 10}
 
 train %>%
   select(where(is.numeric)) %>%
   cor(method = "pearson") %>%
-  corrplot::corrplot() # F2 / nurses / B5 / B3 / B4 / C1 / C2 / C4
+ # corrplot::corrplot() # F2 / nurses / B5 / B3 / B4 / C1 / C2 / C4
+  corrplot::corrplot(main = "Correlation Matrix")
 
 ```
 
-F2 was therefore used as the initial parameter. Other parameters were added in a 'stepwise' manner while assessing the change in R^2^ and MSE. Since variables in the same category, specifically nurses and doctors, had high underlying collinearity, summary parameters were used which were the means of the highest two or total responses per group. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, increasing the simplicity of our model and 2) missing responses are a characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.
+F2 was therefore used as the initial predictive variable and subsequent variables were added in a 'stepwise' fashion while assessing the change in R^2^ and MSE. Variables within the same category exhibited a high degree of underlying collinearity and summary statistics were calculated for the means of the top two responses or the total responses per group to remediate covariance. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, decreasing the Alkaline Information Criterion while maintaining parsimony and 2) missing responses are a notable characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.
 
 ```{r}
 
-# root transformation
-# train %<>%
-#   mutate(across(c(16:39,41,42,43), ~ sqrt(.), .names = "{col}_rt"), .before = family_friends) 
-
 train %<>%
-  mutate(across(c(16:46), ~ sqrt(.), .names = "{col}_rt"), .before = family_friends) 
+  mutate(across(c(16:46), ~ (.)^(1/6), .names = "{col}_rt"), .before = family_friends) 
             
 train %<>%
   mutate(arrival_2 = (A5_rt+C1_rt)/2, doctors_2 = (C4_rt+C75_rt)/2,
@@ -303,7 +312,8 @@ train %<>%
          family_friends_3 = (E1_rt+E2_rt+E3_rt)/3, nurses_3 = (B4_rt+B3_rt+B76_rt)/3,
          personal_issues_3 = (F2_rt+F41_rt+F1_rt)/3, test_3 = (D3_rt+D4_rt+D65_rt)/3) #averages post-trans
 
-train %<>% mutate(C75_7_rt = (C75_rt+C7_rt)/2)
+train %<>% mutate(personal_issues_3_rt = personal_issues^(1/6),
+                  F68_rt = sqrt(F68))
 
 ```
 
@@ -311,20 +321,27 @@ train %<>% mutate(C75_7_rt = (C75_rt+C7_rt)/2)
 
 The final regression is modeled by
 
-$$ f(x) = -2.96537 + 1.52659*x_1 + 1.14899*x_2 + 0.90659*x_3 $$ $$ MSE = .19 $$
+$$ f(x) = -3.52083 + 1.94361*x_1 + 1.35390*x_2 + 1.11454*x_3 $$ $$ RMSE = .12 $$
 
-where β~1~ describes change in ŷ for a one unit change in the root mean satisfaction for the personal issues category, β~2~ for a one unit change in the root mean satisfaction for the nurses category, and β~3~ for a one unit change in the root indicator for Doctor's concern for patients comfort while treating them. Interpretations for β~0~ is omitted due to transformations and range of the data set. The Adjusted R^2^ \~ .74, F(3,2045), p = 2.2e10 using adjusted Type I error rate = .005.
+where β~1~ describes change in ŷ for a one unit change in the root mean satisfaction for the personal issues category, β~2~ for a one unit change in the root mean satisfaction for the nurses category, and β~3~ for a one unit change in the root indicator for Doctor's concern for patients comfort while treating them. Interpretations for β~0~ is omitted due to transformations and range of the data set. The Adjusted R^2^ \~ .74, F(3,2045), p = 2.2e-16 using adjusted Type I error rate = .005.
 
-*If* the data was obtained via random sampling, the model could be used as an estimate for the true target population's overall satisfaction. Our model produced a MSE = .19 (RMSE = .44) with statistically significant results for all predictors.
+Our model produced a MSE = 0.015 (RMSE = 0.123) with statistically significant results for all predictors. **The RMSE quantifies the models predictive capability in the context of regression such that it measures the average difference between the observed values and the predicted values of our model. In other words, the model predicts overall satisfaction within .12 of the actual satisfaction scores for the training data set.** Although robust and promising, true confirmation of performance is assessed on the training data set via precision grades below. 
 
 ```{r}
 
-model <- lm(F68~personal_issues_3+nurses_3+C4_rt, data = train)
-anova(model) # RMSE = .0.4358899
+model <- lm(F68_rt~personal_issues_3_rt+nurses_3+C4_rt, data = train)
+anova(model)
 
 ```
 
-Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey's test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.
+```{r, echo = FALSE, eval = FALSE, include = FALSE}
+
+model2 <-  lm(F68_rt~personal_issues_3+nurses_3+C4_rt_6, data = train)
+anova(model2)
+```
+
+
+*If* the data was obtained via random sampling, the model then could be used as an estimate for the true target population's overall satisfaction. Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey's test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.
 
 ```{r}
 
