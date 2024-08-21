@@ -428,7 +428,7 @@ test_table %>%
   geom_hline(aes(yintercept = 0), color = "#AA0000", linewidth = .75)+
   geom_segment(y = .3, x = 1, xend = 2.25, color = "#AAAA00", linewidth = .25) +
   annotate("text", label = "Ideal Reg Line", x = 1.07,y=.41, color = "#AAAA00")+
-  annotate("text", label = "Predicted Reg Line from Overfitting", x = 1.05,y=-.05, color = "#AA0000"  )+
+  annotate("text", label = "Reg Line from Overfitting", x = 1.05,y=-.05, color = "#AA0000"  )+
   labs(x="Predicted Values", y = "Residual Error", title = "Predicted vs Residual")+
   theme_bw()
 ```
