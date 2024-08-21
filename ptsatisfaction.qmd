@@ -419,7 +419,7 @@ forward.Table/sum(forward.Table)
 
 The first plot is a density bin plot where the x axis are the predicted values and the y axis are the residuals or how much the model was off by. Note that these units are not to scale with the original patient satisfaction scores since the data was transformed for model compatibility. The red line indicates where the error (and data) should be centered. Robust models, and the goal of optimization in the OLS regression, is to fit a line on a cloud of data such that the residual error is zero (if predicted and actual values are the same, the model is 100% accurate and residuals equal zero). This is idealistic and impractical, but nevertheless is what's being optimized. The red line sits beneath all data points, indicative of severe over fitting. For all patients, the model over predicts patient satisfaction and most likely will for future data sets. The fully optimized estimated regression line most likely runs somewhere where the yellow line is. Not only would the model be more balanced in regard to variance-bias, residual normality is the underlying assumption for OLS normality.
 
-```{r, eval = TRUE, echo = TRUE, include = TRUE,warning=FALSE, fig.width = 8,fig.height=8}
+```{r, eval = TRUE, echo = FALSE, include = TRUE,warning=FALSE, fig.width = 10,fig.height=8}
 
 test_table %>%
   ggplot()+
@@ -427,7 +427,7 @@ test_table %>%
   scale_y_continuous(limits=c(-.5,2))+
   geom_hline(aes(yintercept = 0), color = "#AA0000", linewidth = .75)+
   geom_segment(y = .3, x = 1, xend = 2.25, color = "#AAAA00", linewidth = .25) +
-  annotate("text", label = "Ideal Reg Line", x = 1.01,y=.41, color = "#AAAA00")+
+  annotate("text", label = "Ideal Reg Line", x = 1.07,y=.41, color = "#AAAA00")+
   annotate("text", label = "Predicted Reg Line from Overfitting", x = 1.05,y=-.05, color = "#AA0000"  )+
   labs(x="Predicted Values", y = "Residual Error", title = "Predicted vs Residual")+
   theme_bw()
