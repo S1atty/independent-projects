@@ -331,7 +331,7 @@ residualPlots(model)
 
 ```
 
-```{r}
+```{r, echo = FALSE, eval = TRUE, include = FALSE}
 influenceIndexPlot(model)
 
 mydata %>%
@@ -355,4 +355,145 @@ pchisq(214.9064,1,lower.tail = FALSE)
 
 ```
 
-### (cont.)
+## Model Validation
+
+The challenge with model validation is being conscious of the present data and methods taken throughout the modeling process on the test set and appropriately applying them chronologically on the test set. Inefficient processes/workflows used in the modeling phase will often reveal itself in testing. The variance-bias tradeoff is the central phenomena that typically only be visualized during testing. While there are preventative measures analysts take initially to prevent this such as model specification and applied weights, benchmarks need to be created to measure the ability to be precise and to maintain that precision on unseen data. 
+
+After using the parameters from the trained model to calculate the predicted satisfaction scores of our test set, the Mean Absolute Error (MAE) was used to calculate percent accuracy for the test. Arbitrary cutoff points where then assigned four grades ranging from letters A through F- given the following criteria: 
+
+```{r, eval = TRUE, echo = FALSE, include = FALSE, warning = FALSE}
+prediction.grade.table <- 
+tibble(Grade = c("A","B","C","F-"),
+       Accuracy = c("Where the Actual - Predicted error is < than 10%",
+                    "Where the Actual - Predicted error is > 10% but <15%",
+                    "Where the Actual - Predicted error is > 15% but <25%",
+                    "Where the Actual - Predicted error is > 25%"))
+knitr::kable(prediction.grade.table)
+```
+
+
+```{r, eval = TRUE, echo = FALSE, include = FALSE}
+
+dim(test)
+variable.names(test)
+# lm(F68_rt~personal_issues_3_rt+nurses_3+C4_rt, data = train)
+
+test %<>% 
+  mutate(across(c(16:46), ~ (.)^(1/6), .names = "{col}_rt"), 
+         F68_rt = sqrt(F68),
+         nurses_3 = (B4_rt+B3_rt+B76_rt)/3,
+         personal_issues_3 = (F2_rt+F41_rt+F1_rt)/3,
+         .before = family_friends) 
+
+fittedtest <- -3.52083 + (1.94361*test$personal_issues_3) + (1.35390*test$nurses_3) + (1.11454*test$C4_rt) # test fitted values 
+
+residtest <- sqrt((test$F68_rt - fittedtest)^2) # vector of residuals
+
+(sum(residtest))/dim(test)[1] # MSE = .06731
+
+sqrt(.06731) # RMSE = .259; way overfitting 
+
+test_table <- data.frame(yi = test$F68_rt,
+                         fittedtest = fittedtest,
+                         residtest = residtest)
+```
+
+### Variance/Bias Tradeoff
+
+The grades are only one of many test diagnostics used to measure how well a given model fits a subset of data (model fit) **and** how well it fits unseen data. The risk in the former is fitting a model too well. There are two common scenarios that both are operational and are forms overfitting and underfitting. The first being that the trained model fits very well on the initial data. These models will exhibit properties that are 'too good to be true' such as an RMSE ~ 0 or a predictive accuracy ~100%. The issue then becomes a lack of flexibility - mainly components of lack of parsimony, very few observations, or unrecognized bias in data (not to be confused with modeling bias). These models often perform very poorly on new data. With regard to the latter, underfitting is less common and exhibits the converse process. Upon initial assessment, the grades *look* promising. The absolute value of the difference between the predicted and observed values are reported as proportions and easier to interpret below. The model predicted satisfaction score for each patient is within 91% of the actual score. 1.9% of patient satisfaction scores were off by greater than 25% on the polar opposite (F -). Visualizing the models outputs reveals the ostensible performance of the model. 
+
+```{r, eval = TRUE, echo = TRUE, include = TRUE}
+# Prediction Grade
+forward.pct <- abs(test$F68_rt-fittedtest)/test$F68_rt;
+
+forward.PredictionGrade <- ifelse(forward.pct<=0.10,'Grade A: [0,0.10]',
+ifelse(forward.pct<=0.15,'Grade B: (0.10,0.15]',
+ifelse(forward.pct<=0.25,'Grade C: (0.15,0.25]',
+'Grade F-: (0.25+]')))
+forward.Table <- table(forward.PredictionGrade)
+forward.Table/sum(forward.Table)
+ 
+```
+
+#### Predicted vs Residuals
+
+The first plot is a density bin plot where the x axis are the predicted values and the y axis are the residuals or how much the model was off by. Note that these units are not to scale with the original patient satisfaction scores since the data was transformed for model compatibility. The red line indicates where the error (and data) should be centered. Robust models, and the goal of optimization in the OLS regression, is to fit a line on a cloud of data such that the residual error is zero (if predicted and actual values are the same, the model is 100% accurate and residuals equal zero). This is idealistic and impractical, but nevertheless is what's being optimized. The red line sits beneath all data points, indicative of severe over fitting. For all patients, the model over predicts patient satisfaction and most likely will for future data sets. The fully optimized estimated regression line most likely runs somewhere where the yellow line is. Not only would the model be more balanced in regard to variance-bias, residual normality is the underlying assumption for OLS normality.
+
+```{r, eval = TRUE, echo = TRUE, include = TRUE,warning=FALSE, fig.width = 8,fig.height=8}
+
+test_table %>%
+  ggplot()+
+  geom_bin_2d(aes(x=fittedtest, y = residtest))+
+  scale_y_continuous(limits=c(-.5,2))+
+  geom_hline(aes(yintercept = 0), color = "#AA0000", linewidth = .75)+
+  geom_segment(y = .3, x = 1, xend = 2.25, color = "#AAAA00", linewidth = .25) +
+  annotate("text", label = "Ideal Reg Line", x = 1.01,y=.41, color = "#AAAA00")+
+  annotate("text", label = "Predicted Reg Line from Overfitting", x = 1.05,y=-.05, color = "#AA0000"  )+
+  labs(x="Predicted Values", y = "Residual Error", title = "Predicted vs Residual")+
+  theme_bw()
+```
+
+#### Absolute Error
+
+The produced residuals from testing form a right skew log-normal distribution. During wrangling, the sampling distribution had an identical distribution but was skewed left. The severe deviations from a centered distribution with relatively even kurtosis may result in long-term predictive inaccuracies if not remedied. The last visualization shares similarities with influence visualizations. The x-axis is indexed to the error on the y-axis, allowing for comparisons of individual residual errors for each observation across the test data set. The indexes with taller heights can be an implication of the observations individual impact to the model. Models with balanced variance-bias should have uniform height. 
+
+
+```{r, eval = TRUE, echo = FALSE, include = TRUE, warning = FALSE}
+
+mse <- (residtest)
+
+
+barplot(mse,
+        main = "Absolute Error",
+        ylab = "Error",
+        xlab = "Model")
+# mse_grob <- gridGraphics::grid.echo()
+
+```
+
+```{r, eval = TRUE, warning = FALSE, include = TRUE, echo = FALSE}
+hist(residtest, xlim = c(-.3,3), xlab = "Predicted Values", ylab = "Frequency", main = "Histogram of Residuals")
+# p2_grob <- gridGraphics::grid.echo()
+# graphics.off()
+# 
+# mse_grob <- grid::grobTree(mse_grob)
+# graphics.off()
+# p2_grob <- grid::grobTree(p2_grob)
+# 
+# # Arrange plots side by side
+# gridExtra::grid.arrange(mse_grob, p2_grob, ncol = 2)
+# 
+# 
+# mse <- mean(residtest^2)
+# p2 <- ggplot(data = data.frame(Model = "Model", MSE = mse), aes(x = Model, y = MSE)) +
+#   geom_bar(stat = "identity", fill = "red") +
+#   labs(title = "Mean Squared Error", y = "Error", x = "Model")
+
+
+```
+
+#### Predicted vs Observed 
+
+Residual values against predictions can reveal the presence of normality. If the model performs at a 100% accuracy, the predicted and observed values should be 1:1 and the points should subsequently form a regression line with as close to a slope of one as possible. Granted, this is more difficult to accomplish given the nature of the data set. Patient satisfaction scores are discrete values that take whole numbers from 1-5 in the original data set, the reason there are ~5 discrete lines that are shown below.  
+
+```{r, eval = TRUE, echo = FALSE, include = TRUE, warning = FALSE}
+
+
+
+test_table %>%
+  ggplot(aes(x=fittedtest, y = yi))+
+  # geom_bin_2d(binwidth = .05, position = "dodge")+
+  geom_point()+
+  scale_y_continuous(limits=c(-.5,3))+
+  scale_color_binned(labels="Count")+
+  geom_segment(aes(x=0,y=0,xend=3,yend=3), color = "red", linetype = "dotted")+
+  labs(x="Predicted Values", y = "Observed Values", title = "Predicted vs Observed")+
+  theme_bw()
+
+
+```
+
+
+## Conclusion
+
+The ability to quantify and understand the relationships between different hospital staff interactions during emergency care encounters can be powerful for creating quality and retention initiatives within communities with lower social determinants of health. The model revealed that key predictors of overall patient satisfaction included the doctor's attention to the patient's care, communication about delays, the degree to which staff demonstrated care for the patient as an individual, how well pain was controlled, and the attention and courtesy provided by nurses. By focusing on these critical aspects of care, especially in patient populations like Medicaid, Medicare, and self-pay patients, hospitals can implement targeted quality improvement initiatives that address the specific needs of these groups. Enhancing these areas not only improves patient satisfaction but also promotes better retention and long-term health outcomes. This data-driven approach enables healthcare providers to offer more personalized, effective care, ultimately fostering a more equitable and satisfying patient experience in communities with significant social and economic challenges.
