@@ -21,7 +21,9 @@ website:
           - text: "FFS Medicare Benefeciaries"
             href: ffsgvmedicare.qmd
       - text: "Concepts"
-        menu: []
+        menu: 
+          - text: "Fantasy Football"
+            href: fantasyfootball.qmd
     right:
       - text: "About"
         href: about.qmd

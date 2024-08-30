@@ -1,0 +1,633 @@
+---
+title: "Singular Value Decomposition - Enhanced Principal Components to Optimize Fantasy Football Teams"
+author: "Tomi Akisanya"
+output: html_document
+editor_options: 
+  settings:
+  chunk_output_type: console
+  canonical: TRUE
+---
+```{r setup,eval = TRUE, echo = FALSE, include=FALSE, warning=FALSE, error=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, error = FALSE, cache=FALSE)
+```
+
+
+```{r, eval = TRUE, echo = FALSE, include = FALSE, warning=FALSE}
+library(readr)
+library(lessR)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(rvest)
+library(openxlsx)
+library(car)
+library(psych)
+library(corrplot)
+library(DT)
+library(reshape2)
+library(knitr)
+# install.packages(c("corrr","ggcorrplot","FactoMineR"))
+library(corrr,ggcorrplot)
+# install.packages("factoextra")
+library(factoextra) # pca visualization
+# library(gt) # 'beautiful tables'
+
+```
+
+Around this time every year, if you're like me, you've already started to mentally prepare for 80% of your conversations to be on the topic of football. For those individuals that would not classify themselves as ffanatics, it's probably annoying - *it's annoying for all of us*. Pretty consistently there will behavior from fans that range from DMs to athletes, verbal assaults to close friends, damaged property, and public humiliation. Who realistically has the mental endurance to only discuss a single topic over an extended period of time for something they're not physically involved in? It's those with passion, and although I am not passionate about football (nor justify the aforementioned behavior), it will be my first of hopefully many Fantasy Football leagues. If there's one thing I am passionate about, it's tilting the odds in my favor. Usually that's in the form of taking a creative line on the felt on a 2/5 reg by extracting max value with 67s on a low connected board in a 4! pot as the preflop aggressor. Balance and discipline is the name of the game though, and who are we if we don't apply the same approach to all areas in life...
+
+
+# Data Set
+
+The data contains in-game and Fantasy Football Points per Reception stats by NFL player from 2017 - 2023 for all 17 games of the regular season. Most leagues use a points per reception based metric to calculate fantasy points, or `FantasyPointsPPR.` Before converting to fantasy points, in-game stats may be weighted or counted differently. My league adopted the following criterion: 
+
+```{r}
+league_weights <- data.frame(read.xlsx("Fantasy Football Data/archive/fantasy_strata_league_scoring.xlsx"))
+knitr::kable(league_weights[,-3])
+```
+
+Two different data sets are used, with a focus on three distinct NFL regular seasons - 2022, 2023, and 2024. Both data sets have been scraped but differ in source, purpose, and underlying information present:
+
+Data Set 1 - Historical - 2022 & 2023: This data set contains historical data from 2017-2023 for both relevant in-game statistics and fantasy scoring for  regular NFL season. This project primarily focuses on 2022 and 2023. Each observation or row in the data set is a NFL athlete's relevant in-game statistics, such as position, team, completion, attempts, interceptions per attempt, etc. Since most leagues exclude defensive players from their fantasy team, those have been implicitly removed from the data set. The key feature of this data set are the retroactive fantasy rankings/scoring. The total fantasy points, overall rank, and rank by position are available for each player. This enables the direct comparison of calculated rankings from models to their actual rank.
+
+Players that were on two or more teams in a given season are not assigned a team - but are instead given a makeshift name to highlight this. For example, you may see Baker Mayfield's registered team as `2TM.` One notable variable contained in the data set is ADP, or average draft position, representing the number of times the player was drafted across all recorded leagues before the start of the respective season. Additional in-game stats were calculated afterwards. These were `YardsPerRushAttempt`,`CompletionsPerAttempt`, `TDsPerAttempt`, `InterceptionsPerAttempt`, `TDsPerReception`, and `FumblesLostPerFumble.` My fantasy league's scoring methodologies were also factored into a set of new variables. These variables have the `schoring_` schema. 
+
+Data Set 2 - Projected - 2024: This data set contains all player match ups for the upcoming regular 2024 NFL season. The in-game statistics recorded for each player are projections based on those teams and match ups. One benefit of this data set is being able to use these projections as inputs of our model to determine which players obtain the most fantasy points, rank them in ascending order, and draft them accordingly. The drawback is that no additional information on how these projections were calculated are known so the accuracy of these projections cannot be confirmed. 
+
+# Methods
+
+The current methodology is to use singular value decomposition of eigenvalues to create scores of new variables that can be attributed to their overall performance. Their projected overall performance would be used to rank each player in ascending order (potentially by position) to inform our draft decision. Starting with the 2022 season, the overall rank for each player is calculated and then compared to the actual ranks of that same year. Precision will be measured in three ways: 
+
+1. Difference in overall rank
+2. Difference in position rank
+3. Difference in fantasy points, obtained by taking the difference of fantasy points using our model's draft order with the fantasy points using the ideal draft order.
+
+If the model is precise, the same 2022 projections will then be tested on 2023. This method is not full-proof obviously. Many things change between off seasons of professional sports, but the objective is to quantify the model's ability to generalize onto future seasons. If it can, the same process will be done starting with the 2023 data set, testing it against itself, then using those scores for 2024. If it does not, principal component scores will be calculated using the 2024 data set only, and only those will inform our draft order. This is not the ideal scenario, since it inherently trusts the projected data. 
+
+```{r, eval = TRUE, echo = FALSE, include=FALSE}
+
+fantasy_merged_17_22 <- read_csv("Fantasy Football Data/archive/fantasy_merged_7_17.csv")
+fantasy_adp_17_22 <- read_csv("Fantasy Football Data/archive/adp_merged_7_17.csv")
+fantasy_adp_17_22 <- data.frame(fantasy_adp_17_22)
+mydata_id <- read_csv("Fantasy Football Data/archive/adp_merged_7_17.csv")
+# fantasy_test_23 <- read.xlsx("fantasy_mergedsourcecleaned_2023.xlsx") 2023 test
+
+mydata <- fantasy_merged_17_22 %>%
+  left_join(fantasy_adp_17_22 %>%
+              select(PlayerID,adp,Year), by = c("PlayerID","Year")) %>%
+  data.frame()
+
+fantasy <- mydata %>%
+  rename(
+    Rank = Rk,
+    Player = Player,
+    Team = Tm,
+    FantasyPosition = FantPos,
+    Age = Age,
+    Games = G,
+    GamesStarted = GS,
+    Completions = Cmp, #QB
+    Attempts = Att, #QB
+    PassingYards = Yds, # SCORING: (*1/25)
+    PassingTDs = TD, # SCORING: (*4)
+    Interceptions = Int, # SCORING: (*-2)
+    RushingAttempts = RushAtt,
+    RushingYards = RushYds,  # SCORING: (*1/10)
+    YardsPerAttempt = YA, # ***RushingYards / RushingAttempts 
+    RushingTDs = RushTD, # SCORING(*6)
+    Targets = Tgt, # TE/WR no. times player is thrown ball 
+    Receptions = Rec, # no. passes caught; SCORING: (*1)
+    ReceivingYards = RecYds, # SCORING: (*.1)
+    YardsPerReception = YR, # ***ReceivingYards / Receptions ; compelte rate = .85
+    ReceivingTDs = RecTD, # SCORING: (*6)
+    Fumbles = Fmb, # SCORING: (*-2)
+    FumblesLost = FL, # no times player fumbles and opp team receives; SCORING: (*-2)
+    FantasyPointsPPR = PPR, # no fantasy pts in a points per reception league
+    PlayerID = PlayerID,
+    PositionRank = PosRk, # ranking grouped by position
+    Year = Year, 
+    ADP = adp
+  )
+
+fantasy %<>% mutate(
+  YardsPerRushAttempt = RushingYards / RushingAttempts, # duplicate 
+  CompletionsPerAttempt = Completions / Attempts,
+  TDsPerAttempt = PassingTDs / Attempts,
+  InterceptionsPerAttempt = Interceptions / Attempts,
+  TDsPerReception = ReceivingTDs / Receptions, # complete r = .85
+  FumblesLostPerFumble = FumblesLost / Fumbles, .after = ADP # complete rate = .4
+)
+
+fantasy %<>% mutate(Team = factor(Team), FantasyPosition = factor(FantasyPosition))
+
+# including scoring 
+
+fantasy %<>% mutate(
+  scoring_PassingYards = PassingYards*.04,
+  scoring_PassingTDs = PassingTDs*4,
+  scoring_Interceptions = Interceptions*(-2),
+  scoring_RushingYards = RushingYards*(.01),
+  scoring_RushingTDs = RushingTDs*6,
+  scoring_Receptions = Receptions*1,
+  scoring_ReceivingYards = ReceivingYards*.1,
+  scoring_ReceivingTDs = ReceivingTDs*6,
+  scoring_Fumbles = Fumbles*(-2),
+  scoring_FumblesLost = FumblesLost*(-2)
+)
+
+
+```
+
+# Processing 
+
+Missing values in completions per attempt, tds per attempt, interceptions per attempt, tds per reception, and fumbles lost per fumble were a result of undefined values in the denominator. Observations of this missing values are directly related to the player and position. For example, QBs will rarely record touchdowns per reception and will therefore have undefined values for those statistics since they are more equipped to measure performance of wide receivers. All missing values in these cases were replaced with zero. The same approach was applied to yards per attempt and yards per reception with two notable exceptions. Foster Moreau had zero rushing attempts but two rushing yards during the 2022 NFL season which is difficult to interpret considering rushing attempts are a function of rushing yards. In the same vein, Joe Flacco had -3 receiving yards but zero receptions. Both of these players were removed from the data set. 
+
+```{r, eval=FALSE}
+
+
+fantasy %>%
+  select(-ADP,-YardsPerAttempt) %>%
+  filter(if_any(everything(),is.na)) %>%
+  tibble() 
+
+# YardsPerAttempt - RushingYards / RushingAttempt
+
+fantasy %>%
+  filter(!is.na(YardsPerAttempt) & RushingYards!=0) %>%
+  slice_sample(n=5) %>%
+  summarize(n=RushingYards,n2=RushingAttempts,n3=YardsPerAttempt,n4=RushingYards/RushingAttempts) # data quality check
+fantasy %>%
+  filter(is.na(YardsPerAttempt),
+         (RushingYards!=0 & RushingAttempts==0)|(RushingYards==0 & RushingAttempts!=0)) %>%
+  select(Player,PlayerID)
+# Foster Moreau MoreFo00 has 0 rushing attempts but 2 rushing yards. Will most likely remove player from data set. 
+# all other players are na(YardsPerAttempt) since RushingYards = 0 and RushingAttempts = 0
+
+# YardsPerReception - ReceivingYards / Receptions
+fantasy %>% filter(is.na(YardsPerReception)) 
+fantasy %>%
+  filter(!is.na(YardsPerReception) & Receptions!=0) %>%
+  slice_sample(n=5) %>%
+  summarize(n=Receptions,n2=ReceivingYards,n3=YardsPerReception,n4=ReceivingYards/Receptions)
+fantasy %>%
+  filter(is.na(YardsPerReception),
+         (ReceivingYards!=0 & Receptions==0)|(ReceivingYards==0 & Receptions!=0)) %>%
+  select(Player,PlayerID)
+# Joe Flacco FlacJo00 - -3 receiving yards but 0 receptions; doesn't make sense depends on how its counted
+
+# CompletionsPerAttempt
+fantasy %>% filter(is.na(CompletionsPerAttempt))
+fantasy %>%
+  filter(!is.na(CompletionsPerAttempt) & Attempts!=0) %>%
+  slice_sample(n=5) %>%
+  summarize(n=Completions,n2=Attempts,n3=CompletionsPerAttempt,n4=Completions/Attempts)
+fantasy %>%
+  filter(is.na(CompletionsPerAttempt),
+         (Completions!=0 & Attempts==0)|(Completions==0 & Attempts!=0)) %>%
+  select(Player,PlayerID) # no results; substitute zero for NaN
+
+# TDsPerAttempt
+fantasy %>%
+  filter(is.na(TDsPerAttempt),
+         (PassingTDs!=0 & Attempts==0)|(PassingTDs==0 & Attempts!=0)) 
+
+# InterceptionsPerAttempt
+fantasy %>%
+  filter(is.na(InterceptionsPerAttempt),
+         (Interceptions!=0 & Attempts==0)|(Interceptions==0 & Attempts!=0)) 
+
+# TDsPerReception
+fantasy %>%
+  filter(is.na(TDsPerReception),
+         (ReceivingTDs!=0 & Attempts==0)|(ReceivingTDs==0 & Attempts!=0))
+
+# FumblesLostPerFumble
+fantasy %>%
+  filter(is.na(FumblesLostPerFumble),
+         (FumblesLost!=0 & Fumbles==0)|(FumblesLost==0 & Fumbles!=0)) 
+
+```
+
+
+```{r}
+
+# remove joe flacco and foster moreau
+fantasy <- fantasy[!fantasy$PlayerID %in% c("FlacJo00","MoreFo00"),]
+
+# remove duplicate variable YardsPerRushAttempt
+fantasy %<>% select(-YardsPerRushAttempt)
+# replace NaN with 0 
+sum(is.na(fantasy$YardsPerAttempt))
+
+for (i in seq_along(1:nrow(fantasy))){
+  for (j in seq_along(1:ncol(fantasy))){
+    if (any(is.na(fantasy[i,j])) & j != 28){
+      fantasy[i,j] <- 0
+    }
+  }
+}
+
+```
+
+# YoY PPR Trend for Top NFL Teams
+
+```{r, eval = TRUE, echo = FALSE, fig.width=15,fig.height=10}
+
+
+fantasy %>%
+  select(Year,Team,FantasyPointsPPR) %>%
+  group_by(Year,Team) %>%
+  summarize(n=sum(FantasyPointsPPR)) %>%
+  slice_max(n, n = 5) %>%  # PHI, KAN, MIN, JAX, CIN
+  ggplot(aes(x = n, y = factor(Year), fill=Team, label = Team, color = Team)) +
+  geom_col(position = "dodge", show.legend = FALSE) +  
+  coord_cartesian(xlim=c(1300,1900))+
+  scale_fill_manual(values=c("KAN"="red4"))+
+  scale_color_manual(values=c("KAN"="red4"))+
+  geom_text(position = position_dodge(width = 0.9), hjust = -0.1, show.legend = FALSE) + 
+  labs(x = "Fantasy Points PPR", y = "Year", title = "Fantasy Points by Team and Year") +
+  theme_minimal() +  # Optional: Apply a minimal theme
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(color = "red4")) 
+
+```
+
+# 2022 NFL season 
+
+## Data Exploration
+
+The data was sub set for the 2022 season and then skimmed for to review distributions, counts, and other elements within the data set. 
+
+```{r}
+
+fantasy <- fantasy %>%
+  filter(Year == 2022)
+skimr::skim(fantasy)
+```
+
+Important categorical variables to note outside of the Team and Player is the Fantasy Position. These are QBs, WRs, TEs, and RBs. All defensive positions are not scoped and have been explicitly removed from the data set. The objective of this project is to create a fantasy team that has the highest likelihood of obtaining the most Fantasy Points (PPR) for the upcoming season based on prior seasons. The next logical question becomes, does this likelihood vary by team? By position? Intuitively, the likelihood will vary simply based on how many of these positions are in game at a given time. A table of each position shows the distribution of each position in a given NFL season.  
+
+```{r}
+fantasy %>%
+  janitor::tabyl(FantasyPosition) %>%
+  arrange(desc(percent))
+```
+
+A majority of NFL players in 2022 for fantasy purposes were wide receivers (38%) while the least common position were quarterbacks (14%). For the continuous variables, the important things to note are the means, standard deviations, their counts and distribution via the histograms, and any missing values. In-game stats such as Yards Per Attmept, Yards per Reception, and additional variables (below ADP) are missing for a lot of players as expected. The missing values are likely due to a number of factors such as the position of the player and the number of games each played. The range of games played by each player vary from none to 17, representative of 17 total games in the regular season. The descriptive summary for Fantasy Points (PPR) is: 
+
+```{r}
+psych::describe(fantasy$FantasyPointsPPR)
+```
+
+With mean = 78.4 (sd = 85.29), it is obvious that there is high variability. The histogram of PPR shows where how this variability is distributed. 
+
+```{r}
+hist(fantasy$FantasyPointsPPR, main = "Histogram of Fantasy Points (PPR)",
+     xlab = "PPR", ylab = "Count")
+```
+
+Depending on the fantasy league, PPR scoring will be different in the sense that there is typically a PPR threshold per game for a player in order for their PPR to be recorded for that given week. If the player is below the baseline, the PPR may be zero. Interestingly enough, the distribution of PPR in 2022 is a log-normal right skew distribution. The observed PPR for most players were approximately zero. This is logical, granted the extreme difficulty of being a top NFL performer. Most players are benched, aren't playing games, nor are starters. Evidently, most of the continuous variables will follow the same trend with observed frequencies ~0 and relatively a fewer number of players scoring the most for each variable. There are three notable exceptions: 
+
+```{r,fig.align='center'}
+
+h_adp1 <- 
+fantasy %>%
+  ggplot(aes(x=ADP))+
+  geom_histogram(bins = 8, color = "black")+
+  scale_x_continuous(name = "ADP")+
+  scale_y_continuous(name = "Count")+
+  labs(title = "Average Draft Position")
+  
+h_adp2 <- 
+fantasy %>%
+  ggplot(aes(x=FumblesLostPerFumble))+
+  geom_histogram(bins = 9, color = "black")+
+  scale_x_continuous()+
+  labs(title = "Fumbles Lost per Fumble")+
+  theme(axis.title.y = element_blank())
+h_adp3 <-  
+  fantasy %>%
+  ggplot(aes(x=YardsPerReception))+
+  geom_histogram(bins = 11, color = "black")+
+  labs(title =  "Yards Per Reception")+
+  theme(axis.title.y = element_blank())
+
+gridExtra::grid.arrange(h_adp1,h_adp2,h_adp3, ncol = 3)
+
+```
+
+1. Average Draft Position - Uniform Distribution: For players that have this data available, ADP is uniformly distributed across most players. This implies that the parent population drafts players evenly across the board and there isn't a strong concentration of players being picked predominantly. To reiterate, this is specifically for players that have ADP data available, which may be a combination of the most popular or the best players. 
+
+2. Fumbles Lost per Fumble - Bimodal distribution: Frequency of Fumbles Lost per Fumble have peaks at both zero and one, revealing that most players either fumble and lose possession of the ball, resulting in a turnover, or don't fumble at all. 
+
+3. Yards Per Reception - Normal distribution: Players average 10 Yards Per Reception with a majority of players within the range of two standard deviations from the mean. Although there is a slight right skew, this is one of the few variables that follows a Gaussian distribution. 
+
+The first thing we want to understand is *what* position, if any, we should be more inclined to draft first, and their likelihood of obtaining the most fantasy points. I started by seeing what the public likes to draft first. In 2022, the public drafted quarterbacks around 86 times on average, the highest of the four positions, with tight ends at a close second of 84 times on average. Running backs and wide receivers then followed. Acknowledging that ADP data is not available for all positions, I wanted to better understand if quarterbacks are the biggest factor in regards to PPR. A comparison of ADP and PPR by position begins to paint the picture. On average, quarterbacks had 105 fantasy points in 22, followed by wide receivers, running backs, then tight ends.
+
+```{r}
+
+fantasy %>%
+  select(FantasyPosition,FantasyPointsPPR,ADP) %>%
+  group_by(FantasyPosition) %>%
+  summarize(AverageDraftPosition=mean(ADP, na.rm=TRUE),
+            AveragePPR=mean(FantasyPointsPPR, na.rm=TRUE)) %>%
+  arrange(desc(AveragePPR)) 
+# QB / WR / RB / TE -- avg PPR
+# wr / rb / qb / te -- total (totals are void see below)
+
+```
+
+This seems to be consistent at a higher level when the top three teams for the 2022 regular season are compared. 
+
+```{r, eval = TRUE, echo = FALSE, fig.width=15,fig.height=10}
+fantasy %>%
+  filter(Team %in% c("PHI","KAN","CIN")) %>%
+  select(Team,FantasyPosition,FantasyPointsPPR) %>%
+  group_by(Team,FantasyPosition) %>%
+  summarize(n=mean(FantasyPointsPPR),
+            n2=sum(FantasyPointsPPR)) %>%
+  slice_max(n, n = 5) %>%
+  arrange(desc(n)) %>%
+  ggplot(aes(y=fct_rev(fct_inorder(FantasyPosition)),x=n,fill=Team,color=Team, label = Team)) +
+  geom_col(position = "dodge") +  
+  scale_fill_manual(values=c("KAN"="red4","PHI"="palegreen4","CIN"="slategray4"))+
+  scale_color_manual(values=c("KAN"="red4","PHI"="palegreen4","CIN"="slategray4"))+
+  # coord_cartesian(xlim=c(1250,2000))+
+  geom_text(position = position_dodge(width = 0.9), hjust = -0.1) +  # Add text labels
+  labs(x = "Fantasy Points PPR", y = "Year", title = "Fantasy Points by Team and Year") +
+  theme_minimal() +  # Optional: Apply a minimal theme
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size=12),
+        axis.text.y = element_text(size=12),
+        legend.position = "top") 
+```
+
+
+However, properly accounting for total number of games played by player, yields different results. Evidently, quarterbacks are disproportionately the most efficient in regard to fantasy points on a per game basis at .164 per game. Running backs, tight ends, and receivers consecutively follow but are significantly behind. However, fantasy points between those three positions vary by less than 5%.  The logical question becomes what are the underlying causes of this variation? One possibility is that there are typically more wide receivers on an offensive play than any other position. Another possibility can be due to the extreme routes and distances wide receivers run, making them injury prone and therefore less efficient. 
+
+```{r}
+
+fantasy %>%
+  group_by(FantasyPosition) %>%
+  summarize(PPRperGame = mean(FantasyPointsPPR,na.rm = TRUE)/sum(Games,na.rm=TRUE)) %>%
+  arrange(desc(PPRperGame)) # PPR efficiency (after accounting for # of games played)
+# QBs have most efficient PPR on per game basis, WRs seem to have the lowest impact on per game basis
+# After accounting for no. of games, QB > RB > TE > WR  
+
+```
+
+## Analysis SVD PCA 
+
+Eigenvalue decomposition is an unsupervised machine learning method typically used for dimensionality reduction on mostly unlabeled data. The same approach is used here, with the intent to reduce the data to components that measure performance in some aspect. The best way to think about this is in the form of a recipe. A cookbook's recipe for chicken cordon bleu will have elaborate concoctions and mixes of different food. When applied in this context, it would reduce the recipe to its core components, 3/4 chicken, 1/8 cheese, 1/8 ham let's say. It then becomes much easier to make chicken cordon bleu while keeping most of the taste. While an oversimplification, the approach is essentially the same, with the goal of maximizing the amount of underlying variation using linear combinations of variables. At its core, there is some latent underlying variable(s) that combinations of these variables measure. What those underlying variables measure and its relevancy is on us to define. These are the principal components. The principal components are made up of the original variables, and how much that variable contributes to the underlying variable (ie principal component) are the eigen vectors or *loadings*. Loadings can be positive (greatly contributes) or negative (adversely contributes). How well the variables load help define what that new underlying variable is. To define the inclusion criteria, any variable that loads +/- .7 will be considered as loading well and those variables alone will be what is used to define the underlying variable/component. This empirical threshold is a very conservative approach. 
+
+```{r}
+
+## 1) Scale, remove ADP, Year, Rank, PositionRank, (maybe Games and Age); 2) create correlation matrices
+
+# og x_vars
+ffnorm_og <- fantasy %>%
+  select(where(is.numeric) & -ADP & -Year & -FantasyPointsPPR & -Rank & -PositionRank &
+         !contains("scor", ignore.case = TRUE)) %>%
+  mutate_all(scale.default)
+# -- og cor matrix
+fantasy_cormatrix_og <- 
+  fantasy %>%
+  select(where(is.numeric) & -ADP & -Year & -FantasyPointsPPR & -Rank & -PositionRank &
+         !contains("scor", ignore.case = TRUE)) %>%
+  cor()
+
+# all x_vars
+ffnorm_all <- fantasy %>%
+  select(where(is.numeric),-ADP,-Year,-FantasyPointsPPR,-Rank, -PositionRank) %>%
+  mutate_all(scale.default)
+# -- all cor matrix
+fantasy_cormatrix_all <- fantasy %>%
+  select(where(is.numeric),-ADP,-Year,-FantasyPointsPPR,-Rank, -PositionRank) %>%
+  cor()
+
+# scoring vars
+ffnorm_score <- fantasy %>%
+  select(contains("scor", ignore.case = TRUE)) %>%
+  mutate_all(scale.default)
+# -- scoring cor matrix
+fantasy_cormatrix_scoring <- fantasy %>%
+  select(contains("scor", ignore.case = TRUE)) %>%
+  cor()
+
+```
+
+Eigen vectors describe a mathematical phenomena such that 
+
+$$ A * v =  λ * v $$
+
+where A is a square matrix, v is an eigen vector, and λ is a scalar (numerical value) and the associated eigen value of vector v. In this application, matrix A is correlation matrix of the original data. This mechanism works because linear transformations are applied to the data meaning the data does not inherently change. The proportions of all variables and the direction in which they move remain the same. The data gets centered at the origin after scaling, and a best fitting line is calculated that goes through the origin and maximizes the variance in the data. The algorithm does this by fitting a random line through the data, projecting the points onto the line, and calculating the largest sum of squared difference. The yielded line of best fit is the eigen vector for the principal component and the slope is the eigen value. 
+
+```{r,fig.align='center',fig.width=8,fig.height=6}
+
+#scree_plot1 <- fa.parallel(fantasy_cormatrix_og,n.iter=100,fa="pc", main="Parallel Scree")
+# parallel test suggests pc1-pc3 on conservative side; scree test suggest up to pc5
+# psych::scree(fantasy_cormatrix_og,pc=TRUE,factors=TRUE) 
+
+
+
+pc <- prcomp(ffnorm_og,scale. = FALSE)
+eigenvalues <- pc$sdev^2
+eigen_df <- data.frame(PC = paste0("PC", 1:length(eigenvalues)), Eigenvalue = eigenvalues)
+eigen_df$PC <- factor(eigen_df$PC, levels = paste0("PC", 1:length(eigenvalues)))
+scree_plot1 <- 
+eigen_df %>%
+  summarize(PC=PC,Eigenvalue=Eigenvalue) %>%
+  arrange(desc(Eigenvalue)) %>%
+  ggplot(aes(x = PC, y = Eigenvalue)) +
+ # geom_bar(stat = "identity", fill = "steelblue") +
+  geom_line(group = 1, color = "red") +
+  geom_point(color = "red") +
+  geom_segment(x=0,y=2,xend=24,yend=1,linetype = "dotted",linewidth = 1)+
+  annotate("label",x=4,y=2.5,label="Parallel Test",color="black")+
+  labs(title = "Scree Plot", x = "Principal Components", y = "Eigenvalues") +
+  theme_minimal()
+# scree as a % of total variation
+scree_plot2 <- 
+prcomp(fantasy %>%
+  select(where(is.numeric) & -ADP & -Year & -FantasyPointsPPR & -Rank & -PositionRank &
+         !contains("scor", ignore.case = TRUE)), scale. = TRUE) %>%
+  fviz_eig(addlabels = TRUE)
+
+gridExtra::grid.arrange(scree_plot1,scree_plot2,ncol=2)
+
+pc_og <- principal(ffnorm_og,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") # default is varimax rotation
+# pc_og$loadings
+# print(as.matrix(pc_og$loadings), cutoff = 0) # seems to only account for 62% of the total variance 
+# eigen(fantasy_cormatrix_og)$val/24
+# 0.55743682334+0.37837352942+0.21494701803
+# fantasy %>%
+#   group_by(FantasyPosition) %>%
+#   summarize(n=mean(FumblesLost))
+# # PC1 = The QB Effect 
+  
+# fviz_pca_var(prcomp(ffnorm_og, scale. = FALSE), col.var = "black")
+
+```
+
+A parallel test was used to measure the number of components to obtain. The test performs the same decomposition on simulated data of the same size and graphs the results. Where the simulated and actual data intersect is the cutoff for the number of components to obtain. The results of the test suggest three components. The y-axis plots the eigenvalues which is the total variation explained by each component. In a simpler sense, it can be thought of as the number of original variables accounted for in that component (hence the horizontal line separating values less than one). Three principal components were obtained, acknowledging that principal component one (PC1) should account for approximately six variables, PC2 around 5, and PC3 around 3. The other scree plot better highlights the components as a percentage of total variability explained. Keep in mind that PC1 only accounts for 30% of the total variability and the first three components cumulatively account for 52% of total variability. It's likely that the post-hoc tests described in the methods section will not be sufficient for our goal since there is still half of the total variation not accounted for in these components. 
+
+Scores are calculated for each individual player. Depending on how the components are defined, players can be ranked in ascending order. 
+
+```{r,fig.width=12,fig.height=10,fig.align='center'}
+test <- data.frame(pc_og$loadings[,c(1,2)])
+
+
+
+test$variable <- row.names(test)
+test_melt <- melt(test,id.vars = "variable")
+colnames(test_melt) <- c("variable","component","value")
+test_melt %>%
+  mutate(component=fct_recode(component,PC1="RC1",PC2="RC2")) %>%
+  ggplot(aes(x=variable,y=component,fill=value,label=round(value,2)))+
+  geom_tile(color = "white") +
+  geom_text(size=3,face="bold",color="black")+
+  scale_fill_gradient2(low = "red", high = "blue", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), space = "Lab", 
+                       name="Loading") +
+  theme_bw()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.title.x = element_blank()) +
+  labs(title = "Principal Component Loadings",y="Principal Components")
+
+```
+
+
+## Principal Components
+rotation: maximum variance 
+
+**PC1** - 
+Definition: High-Volume Performing QBs
+Attributes: Completions, Attempts, Passing Yards, Passing TDs, Interceptions, Fumbles
+
+1. PC1 would be attributed to high-volume QBs as they load extremely well for the above categories. The first inclination was to attribute PC1 to high performing quarter backs, however, that statement alone would be unjustifiable considering that interceptions and fumbles load extremely well to this component. High-volume quarter backs would be a more fitting description. These quarter backs are performing extremely well in some regard since it loads high for completions, passing yards, and passing touch downs. We can reason that these quarter backs are also able to consistently get the ball off of their hands. High-volume quarter backs will also load high to interceptions and fumbles. The more throws and attempts made, the more likely that fumbles and interceptions will occur. 
+  
+**PC2** - 
+Definition: Offensive Efficiency (Long range efficiency):
+Attributes: !GamesStarted, Targets, Receptions, Receiving Yards, Receiving TDs
+
+2. PC2 can be attributed to total overall offensive efficiency given that we load extremely high for targets, receptions, receiving yards, and receiving    touchdowns. Players typically defined for this category would be wide receivers, and pc2 is measuring yardage efficiency. Efficiency is important in this context given that we also load high to targets, and even though it is not an inclusion criteria in fantasy scoring, it speaks to the aggressiveness on the offensive side. The key distinction to make here is that this describes the overall long range efficiency only since rushing yards and touch downs are not accounted for in this component. Additionally, *overall* long range efficiency is justified since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a good quarter back. 
+  
+**PC3** - 
+Definition:Driving Efficiency (Short range efficiency):
+Attributes: Rushing Attempts, Rushing Yards, Rushing TDs
+
+3. PC3 would be attributed to mainly RBs and TEs that are elite drivers since they load high for rushing stats. 
+
+Ideally, we'd want to load players that load high for all three categories. Considering the nature of football, depending on player's primary position, they will naturally perform better in certain stats or categories over others. In this case, there are multiple approaches to account for this. Actually, along every step I find there are ways that our paths diverge, but more on that later. One approach is to use only principal component one and players/scores that load high for that component to pick our quarter back. Principal components two and three would then be used for all other positions. I started with that approach but here comes the other divergence - how I choose the calculate the scores. There are two options under consideration. 
+
+1. Include all variables in the principal component computation, with the benefit of providing a more comprehensive score but the drawback of added complexity.
+2. Include only variables in the principal component computations that load high as the score, with the benefit of exclusively calculating how good they are at being good but the drawback of missing nuanced information capture in less significant variables. 
+
+I tested the model starting with the second approach. First, I reviewed how the top ten quarter backs performed in 2022 by looking at their overall rank, position rank, the player, and the total fantasy points they had. 
+
+```{r}
+# test for pc1 
+rank_actual <- 
+fantasy %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR) %>%
+  tibble()
+
+rank_actual[1:10,]
+```
+
+Then we use the eigen values to calculate the principal component scores for each player, only including variables that loaded high. The players with the highest scores would be the highest performing QBs predicted for the 2022 season. Two things to note. Firstly, the position and overall rank will be the same here since we've define our first principal component as attributes of quarter backs only. Secondly, the model's fantasy points ppr would not be known. The purpose here is to calculate scores and draft in ascending order. We can, however, calculate the difference in fantasy points had we taken the models' picks. In the table, the model's fantasy points are the same as actual fantasy points to make this calculation easier. The results are shown below.
+
+```{r, eval=TRUE,echo=FALSE,include=FALSE}
+
+rank_pred <- 
+fantasy %>%
+  mutate(pc1 = (0.96755758*Completions)+(0.96979088*Attempts)+(0.96705865*PassingYards)
+         +(0.93954025*PassingTDs)+(0.93859580*Interceptions)+(0.77179023*Fumbles)) %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
+  arrange(desc(pc1)) %>%
+  tibble() %>%
+  rename("Model_Rank" = "Rank",
+         "Model_PositionRank"="PositionRank",
+         "Model_FantasyPointsPPR"="FantasyPointsPPR",
+         "Model_Score"="pc1") %>%
+  mutate(Model_PositionRank = c(1:82)) %>%
+  print(n=10)
+knitr::kable(rank_pred[1:10,c(-1)])
+
+```
+
+Here's the difference in the models vs the actual performance for the top 10 quarter backs of the 2022 regular season. 
+
+```{r}
+
+rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
+knitr::kable(rank_diff)
+
+```
+
+
+```{r, eval=FALSE,echo=FALSE,include=FALSE}
+
+fantasy %>%
+  mutate(pc1 = pc_og$scores[,1]) %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
+  arrange(desc(pc1)) %>%
+  tibble() %>%
+  print(n=10)
+
+```
+
+
+
+
+# cont
+
+```{r, eval=FALSE,echo=FALSE,include=FALSE}
+fantasy %>%
+  group_by(FantasyPosition) %>%
+  filter(!is.na(ADP)) %>%
+  slice_max(ADP, n = 3) %>%
+  ggplot(aes(x=ADP,y=FantasyPointsPPR,shape=FantasyPosition))+
+  geom_point() # potential cluster, k = 3
+
+mean(fantasy$ADP,na.rm=TRUE)
+```
+
+```{r, eval=FALSE,echo=FALSE,include=FALSE}
+
+# component space (pc1|pc2)
+
+s <- prcomp(ffnorm_og,scale. = FALSE)
+
+# str(iris)
+# s <- data.frame(s$x)
+
+# dim(s)
+fviz_pca_biplot(s,
+                    # Individuals
+                    geom.ind = "point",
+                    fill.ind = fantasy$FantasyPosition,
+                    col.ind = "black",
+                    pointshape = 21, pointsize = 1,
+                    palette = "jco",
+                    addEllipses = TRUE, 
+                    # Variables
+                    alpha.var ="contrib", col.var = NA,
+                    gradient.cols = "RdYlBu")+annotate("text",x=5,y=7,label="some text")
+
+# Iris dataset example
+# res.pca <- prcomp(iris[, -5], scale. = TRUE)
+# fviz_pca_ind(res.pca, geom.ind = "point", pointshape = 21, pointsize = 2, 
+#              fill.ind = iris$Species, col.ind = "black", 
+#              palette = "jco", addEllipses = TRUE, ellipse.level = 0.95)
+```
+
+
+
+
+
+
