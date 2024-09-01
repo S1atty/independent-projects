@@ -862,7 +862,7 @@ pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="
 
 rank_actual <- 
 fantasy %>%
-  filter(FantasyPosition=="WR") %>%
+  filter(FantasyPosition=="RB") %>%
   select(Rank,PositionRank,Player,FantasyPointsPPR) %>%
   tibble()
 
