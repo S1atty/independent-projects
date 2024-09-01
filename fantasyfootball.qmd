@@ -857,7 +857,7 @@ pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="
 #   select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
 #   arrange(desc(pc2)) %>%
 #   tibble() %>%
-#   print(n=10)
+#   print(n=10)f
 
 
 rank_actual <- 
