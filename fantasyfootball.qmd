@@ -851,13 +851,13 @@ knitr::kable(rank_diff)
 ```{r}
 pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
 
-fantasy %>%
-  mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
-  filter(FantasyPosition=="WR") %>%
-  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
-  arrange(desc(pc2)) %>%
-  tibble() %>%
-  print(n=10)
+# fantasy %>%
+#   mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+#   filter(FantasyPosition=="WR") %>%
+#   select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
+#   arrange(desc(pc2)) %>%
+#   tibble() %>%
+#   print(n=10)
 
 
 rank_actual <- 
@@ -1020,10 +1020,10 @@ fantasy %>%
 
 ```
 
-# 2023 NFL season
+
 
 ```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
-
+########################### 2023 NFL import and clean
 fantasy2023 <- data.frame(read.xlsx("Fantasy Football Data/archive/fantasy_mergedsource_2023.xlsx"))
 fantasy2023 %<>% mutate(Player=gsub("\\*","",Player),
                         Player=gsub("\\+","",Player))  
@@ -1037,10 +1037,10 @@ fantasy2023 %>%
   
 ```
 
-# 2024
+
 
 ```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
-
+########################### 2024
 fantasyprojection <- data.frame(read.xlsx("Fantasy Football Data/archive/fantasypointsprojections2024.xlsx"))
 View(fantasyprojection)
 ```
