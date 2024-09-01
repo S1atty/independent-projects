@@ -857,7 +857,7 @@ pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="
 #   select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
 #   arrange(desc(pc2)) %>%
 #   tibble() %>%
-#   print(n=10)f
+#   print(n=10)
 
 
 rank_actual <- 
@@ -877,8 +877,7 @@ fantasy %>%
          "Model_Player"="Player",
          "Model_FantasyPointsPPR"="FantasyPointsPPR",
          "Model_PCscore"="pc2") %>%
-  mutate(Model_PositionRank = c(1:575),.before = Model_Player) %>%
-  print(n=10)
+  mutate(Model_PositionRank = c(1:575),.before = Model_Player) 
 
 rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
 knitr::kable(rank_diff)
