@@ -498,7 +498,7 @@ test_melt %>%
 ```
 
 
-## Principal Components
+## Principal Components - In-Game Stats
 rotation: maximum variance 
 
 **PC1 Definition: High-Volume Performing QBs**\
@@ -509,7 +509,7 @@ Attributes: Completions, Attempts, Passing Yards, Passing TDs, Interceptions, Fu
 **PC2 Definition: Offensive Long Range Efficiency**\
 Attributes: Games Started, Targets, Receptions, Receiving Yards, Receiving TDs\
 
-2. PC2 can be attributed to total overall offensive efficiency given that we load extremely high for targets, receptions, receiving yards, and receiving    touchdowns. Players typically defined for this category would be wide receivers, and pc2 is measuring yardage efficiency. Efficiency is important in this context given that we also load high to targets, and even though it is not an inclusion criteria in fantasy scoring, it speaks to the aggressiveness on the offensive side. The key distinction to make here is that this describes the overall long range efficiency only since rushing yards and touch downs are not accounted for in this component. Additionally, *overall* long range efficiency is justified since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a good quarter back. 
+2. PC2 can be attributed to total overall offensive efficiency given that we load extremely high for targets, receptions, receiving yards, and receiving    touchdowns. Players typically defined for this category would be wide receivers, and pc2 is measuring yardage efficiency. Efficiency is important in this context given that we also load high to targets, and even though it is not an inclusion criteria in fantasy scoring, it speaks to the aggressiveness on the offensive side. The key distinction to make here is that this describes the overall long range efficiency only, since rushing yards and touch downs are not accounted for in this component. Additionally, *overall* long range efficiency is justified since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a good quarter back. 
   
 **PC3 Definition: Offensive Driving Efficiency**\
 Attributes: Rushing Attempts, Rushing Yards, Rushing TDs\
@@ -546,19 +546,13 @@ fantasy %>%
   select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
   arrange(desc(pc1)) %>%
   tibble() %>%
-  rename("Model_Rank" = "Rank",
-         "Model_PositionRank"="PositionRank",
+  rename("Model_OverallRank" = "Rank",
+         "Actual_PositionRank"="PositionRank",
+         "Model_Player"="Player",
          "Model_FantasyPointsPPR"="FantasyPointsPPR",
-         "Model_Score"="pc1") %>%
-  mutate(Model_PositionRank = c(1:82)) %>%
+         "Model_PCscore"="pc1") %>%
+  mutate(Model_PositionRank = c(1:82),.before = Model_Player) %>%
   print(n=10)
-knitr::kable(rank_pred[1:10,c(-1)])
-
-```
-
-Here's the difference in the model vs the actual performance for the top 10 quarter backs of the 2022 regular season. 
-
-```{r}
 
 rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
 knitr::kable(rank_diff)
@@ -566,24 +560,496 @@ knitr::kable(rank_diff)
 ```
 
 
-```{r, eval=FALSE,echo=FALSE,include=FALSE}
+Methods of measuring model performance: 
 
-fantasy %>%
-  mutate(pc1 = pc_og$scores[,1]) %>%
-  filter(FantasyPosition=="QB") %>%
-  select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
-  arrange(desc(pc1)) %>%
+1. **Percentage of total players the model accurately selects.** If we were selecting quarter backs, we would use the first principal component scores to obtain the top 10 quarter backs in ascending order. We would then compare the results against the actual top 10 quarter backs for that season. In these results, 70% (7 out of 10 QBs) were accurately selected as being in the top 10 for total fantasy points. 
+
+2. **Difference in total fantasy points of the top 20 players.** The top 20 players for each position are isolated using their associated principal component scores. The sum of the total fantasy points for the top 20 players are then subtracted from the what the actual total fantasy points for players in the top 20 in each position had to obtain the delta. 
+
+3. **Absolute difference in position rank by player.** Each player will have the net difference in their position rank between the model and their actual rank for that season. In the above table, for example, the model selects Justin Herbert as #2 QB for fantasy but was actually #11 after the regular season, making the net -11.  
+
+Now using the model's picks for the top ten quarter backs, 70% of those selected in the top 10 were actually in the top ten during the 2022 regular season. The total fantasy points for the quarter backs picked by the model were 3131.2. The total fantasy points the top ten quarter backs actually had was 3302 which means the model was off by 5% in regard to quarter back selection. The difference for rank by position are shown below. Players with a negative delta are those that were ranked higher in the model but came in lower after the season.
+
+```{r}
+
+rank_diff %>%
+  mutate(PositionRankDelta=PositionRank-Actual_PositionRank) %>%
   tibble() %>%
+  select(Model_Player,PositionRankDelta) %>%
   print(n=10)
 
 ```
 
+## Principal Components - Fantasy Weights
+
+While the results are seemingly great, this was when I recalled that these principal components only account for half of the total variation. Considering that the goal of singular value decomposition via principal component is to maximize the total variation in the data, I had to think we can do much better. The first principal component which was attributed to quarter backs load high for interceptions and fumbles. While it is justifiable to reason that high-volume quarter backs will naturally intercept and fumble more often solely as a function of volume, would the *best* quarter backs really load high for those? To better understand this, the exact same process above was done to calculate new component scores, this time only including variables that are used for fantasy scoring. I first created these additional variables by multiplying them by my league's point system. For example, rushing touch downs were multiplied by six and became the new variable used for the svd. Those variables were passing yards, passing touchdowns, interceptions, rushing yards, rushing touchdowns, receptions, receiving yards, receiving touch downs, fumbles, and fumbles lost. 
+
+
+```{r, eval=FALSE,echo=FALSE,include=FALSE}
+
+# pc2
+# actual
+fantasy %>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR) %>%
+  tibble() %>%
+  print(n=10) # mostly WR RB like the pc analysis shows; top 10 are evenly split between teh best WR and best TE
+# predicted
+fantasy %>%
+  mutate(pc2 = (0.732909476*Games)+(0.954222398*Targets)+(0.944470501*Receptions)+
+           (0.956157602*ReceivingYards)+(0.882981792*ReceivingTDs))%>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
+  arrange(desc(pc2)) %>%
+  tibble() %>%
+  print(n=10)
+
+
+# pc3
+fantasy %>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR) %>%
+  tibble() %>%
+  print(n=10) 
+
+fantasy %>%
+  mutate(pc3 = (0.961141891*RushingAttempts)+(0.966004285*RushingYards)+(0.910680715*RushingTDs)) %>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc3) %>%
+  arrange(desc(pc3)) %>%
+  tibble() %>%
+  print(n=30)
+
+pc_og$loadings[,3]
+
+# using all variables 
+fantasy %>%
+  mutate(pc1 = pc_og$scores[,1],
+         pc2 = pc_og$scores[,2],
+         pc3 = pc_og$scores[,3],
+         ovr = pc1+pc2+pc3) %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1,pc2,pc3,ovr) %>%
+  arrange(desc(ovr)) %>%
+  filter(FantasyPosition=="QB") %>%
+  tibble() %>%
+  print(n=100) %>%
+  slice_max(FantasyPointsPPR,n=30) %>%
+  summarize(sum(FantasyPointsPPR))
+  
+
+fantasy %>%
+  mutate(pc1 = (0.96755758*Completions)+(0.96979088*Attempts)+(0.96705865*PassingYards)
+         +(0.93954025*PassingTDs)+(0.93859580*Interceptions)+(0.77179023*Fumbles)) %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
+  arrange(desc(pc1)) %>%
+  # tibble() %>%
+  # print(n=30) %>%
+  slice_max(pc1,n=30) %>%
+  summarize(sum(FantasyPointsPPR))
+
+```
+
+
+### Results
+
+The parallel test suggested three components were sufficient to explain the maximum variation in the data. 
+
+```{r,fig.align='center'}
+
+prcomp(ffnorm_score,scale.=FALSE) %>%
+  fviz_eig(addlabels=TRUE)
+
+```
+
+The first three components alone account for 88.1% of the total variation within the data set, much better than the 50% obtained previously. The mean item complexity = 1.1. This means that each individual variable included in the principal components only load significantly on one component. This is the more ideal scenario since it makes defining the components much easier. Previously we had a mean item complexity of 1.5, meaning that half of the variables on average load significantly to two components. The first three components are then defined using a loading threshold of .7. 
+
+```{r,fig.width=12,fig.height=10,fig.align='center'}
+
+pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
+
+test <- data.frame(pc_scoring$loadings[,c(1:3)])
+test$variable <- row.names(test)
+test_melt <- melt(test,id.vars = "variable")
+colnames(test_melt) <- c("variable","component","value")
+test_melt %>%
+  mutate(component=fct_recode(component,PC1="RC1",PC2="RC2",PC3="RC3")) %>%
+  ggplot(aes(x=variable,y=component,fill=value,label=round(value,2)))+
+  geom_tile(color = "white") +
+  geom_text(size=3,face="bold",color="black")+
+  scale_fill_gradient2(low = "red", high = "blue", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), space = "Lab", 
+                       name="Loading") +
+  theme_bw()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.title.x = element_blank()) +
+  labs(title = "Principal Component Loadings",y="Principal Components")
+
+```
+
+### Dimension Definitions
+rotation: maximum variance 
+
+**PC1 Definition: Low Performing QBs**\
+Attributes: (-) Passing Yards, (-) Passing Touchdowns, (+) Fumbles, (+) Interceptions\
+
+1. PC1 would be attributed to quite literally the least performing quarter backs. The significantly negative loadings for passing yards and touch downs mean that quarter backs that load high to this component are unable to score touch downs. Additionally, they load extremely high for fumbles and interceptions, a confirmation of their under performance in relevant categories. PC1 would only be attributed to quarter backs since these in-game stats are generally relevant to them alone. 
+  
+**PC2 Definition: High-Performing Distance Efficiency**\
+Attributes: + Receiving Touchdowns, + Receiving Yards, + Receptions\
+
+2. PC2 can be attributed to total overall offensive efficiency given that we load extremely high for receiving touchdowns, receiving yards, and receptions. Players that load high to this category are likely wide receivers since wide receivers are more used for long range plays. The key distinction to make here is that this describes the overall long range efficiency only, since rushing yards and rushing touch downs are not accounted for in this component. Additionally, *overall* long range efficiency would better describe this component, since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a better quarter back. 
+  
+**PC3 Definition: High-Performing Driving Efficiency**\
+Attributes: + Rushing Touchdowns, + Rushing Yards\
+
+3. PC3 would be attributed to overall driving efficiency in the same fashion. Likewise, this is also a combination of the offense line and the quarterback, considering that high performing drivers will still be unable to score touch downs in some fashion if their quarter back cannot perform. I would expect running backs and tight ends to load high to this category.  
+
+The goal is to isolate players in these areas. 
+
+
+```{r,fig.width=12,fig.height=10,fig.align='center'}
+s <- prcomp(ffnorm_score,scale.=FALSE)
+
+fviz_pca_biplot(s,
+                    # Individuals
+                
+                    geom.ind = "point",
+                    geom = c("arrow", "point"),
+                    arrow.color = "black",
+                    label = "var",
+                    fill.ind = fantasy$FantasyPosition,
+                    col.ind = "black",
+                    pointshape = 21, 
+                    pointsize = 1,
+                    palette = "jco",
+                    addEllipses = TRUE, 
+                    repel = TRUE,
+                    # Variables
+                    alpha.var = "contrib", 
+                    col.var = "black",
+                    gradient.cols = "RdYlBu") +
+  geom_rect(aes(xmin = -13.5, ymin = 0, xmax = -7.5, ymax = -3.5), 
+            color = "grey30", 
+            alpha = 0, 
+            show.legend = FALSE) +  # Hide legend for this rect
+  annotate("text", label = "Best Overall QBs", x = -12, y = -0.5, color = "grey30") +
+  geom_rect(aes(xmin = 0.25, ymin = 1, xmax = 1, ymax = 1.75), 
+            color = "grey30", 
+            alpha = 0, 
+            show.legend = FALSE) +  # Hide legend for this rect
+  annotate("text", label = "Best Offensive \n long range players", x = -2.5, y = 2.5, color = "grey30") +
+  geom_curve(aes(xend = 0.8, yend = 1.85, x = -2.8, y = 2.8), 
+             color = "grey30", 
+             arrow = arrow(), 
+             curvature = -0.4, 
+             show.legend = FALSE) 
+
+```
+
+The coordinate plane shows the first component on the x axis and the second on the y axis. The `scoring_` and associated arrows are the eigen vectors on this principal component space. An increase on the x axis, or the first principal component, we increase in *under* performance. We would want to obtain players that negative contribute to this component ie quadrant three. In the same fashion, an increase on the y axis means an increase in long range efficiency. This can only show the first two components. Based on the above, the we'd use the first component for quarter backs, the second for wide receivers, and the third for tight ends and running backs. However, since WRs, TEs, and RBs are much more similar in position (which the model concurs via the boxed region in quadrant I) than QBs, those three positions were included and ranked for PC2 and PC3. The allows us to more effectively see the primary position and players the model decides to pick for each category. In summary, principal component one was used for quarter backs, principal components two and three were used for all other positions at first. An overall score was then calculated using PC2 and PC3 only. Players with the highest overall scores would load significantly well to PC2 and PC3. These players would be both the best of the best in both long-range and driving efficiency. This allows us to see what positions the model picks for long-range (PC2) and driving (PC3) efficiency. Note that this tells us what position would be the best at both but *does not* tell us if they are the best at both. 
+
+```{r}
+fantasy %>%
+  mutate(pc1 = pc_og$scores[,1],
+         pc2 = pc_og$scores[,2],
+         pc3 = pc_og$scores[,3],
+         pc2_3 = pc2+pc3,
+         ovr = pc1+pc2+pc3) %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1,pc2,pc3,pc2_3,ovr) %>%
+  filter(FantasyPosition!="QB") %>%
+  group_by(FantasyPosition) %>%
+  summarize(n=mean(pc2_3)) %>%
+  arrange(desc(n))
+```
+
+We see that running backs and wide receivers on average have positive scores for both, meaning that they contribute positively to the second and third components (long and driving efficiency). Surprisingly enough, tight tends on average are negative in both regards. The model rarely picks tight ends at all across all three of these dimensions. The model tries to pick the best overall QBs via the lowest component scores for PC1, the best wide receivers for PC2, and the best RBs for PC3. That processed was followed with plans of addressing the 'tight end' problem afterwards. The model's results for QBs, WRs, and RBs are below.
+
+### Model Picks
+#### PC1 - QBs
+
+```{r}
+pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
+
+# fantasy %>%
+#   mutate(pc1 = (-.956*scoring_PassingYards)+(-.94*scoring_PassingTDs)+(.933*scoring_Interceptions)+
+#            (0.850*scoring_Fumbles)+(0.711*scoring_FumblesLost)) %>%
+#   filter(FantasyPosition=="QB") %>%
+#   select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1) %>%
+#   arrange(pc1) %>%
+#   tibble() 
+# 
+
+rank_actual <- 
+fantasy %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR) %>%
+  tibble()
+
+rank_pred <- 
+fantasy %>%
+  mutate(pc1 = (-.956*scoring_PassingYards)+(-.94*scoring_PassingTDs)+(.933*scoring_Interceptions)+
+           (0.850*scoring_Fumbles)+(0.711*scoring_FumblesLost)) %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc1) %>%
+  arrange(pc1) %>%
+  tibble() %>%
+  rename("Model_OverallRank" = "Rank",
+         "Actual_PositionRank"="PositionRank",
+         "Model_Player"="Player",
+         "Model_FantasyPointsPPR"="FantasyPointsPPR",
+         "Model_PCscore"="pc1") %>%
+  mutate(Model_PositionRank = c(1:82),.before = Model_Player) 
+
+rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
+knitr::kable(rank_diff)
+
+```
+
+The results are nearly identical to the previous method (on the original variables). Model accurately picks seven of the top ten players.
+
+#### PC2 - WR
+
+```{r}
+pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
+
+# fantasy %>%
+#   mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+#   filter(FantasyPosition=="WR") %>%
+#   select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
+#   arrange(desc(pc2)) %>%
+#   tibble()
+
+
+rank_actual <- 
+fantasy %>%
+  filter(FantasyPosition=="WR") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR) %>%
+  tibble()
+
+rank_pred <- 
+fantasy %>%
+  mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc2) %>%
+  arrange(desc(pc2)) %>%
+  tibble() %>%
+  rename("Model_OverallRank" = "Rank",
+         "Actual_PositionRank"="PositionRank",
+         "Model_Player"="Player",
+         "Model_FantasyPointsPPR"="FantasyPointsPPR",
+         "Model_PCscore"="pc2") %>%
+  mutate(Model_PositionRank = c(1:575),.before = Model_Player)
+
+rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
+knitr::kable(rank_diff)
+
+```
+
+#### PC3 - RB 
+
+```{r}
+pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
+
+fantasy %>%
+  mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+  filter(FantasyPosition=="WR") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
+  arrange(desc(pc2)) %>%
+  tibble() %>%
+  print(n=10)
+
+
+rank_actual <- 
+fantasy %>%
+  filter(FantasyPosition=="WR") %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR) %>%
+  tibble()
+
+rank_pred <- 
+fantasy %>%
+  mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+  select(Rank,PositionRank,Player,FantasyPointsPPR,pc2) %>%
+  arrange(desc(pc2)) %>%
+  tibble() %>%
+  rename("Model_OverallRank" = "Rank",
+         "Actual_PositionRank"="PositionRank",
+         "Model_Player"="Player",
+         "Model_FantasyPointsPPR"="FantasyPointsPPR",
+         "Model_PCscore"="pc2") %>%
+  mutate(Model_PositionRank = c(1:575),.before = Model_Player) %>%
+  print(n=10)
+
+rank_diff <- cbind.data.frame(rank_actual[1:10,],rank_pred[1:10,-1])
+knitr::kable(rank_diff)
+
+```
+
+```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
+
+fviz_scre
+
+fa.parallel(fantasy_cormatrix_scoring,n.iter=100,fa="pc", main="Parallel Scree")
+
+# PA suggests 3 components
+
+pc_scoring <- principal(ffnorm_score,nfactors=3,scores=TRUE,covar=FALSE,rotate="varimax") 
+
+# RMSE = .99; cumulative explaind variance 88%; Mean item complexity is 1.1 as opposed to original 1.5 meaning interpretation is much easier as all variables load to only one component
+
+print(pc_scoring$loadings,cutoff=0)
+
+s <- prcomp(ffnorm_score,scale.=FALSE)
+
+fviz_pca_biplot(s,
+                    # Individuals
+                    geom.ind = "point",
+                    geom = c("arrow", "point"),
+                    arrow.color = "black",
+                    label = "var",
+                    fill.ind = fantasy$FantasyPosition,
+                    col.ind = "black",
+                    pointshape = 21, 
+                    pointsize = 1,
+                    palette = "jco",
+                    addEllipses = TRUE, 
+                    repel = TRUE,
+                    # Variables
+                    alpha.var = "contrib", 
+                    col.var = "black",
+                    gradient.cols = "RdYlBu") +
+  geom_rect(aes(xmin = -13.5, ymin = 0, xmax = -7.5, ymax = -3.5), 
+            color = "grey30", 
+            alpha = 0, 
+            show.legend = FALSE) +  # Hide legend for this rect
+  annotate("text", label = "Best Overall QBs", x = -12, y = -0.5, color = "grey30") +
+  geom_rect(aes(xmin = 0.25, ymin = 1, xmax = 1, ymax = 1.75), 
+            color = "grey30", 
+            alpha = 0, 
+            show.legend = FALSE) +  # Hide legend for this rect
+  annotate("text", label = "Best Offensive \n long range players", x = -2.5, y = 2.5, color = "grey30") +
+  geom_curve(aes(xend = 0.8, yend = 1.85, x = -2.8, y = 2.8), 
+             color = "grey30", 
+             arrow = arrow(), 
+             curvature = -0.4, 
+             show.legend = FALSE)  # Hide legend for this curve
+    
+fantasy %>%
+  mutate(pc1 = (-.956*scoring_PassingYards)+(-.94*scoring_PassingTDs)+(.933*scoring_Interceptions)+
+           (0.850*scoring_Fumbles)+(0.711*scoring_FumblesLost)) %>%
+  filter(FantasyPosition=="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1) %>%
+  arrange(pc1) %>%
+  tibble() %>%
+  print(n=20)
+
+
+fantasy %>%
+  mutate(pc2 = (0.958*scoring_Receptions)+(0.976*scoring_ReceivingYards)+(.923*scoring_ReceivingTDs)) %>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc2) %>%
+  arrange(desc(pc2)) %>%
+  tibble() %>%
+  print(n=50) # couple TEs in the mix, 1 RB but mostly WRs as typical
+
+
+
+fantasy %>%
+  mutate(pc3 = (0.961*scoring_RushingYards)+(0.939*scoring_RushingTDs)) %>%
+  filter(FantasyPosition!="QB") %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc3) %>%
+  arrange(desc(pc3)) %>%
+  tibble() %>%
+  print(n=50)
+
+# using all variables 
+
+fantasy %>%
+  mutate(pc1 = pc_og$scores[,1],
+         pc2 = pc_og$scores[,2],
+         pc3 = pc_og$scores[,3],
+         ovr = pc1+pc2+pc3) %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1,pc2,pc3,ovr) %>%
+  arrange(desc(ovr)) %>%
+  #filter(FantasyPosition=="QB") %>%
+  tibble() %>%
+  print(n=20) %>%
+  slice_min(FantasyPointsPPR,n=30) %>%
+  summarize(sum(FantasyPointsPPR))
+
+# BIPLOT
+
+
+s <- prcomp(ffnorm_score,scale. = FALSE)
+
+prcomp(ffnorm_score,scale.=FALSE)$val
+
+# str(iris)
+s$rotation[,c(2,3)]
+# s <- data.frame(s$x)
+
+# dim(s)
+fviz_pca_biplot(s,
+                    # Individuals
+                    geom.ind = "point",
+                    axes = c(3,2),
+                    fill.ind = fantasy$FantasyPosition,
+                    col.ind = "black",
+                    pointshape = 21, pointsize = 1,
+                    palette = "jco",
+                    addEllipses = TRUE, 
+                    # Variables
+                    alpha.var ="contrib", col.var = NA,
+                    gradient.cols = "RdYlBu")+geom_label("text",x=5,y=7,label="some text")
+
+
+# BY POSITION 
+
+fantasy %>%
+  mutate(pc1 = pc_og$scores[,1],
+         pc2 = pc_og$scores[,2],
+         pc3 = pc_og$scores[,3],
+         ovr = pc1+pc2+pc3) %>%
+  select(Rank,PositionRank,FantasyPosition,Player,FantasyPointsPPR,pc1,pc2,pc3,ovr) %>%
+  arrange(desc(ovr)) %>%
+  tibble() %>%
+  print(n=100)
+  
+
+# DRAFT ORDER QB > RB > WR > TE 
+
+```
+
+# 2023 NFL season
+
+```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
+
+fantasy2023 <- data.frame(read.xlsx("Fantasy Football Data/archive/fantasy_mergedsource_2023.xlsx"))
+fantasy2023 %<>% mutate(Player=gsub("\\*","",Player),
+                        Player=gsub("\\+","",Player))  
+
+fantasy
+fantasy2023 %>%
+  select(Player) %>%
+  tibble()
+fantasy2023 %>%
+  write.xlsx("fantasy2023.xlsx")
+  
+```
+
+# 2024
+
+```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
+
+fantasyprojection <- data.frame(read.xlsx("Fantasy Football Data/archive/fantasypointsprojections2024.xlsx"))
+View(fantasyprojection)
+```
 
 
 
 # cont
 
-```{r, eval=FALSE,echo=FALSE,include=FALSE}
+```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
 fantasy %>%
   group_by(FantasyPosition) %>%
   filter(!is.na(ADP)) %>%
@@ -594,7 +1060,7 @@ fantasy %>%
 mean(fantasy$ADP,na.rm=TRUE)
 ```
 
-```{r, eval=FALSE,echo=FALSE,include=FALSE}
+```{r, echo=FALSE, eval=FALSE,warning=FALSE,include=FALSE}
 
 # component space (pc1|pc2)
 

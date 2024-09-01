@@ -188,8 +188,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration">Data Exploration</a></li>
   <li><a href="#analysis-svd-pca" id="toc-analysis-svd-pca" class="nav-link" data-scroll-target="#analysis-svd-pca">Analysis SVD PCA</a></li>
-  <li><a href="#principal-components" id="toc-principal-components" class="nav-link" data-scroll-target="#principal-components">Principal Components</a></li>
+  <li><a href="#principal-components---in-game-stats" id="toc-principal-components---in-game-stats" class="nav-link" data-scroll-target="#principal-components---in-game-stats">Principal Components - In-Game Stats</a></li>
+  <li><a href="#principal-components---fantasy-weights" id="toc-principal-components---fantasy-weights" class="nav-link" data-scroll-target="#principal-components---fantasy-weights">Principal Components - Fantasy Weights</a></li>
   </ul></li>
+  <li><a href="#nfl-season-1" id="toc-nfl-season-1" class="nav-link" data-scroll-target="#nfl-season-1">2023 NFL season</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">2024</a></li>
   <li><a href="#cont" id="toc-cont" class="nav-link" data-scroll-target="#cont">cont</a></li>
   </ul>
 </nav>
@@ -1176,8 +1179,8 @@ X1 3.56</code></pre>
 </div>
 </div>
 </section>
-<section id="principal-components" class="level2">
-<h2 class="anchored" data-anchor-id="principal-components">Principal Components</h2>
+<section id="principal-components---in-game-stats" class="level2">
+<h2 class="anchored" data-anchor-id="principal-components---in-game-stats">Principal Components - In-Game Stats</h2>
 <p>rotation: maximum variance</p>
 <p><strong>PC1 Definition: High-Volume Performing QBs</strong><br>
 Attributes: Completions, Attempts, Passing Yards, Passing TDs, Interceptions, Fumbles<br>
@@ -1189,7 +1192,7 @@ Attributes: Completions, Attempts, Passing Yards, Passing TDs, Interceptions, Fu
 Attributes: Games Started, Targets, Receptions, Receiving Yards, Receiving TDs<br>
 </p>
 <ol start="2" type="1">
-<li>PC2 can be attributed to total overall offensive efficiency given that we load extremely high for targets, receptions, receiving yards, and receiving touchdowns. Players typically defined for this category would be wide receivers, and pc2 is measuring yardage efficiency. Efficiency is important in this context given that we also load high to targets, and even though it is not an inclusion criteria in fantasy scoring, it speaks to the aggressiveness on the offensive side. The key distinction to make here is that this describes the overall long range efficiency only since rushing yards and touch downs are not accounted for in this component. Additionally, <em>overall</em> long range efficiency is justified since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a good quarter back.</li>
+<li>PC2 can be attributed to total overall offensive efficiency given that we load extremely high for targets, receptions, receiving yards, and receiving touchdowns. Players typically defined for this category would be wide receivers, and pc2 is measuring yardage efficiency. Efficiency is important in this context given that we also load high to targets, and even though it is not an inclusion criteria in fantasy scoring, it speaks to the aggressiveness on the offensive side. The key distinction to make here is that this describes the overall long range efficiency only, since rushing yards and touch downs are not accounted for in this component. Additionally, <em>overall</em> long range efficiency is justified since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a good quarter back.</li>
 </ol>
 <p><strong>PC3 Definition: Offensive Driving Efficiency</strong><br>
 Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
@@ -1221,18 +1224,133 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 </div>
 </div>
 <p>Then we use the eigen values to calculate the principal component scores for each player, only including variables that loaded high. The players with the highest scores would be the highest performing QBs predicted for the 2022 season. Two things to note. Firstly, the position and overall rank will be the same here since we’ve define our first principal component as attributes of quarter backs only. Secondly, the model’s fantasy points ppr would not be known. The purpose here is to calculate scores and draft in ascending order. We can, however, calculate the difference in fantasy points had we taken the models’ picks. In the table, the model’s fantasy points are the same as actual fantasy points to make this calculation easier. The results are shown below.</p>
-<p>Here’s the difference in the models vs the actual performance for the top 10 quarter backs of the 2022 regular season.</p>
+<p>Methods of measuring model performance:</p>
+<ol type="1">
+<li><p><strong>Percentage of total players the model accurately selects.</strong> If we were selecting quarter backs, we would use the first principal component scores to obtain the top 10 quarter backs in ascending order. We would then compare the results against the actual top 10 quarter backs for that season. In these results, 70% (7 out of 10 QBs) were accurately selected as being in the top 10 for total fantasy points.</p></li>
+<li><p><strong>Difference in total fantasy points of the top 20 players.</strong> The top 20 players for each position are isolated using their associated principal component scores. The sum of the total fantasy points for the top 20 players are then subtracted from the what the actual total fantasy points for players in the top 20 in each position had to obtain the delta.</p></li>
+<li><p><strong>Absolute difference in position rank by player.</strong> Each player will have the net difference in their position rank between the model and their actual rank for that season. In the above table, for example, the model selects Justin Herbert as #2 QB for fantasy but was actually #11 after the regular season, making the net -11.</p></li>
+</ol>
+<p>Now using the model’s picks for the top ten quarter backs, 70% of those selected in the top 10 were actually in the top ten during the 2022 regular season. The total fantasy points for the quarter backs picked by the model were 3131.2. The total fantasy points the top ten quarter backs actually had was 3302 which means the model was off by 5% in regard to quarter back selection. The difference for rank by position are shown below. Players with a negative delta are those that were ranked higher in the model but came in lower after the season.</p>
 <div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   Model_Player    PositionRankDelta
+   &lt;chr&gt;                       &lt;dbl&gt;
+ 1 Patrick Mahomes                 0
+ 2 Justin Herbert                 -9
+ 3 Tom Brady                      -9
+ 4 Kirk Cousins                   -4
+ 5 Joe Burrow                      1
+ 6 Jared Goff                     -4
+ 7 Geno Smith                      2
+ 8 Josh Allen                      6
+ 9 Trevor Lawrence                 2
+10 Aaron Rodgers                  -3</code></pre>
+</div>
+</div>
+</section>
+<section id="principal-components---fantasy-weights" class="level2">
+<h2 class="anchored" data-anchor-id="principal-components---fantasy-weights">Principal Components - Fantasy Weights</h2>
+<p>While the results are seemingly great, this was when I recalled that these principal components only account for half of the total variation. Considering that the goal of singular value decomposition via principal component is to maximize the total variation in the data, I had to think we can do much better. The first principal component which was attributed to quarter backs load high for interceptions and fumbles. While it is justifiable to reason that high-volume quarter backs will naturally intercept and fumble more often solely as a function of volume, would the <em>best</em> quarter backs really load high for those? To better understand this, the exact same process above was done to calculate new component scores, this time only including variables that are used for fantasy scoring. I first created these additional variables by multiplying them by my league’s point system. For example, rushing touch downs were multiplied by six and became the new variable used for the svd. Those variables were passing yards, passing touchdowns, interceptions, rushing yards, rushing touchdowns, receptions, receiving yards, receiving touch downs, fumbles, and fumbles lost.</p>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<p>The parallel test suggested three components were sufficient to explain the maximum variation in the data.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The first three components alone account for 88.1% of the total variation within the data set, much better than the 50% obtained previously. The mean item complexity = 1.1. This means that each individual variable included in the principal components only load significantly on one component. This is the more ideal scenario since it makes defining the components much easier. Previously we had a mean item complexity of 1.5, meaning that half of the variables on average load significantly to two components. The first three components are then defined using a loading threshold of .7.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dimension-definitions" class="level3">
+<h3 class="anchored" data-anchor-id="dimension-definitions">Dimension Definitions</h3>
+<p>rotation: maximum variance</p>
+<p><strong>PC1 Definition: Low Performing QBs</strong><br>
+Attributes: (-) Passing Yards, (-) Passing Touchdowns, (+) Fumbles, (+) Interceptions<br>
+</p>
+<ol type="1">
+<li>PC1 would be attributed to quite literally the least performing quarter backs. The significantly negative loadings for passing yards and touch downs mean that quarter backs that load high to this component are unable to score touch downs. Additionally, they load extremely high for fumbles and interceptions, a confirmation of their under performance in relevant categories. PC1 would only be attributed to quarter backs since these in-game stats are generally relevant to them alone.</li>
+</ol>
+<p><strong>PC2 Definition: High-Performing Distance Efficiency</strong><br>
+Attributes: + Receiving Touchdowns, + Receiving Yards, + Receptions<br>
+</p>
+<ol start="2" type="1">
+<li>PC2 can be attributed to total overall offensive efficiency given that we load extremely high for receiving touchdowns, receiving yards, and receptions. Players that load high to this category are likely wide receivers since wide receivers are more used for long range plays. The key distinction to make here is that this describes the overall long range efficiency only, since rushing yards and rushing touch downs are not accounted for in this component. Additionally, <em>overall</em> long range efficiency would better describe this component, since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a better quarter back.</li>
+</ol>
+<p><strong>PC3 Definition: High-Performing Driving Efficiency</strong><br>
+Attributes: + Rushing Touchdowns, + Rushing Yards<br>
+</p>
+<ol start="3" type="1">
+<li>PC3 would be attributed to overall driving efficiency in the same fashion. Likewise, this is also a combination of the offense line and the quarterback, considering that high performing drivers will still be unable to score touch downs in some fashion if their quarter back cannot perform. I would expect running backs and tight ends to load high to this category.</li>
+</ol>
+<p>The goal is to isolate players in these areas.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The coordinate plane shows the first component on the x axis and the second on the y axis. The <code>scoring_</code> and associated arrows are the eigen vectors on this principal component space. An increase on the x axis, or the first principal component, we increase in <em>under</em> performance. We would want to obtain players that negative contribute to this component ie quadrant three. In the same fashion, an increase on the y axis means an increase in long range efficiency. This can only show the first two components. Based on the above, the we’d use the first component for quarter backs, the second for wide receivers, and the third for tight ends and running backs. However, since WRs, TEs, and RBs are much more similar in position (which the model concurs via the boxed region in quadrant I) than QBs, those three positions were included and ranked for PC2 and PC3. The allows us to more effectively see the primary position and players the model decides to pick for each category. In summary, principal component one was used for quarter backs, principal components two and three were used for all other positions at first. An overall score was then calculated using PC2 and PC3 only. Players with the highest overall scores would load significantly well to PC2 and PC3. These players would be both the best of the best in both long-range and driving efficiency. This allows us to see what positions the model picks for long-range (PC2) and driving (PC3) efficiency. Note that this tells us what position would be the best at both but <em>does not</em> tell us if they are the best at both.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  FantasyPosition       n
+  &lt;fct&gt;             &lt;dbl&gt;
+1 RB               0.455 
+2 WR               0.0738
+3 TE              -0.287 </code></pre>
+</div>
+</div>
+<p>We see that running backs and wide receivers on average have positive scores for both, meaning that they contribute positively to the second and third components (long and driving efficiency). Surprisingly enough, tight tends on average are negative in both regards. The model rarely picks tight ends at all across all three of these dimensions. The model tries to pick the best overall QBs via the lowest component scores for PC1, the best wide receivers for PC2, and the best RBs for PC3. That processed was followed with plans of addressing the ‘tight end’ problem afterwards. The model’s results for QBs, WRs, and RBs are below.</p>
+</section>
+<section id="model-picks" class="level3">
+<h3 class="anchored" data-anchor-id="model-picks">Model Picks</h3>
+<section id="pc1---qbs" class="level4">
+<h4 class="anchored" data-anchor-id="pc1---qbs">PC1 - QBs</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 82 × 6
+    Rank PositionRank FantasyPosition Player          FantasyPointsPPR   pc1
+   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt;
+ 1     1            1 QB              Patrick Mahomes             417. -386.
+ 2     2            2 QB              Josh Allen                  396. -351.
+ 3     7            4 QB              Joe Burrow                  351. -340.
+ 4    19            8 QB              Kirk Cousins                292. -325.
+ 5    13            5 QB              Geno Smith                  304. -316.
+ 6    24           11 QB              Justin Herbert              281. -312.
+ 7    21           10 QB              Jared Goff                  284. -309.
+ 8    25           12 QB              Tom Brady                   272. -304.
+ 9    18            7 QB              Trevor Lawrence             296. -299.
+10    36           13 QB              Aaron Rodgers               239. -281.
+# ℹ 72 more rows</code></pre>
+</div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 4%">
-<col style="width: 10%">
+<col style="width: 3%">
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 11%">
 <col style="width: 13%">
-<col style="width: 14%">
-<col style="width: 15%">
 <col style="width: 13%">
-<col style="width: 19%">
+<col style="width: 11%">
+<col style="width: 16%">
 <col style="width: 9%">
 </colgroup>
 <thead>
@@ -1241,10 +1359,11 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <th style="text-align: right;">PositionRank</th>
 <th style="text-align: left;">Player</th>
 <th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_PositionRank</th>
 <th style="text-align: right;">Model_PositionRank</th>
-<th style="text-align: left;">Player</th>
+<th style="text-align: left;">Model_Player</th>
 <th style="text-align: right;">Model_FantasyPointsPPR</th>
-<th style="text-align: right;">Model_Score</th>
+<th style="text-align: right;">Model_PCscore</th>
 </tr>
 </thead>
 <tbody>
@@ -1254,9 +1373,10 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <td style="text-align: left;">Patrick Mahomes</td>
 <td style="text-align: right;">417.4</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">Patrick Mahomes</td>
 <td style="text-align: right;">417.4</td>
-<td style="text-align: right;">6180.013</td>
+<td style="text-align: right;">-385.8120</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
@@ -1264,29 +1384,32 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <td style="text-align: left;">Josh Allen</td>
 <td style="text-align: right;">395.5</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">Justin Herbert</td>
-<td style="text-align: right;">281.3</td>
-<td style="text-align: right;">5761.349</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Josh Allen</td>
+<td style="text-align: right;">395.5</td>
+<td style="text-align: right;">-350.7159</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">Jalen Hurts</td>
 <td style="text-align: right;">378.0</td>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;">3</td>
-<td style="text-align: left;">Tom Brady</td>
-<td style="text-align: right;">271.7</td>
-<td style="text-align: right;">5760.128</td>
+<td style="text-align: left;">Joe Burrow</td>
+<td style="text-align: right;">350.7</td>
+<td style="text-align: right;">-339.5820</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">7</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Joe Burrow</td>
 <td style="text-align: right;">350.7</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Kirk Cousins</td>
 <td style="text-align: right;">291.6</td>
-<td style="text-align: right;">5476.825</td>
+<td style="text-align: right;">-325.2073</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">13</td>
@@ -1294,65 +1417,419 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <td style="text-align: left;">Geno Smith</td>
 <td style="text-align: right;">303.9</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: left;">Joe Burrow</td>
-<td style="text-align: right;">350.7</td>
-<td style="text-align: right;">5364.627</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Geno Smith</td>
+<td style="text-align: right;">303.9</td>
+<td style="text-align: right;">-316.3577</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">17</td>
 <td style="text-align: right;">6</td>
 <td style="text-align: left;">Justin Fields</td>
 <td style="text-align: right;">296.0</td>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;">6</td>
-<td style="text-align: left;">Jared Goff</td>
-<td style="text-align: right;">284.3</td>
-<td style="text-align: right;">5269.900</td>
+<td style="text-align: left;">Justin Herbert</td>
+<td style="text-align: right;">281.3</td>
+<td style="text-align: right;">-311.7454</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">18</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: left;">Trevor Lawrence</td>
 <td style="text-align: right;">295.6</td>
+<td style="text-align: right;">10</td>
 <td style="text-align: right;">7</td>
-<td style="text-align: left;">Geno Smith</td>
-<td style="text-align: right;">303.9</td>
-<td style="text-align: right;">5126.406</td>
+<td style="text-align: left;">Jared Goff</td>
+<td style="text-align: right;">284.3</td>
+<td style="text-align: right;">-309.3991</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">19</td>
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">Kirk Cousins</td>
 <td style="text-align: right;">291.6</td>
+<td style="text-align: right;">12</td>
 <td style="text-align: right;">8</td>
-<td style="text-align: left;">Josh Allen</td>
-<td style="text-align: right;">395.5</td>
-<td style="text-align: right;">5095.194</td>
+<td style="text-align: left;">Tom Brady</td>
+<td style="text-align: right;">271.7</td>
+<td style="text-align: right;">-304.4806</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">20</td>
 <td style="text-align: right;">9</td>
 <td style="text-align: left;">Daniel Jones</td>
 <td style="text-align: right;">289.0</td>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;">9</td>
 <td style="text-align: left;">Trevor Lawrence</td>
 <td style="text-align: right;">295.6</td>
-<td style="text-align: right;">4958.574</td>
+<td style="text-align: right;">-299.4071</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">21</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: left;">Jared Goff</td>
 <td style="text-align: right;">284.3</td>
+<td style="text-align: right;">13</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: left;">Aaron Rodgers</td>
 <td style="text-align: right;">239.2</td>
-<td style="text-align: right;">4479.419</td>
+<td style="text-align: right;">-280.7368</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The results are nearly identical to the previous method (on the original variables). Model accurately picks seven of the top ten players.</p>
+</section>
+<section id="pc2---wr" class="level4">
+<h4 class="anchored" data-anchor-id="pc2---wr">PC2 - WR</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 218 × 6
+    Rank PositionRank FantasyPosition Player            FantasyPointsPPR   pc2
+   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                        &lt;dbl&gt; &lt;dbl&gt;
+ 1     5            1 WR              Justin Jefferson              369.  343.
+ 2     9            3 WR              Davante Adams                 336.  321.
+ 3     8            2 WR              Tyreek Hill                   347.  320.
+ 4    11            4 WR              Stefon Diggs                  317.  304.
+ 5    16            6 WR              A.J. Brown                    300.  291.
+ 6    15            5 WR              CeeDee Lamb                   302.  285.
+ 7    27            8 WR              Jaylen Waddle                 259.  248.
+ 8    26            7 WR              Amon-Ra St. Brown             268.  248.
+ 9    28            9 WR              DeVonta Smith                 255.  247.
+10    32           10 WR              Amari Cooper                  246   238.
+# ℹ 208 more rows</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank</th>
+<th style="text-align: right;">PositionRank</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_PositionRank</th>
+<th style="text-align: right;">Model_PositionRank</th>
+<th style="text-align: left;">Model_Player</th>
+<th style="text-align: right;">Model_FantasyPointsPPR</th>
+<th style="text-align: right;">Model_PCscore</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">368.7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">368.7</td>
+<td style="text-align: right;">343.4864</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">347.2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">335.5</td>
+<td style="text-align: right;">321.2936</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">335.5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">347.2</td>
+<td style="text-align: right;">319.6640</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">316.6</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">316.6</td>
+<td style="text-align: right;">303.8524</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">301.6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Travis Kelce</td>
+<td style="text-align: right;">316.3</td>
+<td style="text-align: right;">302.4248</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">299.6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">299.6</td>
+<td style="text-align: right;">291.2316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">267.6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">301.6</td>
+<td style="text-align: right;">284.9864</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">259.2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">259.2</td>
+<td style="text-align: right;">248.4996</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">267.6</td>
+<td style="text-align: right;">248.0896</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">246.0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">246.5056</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
+<section id="pc3---rb" class="level4">
+<h4 class="anchored" data-anchor-id="pc3---rb">PC3 - RB</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 218 × 6
+    Rank PositionRank FantasyPosition Player            FantasyPointsPPR   pc2
+   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                        &lt;dbl&gt; &lt;dbl&gt;
+ 1     5            1 WR              Justin Jefferson              369.  343.
+ 2     9            3 WR              Davante Adams                 336.  321.
+ 3     8            2 WR              Tyreek Hill                   347.  320.
+ 4    11            4 WR              Stefon Diggs                  317.  304.
+ 5    16            6 WR              A.J. Brown                    300.  291.
+ 6    15            5 WR              CeeDee Lamb                   302.  285.
+ 7    27            8 WR              Jaylen Waddle                 259.  248.
+ 8    26            7 WR              Amon-Ra St. Brown             268.  248.
+ 9    28            9 WR              DeVonta Smith                 255.  247.
+10    32           10 WR              Amari Cooper                  246   238.
+# ℹ 208 more rows</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 575 × 6
+   Model_OverallRank Actual_PositionRank Model_PositionRank Model_Player     
+               &lt;dbl&gt;               &lt;dbl&gt;              &lt;int&gt; &lt;chr&gt;            
+ 1                 5                   1                  1 Justin Jefferson 
+ 2                 9                   3                  2 Davante Adams    
+ 3                 8                   2                  3 Tyreek Hill      
+ 4                11                   4                  4 Stefon Diggs     
+ 5                12                   1                  5 Travis Kelce     
+ 6                16                   6                  6 A.J. Brown       
+ 7                15                   5                  7 CeeDee Lamb      
+ 8                27                   8                  8 Jaylen Waddle    
+ 9                26                   7                  9 Amon-Ra St. Brown
+10                28                   9                 10 DeVonta Smith    
+# ℹ 565 more rows
+# ℹ 2 more variables: Model_FantasyPointsPPR &lt;dbl&gt;, Model_PCscore &lt;dbl&gt;</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank</th>
+<th style="text-align: right;">PositionRank</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_PositionRank</th>
+<th style="text-align: right;">Model_PositionRank</th>
+<th style="text-align: left;">Model_Player</th>
+<th style="text-align: right;">Model_FantasyPointsPPR</th>
+<th style="text-align: right;">Model_PCscore</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">368.7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">368.7</td>
+<td style="text-align: right;">343.4864</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">347.2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">335.5</td>
+<td style="text-align: right;">321.2936</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">335.5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">347.2</td>
+<td style="text-align: right;">319.6640</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">316.6</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">316.6</td>
+<td style="text-align: right;">303.8524</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">301.6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Travis Kelce</td>
+<td style="text-align: right;">316.3</td>
+<td style="text-align: right;">302.4248</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">299.6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">299.6</td>
+<td style="text-align: right;">291.2316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">267.6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">301.6</td>
+<td style="text-align: right;">284.9864</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">259.2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">259.2</td>
+<td style="text-align: right;">248.4996</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">267.6</td>
+<td style="text-align: right;">248.0896</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">246.0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">246.5056</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="nfl-season-1" class="level1">
+<h1>2023 NFL season</h1>
+</section>
+<section id="section" class="level1">
+<h1>2024</h1>
 </section>
 <section id="cont" class="level1">
 <h1>cont</h1>
