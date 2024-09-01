@@ -191,8 +191,6 @@ window.Quarto = {
   <li><a href="#principal-components---in-game-stats" id="toc-principal-components---in-game-stats" class="nav-link" data-scroll-target="#principal-components---in-game-stats">Principal Components - In-Game Stats</a></li>
   <li><a href="#principal-components---fantasy-weights" id="toc-principal-components---fantasy-weights" class="nav-link" data-scroll-target="#principal-components---fantasy-weights">Principal Components - Fantasy Weights</a></li>
   </ul></li>
-  <li><a href="#nfl-season-1" id="toc-nfl-season-1" class="nav-link" data-scroll-target="#nfl-season-1">2023 NFL season</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">2024</a></li>
   <li><a href="#cont" id="toc-cont" class="nav-link" data-scroll-target="#cont">cont</a></li>
   </ul>
 </nav>
@@ -1324,22 +1322,6 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <section id="pc1---qbs" class="level4">
 <h4 class="anchored" data-anchor-id="pc1---qbs">PC1 - QBs</h4>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 82 × 6
-    Rank PositionRank FantasyPosition Player          FantasyPointsPPR   pc1
-   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt;
- 1     1            1 QB              Patrick Mahomes             417. -386.
- 2     2            2 QB              Josh Allen                  396. -351.
- 3     7            4 QB              Joe Burrow                  351. -340.
- 4    19            8 QB              Kirk Cousins                292. -325.
- 5    13            5 QB              Geno Smith                  304. -316.
- 6    24           11 QB              Justin Herbert              281. -312.
- 7    21           10 QB              Jared Goff                  284. -309.
- 8    25           12 QB              Tom Brady                   272. -304.
- 9    18            7 QB              Trevor Lawrence             296. -299.
-10    36           13 QB              Aaron Rodgers               239. -281.
-# ℹ 72 more rows</code></pre>
-</div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
@@ -1486,22 +1468,6 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <section id="pc2---wr" class="level4">
 <h4 class="anchored" data-anchor-id="pc2---wr">PC2 - WR</h4>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 218 × 6
-    Rank PositionRank FantasyPosition Player            FantasyPointsPPR   pc2
-   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                        &lt;dbl&gt; &lt;dbl&gt;
- 1     5            1 WR              Justin Jefferson              369.  343.
- 2     9            3 WR              Davante Adams                 336.  321.
- 3     8            2 WR              Tyreek Hill                   347.  320.
- 4    11            4 WR              Stefon Diggs                  317.  304.
- 5    16            6 WR              A.J. Brown                    300.  291.
- 6    15            5 WR              CeeDee Lamb                   302.  285.
- 7    27            8 WR              Jaylen Waddle                 259.  248.
- 8    26            7 WR              Amon-Ra St. Brown             268.  248.
- 9    28            9 WR              DeVonta Smith                 255.  247.
-10    32           10 WR              Amari Cooper                  246   238.
-# ℹ 208 more rows</code></pre>
-</div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
@@ -1647,39 +1613,6 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <section id="pc3---rb" class="level4">
 <h4 class="anchored" data-anchor-id="pc3---rb">PC3 - RB</h4>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 218 × 6
-    Rank PositionRank FantasyPosition Player            FantasyPointsPPR   pc2
-   &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;           &lt;chr&gt;                        &lt;dbl&gt; &lt;dbl&gt;
- 1     5            1 WR              Justin Jefferson              369.  343.
- 2     9            3 WR              Davante Adams                 336.  321.
- 3     8            2 WR              Tyreek Hill                   347.  320.
- 4    11            4 WR              Stefon Diggs                  317.  304.
- 5    16            6 WR              A.J. Brown                    300.  291.
- 6    15            5 WR              CeeDee Lamb                   302.  285.
- 7    27            8 WR              Jaylen Waddle                 259.  248.
- 8    26            7 WR              Amon-Ra St. Brown             268.  248.
- 9    28            9 WR              DeVonta Smith                 255.  247.
-10    32           10 WR              Amari Cooper                  246   238.
-# ℹ 208 more rows</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 575 × 6
-   Model_OverallRank Actual_PositionRank Model_PositionRank Model_Player     
-               &lt;dbl&gt;               &lt;dbl&gt;              &lt;int&gt; &lt;chr&gt;            
- 1                 5                   1                  1 Justin Jefferson 
- 2                 9                   3                  2 Davante Adams    
- 3                 8                   2                  3 Tyreek Hill      
- 4                11                   4                  4 Stefon Diggs     
- 5                12                   1                  5 Travis Kelce     
- 6                16                   6                  6 A.J. Brown       
- 7                15                   5                  7 CeeDee Lamb      
- 8                27                   8                  8 Jaylen Waddle    
- 9                26                   7                  9 Amon-Ra St. Brown
-10                28                   9                 10 DeVonta Smith    
-# ℹ 565 more rows
-# ℹ 2 more variables: Model_FantasyPointsPPR &lt;dbl&gt;, Model_PCscore &lt;dbl&gt;</code></pre>
-</div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
@@ -1824,12 +1757,6 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 </section>
 </section>
 </section>
-</section>
-<section id="nfl-season-1" class="level1">
-<h1>2023 NFL season</h1>
-</section>
-<section id="section" class="level1">
-<h1>2024</h1>
 </section>
 <section id="cont" class="level1">
 <h1>cont</h1>
