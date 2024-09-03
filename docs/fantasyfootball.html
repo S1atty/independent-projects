@@ -180,7 +180,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#data-set" id="toc-data-set" class="nav-link active" data-scroll-target="#data-set">Data Set</a></li>
+  <li><a href="#data-sets" id="toc-data-sets" class="nav-link active" data-scroll-target="#data-sets">Data Sets</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
   <li><a href="#processing" id="toc-processing" class="nav-link" data-scroll-target="#processing">Processing</a></li>
   <li><a href="#yoy-ppr-trend-for-top-nfl-teams" id="toc-yoy-ppr-trend-for-top-nfl-teams" class="nav-link" data-scroll-target="#yoy-ppr-trend-for-top-nfl-teams">YoY PPR Trend for Top NFL Teams</a></li>
@@ -191,7 +191,6 @@ window.Quarto = {
   <li><a href="#principal-components---in-game-stats" id="toc-principal-components---in-game-stats" class="nav-link" data-scroll-target="#principal-components---in-game-stats">Principal Components - In-Game Stats</a></li>
   <li><a href="#principal-components---fantasy-weights" id="toc-principal-components---fantasy-weights" class="nav-link" data-scroll-target="#principal-components---fantasy-weights">Principal Components - Fantasy Weights</a></li>
   </ul></li>
-  <li><a href="#cont" id="toc-cont" class="nav-link" data-scroll-target="#cont">cont</a></li>
   </ul>
 </nav>
     </div>
@@ -224,8 +223,8 @@ window.Quarto = {
 
 
 <p>Around this time every year, if you’re like me, you’ve already started to mentally prepare for 80% of your conversations to be on the topic of football. For those individuals that would not classify themselves as ffanatics, it’s probably annoying - <em>it’s annoying for all of us</em>. Pretty consistently there will behavior from fans that range from DMs to athletes, verbal assaults to close friends, damaged property, and public humiliation. Who realistically has the mental endurance to only discuss a single topic over an extended period of time for something they’re not physically involved in? It’s those with passion, and although I am not passionate about football (nor justify the aforementioned behavior), it will be my first of hopefully many Fantasy Football leagues. If there’s one thing I am passionate about, it’s tilting the odds in my favor. Usually that’s in the form of taking a creative line on the felt on a 2/5 reg by extracting max value with 67s on a low connected board in a 4! pot as the preflop aggressor. Balance and discipline is the name of the game though, and who are we if we don’t apply the same approach to all areas in life…</p>
-<section id="data-set" class="level1">
-<h1>Data Set</h1>
+<section id="data-sets" class="level1">
+<h1>Data Sets</h1>
 <p>The data contains in-game and Fantasy Football Points per Reception stats by NFL player from 2017 - 2023 for all 17 games of the regular season. Most leagues use a points per reception based metric to calculate fantasy points, or <code>FantasyPointsPPR.</code> Before converting to fantasy points, in-game stats may be weighted or counted differently. My league adopted the following criterion:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -350,6 +349,7 @@ window.Quarto = {
 <p>Two different data sets are used, with a focus on three distinct NFL regular seasons - 2022, 2023, and 2024. Both data sets have been scraped but differ in source, purpose, and underlying information present:</p>
 <p>Data Set 1 - Historical - 2022 &amp; 2023: This data set contains historical data from 2017-2023 for both relevant in-game statistics and fantasy scoring for regular NFL season. This project primarily focuses on 2022 and 2023. Each observation or row in the data set is a NFL athlete’s relevant in-game statistics, such as position, team, completion, attempts, interceptions per attempt, etc. Since most leagues exclude defensive players from their fantasy team, those have been implicitly removed from the data set. The key feature of this data set are the retroactive fantasy rankings/scoring. The total fantasy points, overall rank, and rank by position are available for each player. This enables the direct comparison of calculated rankings from models to their actual rank.</p>
 <p>Players that were on two or more teams in a given season are not assigned a team - but are instead given a makeshift name to highlight this. For example, you may see Baker Mayfield’s registered team as <code>2TM.</code> One notable variable contained in the data set is ADP, or average draft position, representing the number of times the player was drafted across all recorded leagues before the start of the respective season. Additional in-game stats were calculated afterwards. These were <code>YardsPerRushAttempt</code>,<code>CompletionsPerAttempt</code>, <code>TDsPerAttempt</code>, <code>InterceptionsPerAttempt</code>, <code>TDsPerReception</code>, and <code>FumblesLostPerFumble.</code> My fantasy league’s scoring methodologies were also factored into a set of new variables. These variables have the <code>schoring_</code> schema.</p>
+<p>Years 2017-2022 and 2023 are taken from the same source but were scraped separately. Player IDs assigned</p>
 <p>Data Set 2 - Projected - 2024: This data set contains all player match ups for the upcoming regular 2024 NFL season. The in-game statistics recorded for each player are projections based on those teams and match ups. One benefit of this data set is being able to use these projections as inputs of our model to determine which players obtain the most fantasy points, rank them in ascending order, and draft them accordingly. The drawback is that no additional information on how these projections were calculated are known so the accuracy of these projections cannot be confirmed.</p>
 </section>
 <section id="methods" class="level1">
@@ -1228,22 +1228,27 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <li><p><strong>Difference in total fantasy points of the top 20 players.</strong> The top 20 players for each position are isolated using their associated principal component scores. The sum of the total fantasy points for the top 20 players are then subtracted from the what the actual total fantasy points for players in the top 20 in each position had to obtain the delta.</p></li>
 <li><p><strong>Absolute difference in position rank by player.</strong> Each player will have the net difference in their position rank between the model and their actual rank for that season. In the above table, for example, the model selects Justin Herbert as #2 QB for fantasy but was actually #11 after the regular season, making the net -11.</p></li>
 </ol>
-<p>Now using the model’s picks for the top ten quarter backs, 70% of those selected in the top 10 were actually in the top ten during the 2022 regular season. The total fantasy points for the quarter backs picked by the model were 3131.2. The total fantasy points the top ten quarter backs actually had was 3302 which means the model was off by 5% in regard to quarter back selection. The difference for rank by position are shown below. Players with a negative delta are those that were ranked higher in the model but came in lower after the season.</p>
+<p>Now using the model’s picks for the top ten quarter backs, 70% of those selected in the top 10 were actually in the top ten during the 2022 regular season. The total fantasy points for the quarter backs picked by the model were 3131.2. The total fantasy points the top ten quarter backs actually had was 3302 which means the model was off by 5% in regard to quarter back selection. The difference for rank by position are shown below. Players with a negative delta are those that were ranked higher in the model but came in lower after the season. Using a conservative threshold, MAE &gt; 5, Top10 &lt; 70%, and Fantasy Error &gt; 5% will be used. If results are above or below this threshold, different measures should be taken to improve the model.</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 2
-   Model_Player    PositionRankDelta
-   &lt;chr&gt;                       &lt;dbl&gt;
- 1 Patrick Mahomes                 0
- 2 Justin Herbert                 -9
- 3 Tom Brady                      -9
- 4 Kirk Cousins                   -4
- 5 Joe Burrow                      1
- 6 Jared Goff                     -4
- 7 Geno Smith                      2
- 8 Josh Allen                      6
- 9 Trevor Lawrence                 2
-10 Aaron Rodgers                  -3</code></pre>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">FantasyPosition</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: left;">Top10</th>
+<th style="text-align: left;">FantasyError</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">QB</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">70%</td>
+<td style="text-align: left;">5.1%</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
@@ -1304,7 +1309,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 </div>
 </div>
 </div>
-<p>The coordinate plane shows the first component on the x axis and the second on the y axis. The <code>scoring_</code> and associated arrows are the eigen vectors on this principal component space. An increase on the x axis, or the first principal component, we increase in <em>under</em> performance. We would want to obtain players that negative contribute to this component ie quadrant three. In the same fashion, an increase on the y axis means an increase in long range efficiency. This can only show the first two components. Based on the above, the we’d use the first component for quarter backs, the second for wide receivers, and the third for tight ends and running backs. However, since WRs, TEs, and RBs are much more similar in position (which the model concurs via the boxed region in quadrant I) than QBs, those three positions were included and ranked for PC2 and PC3. The allows us to more effectively see the primary position and players the model decides to pick for each category. In summary, principal component one was used for quarter backs, principal components two and three were used for all other positions at first. An overall score was then calculated using PC2 and PC3 only. Players with the highest overall scores would load significantly well to PC2 and PC3. These players would be both the best of the best in both long-range and driving efficiency. This allows us to see what positions the model picks for long-range (PC2) and driving (PC3) efficiency. Note that this tells us what position would be the best at both but <em>does not</em> tell us if they are the best at both.</p>
+<p>The coordinate plane shows the first component on the x axis and the second on the y axis. The <code>scoring_</code> and associated arrows are the eigen vectors on this principal component space. An increase on the x axis, or the first principal component, we increase in <em>under</em> performance. We would want to obtain players that negatively contribute to this component ie quadrant three. In the same fashion, an increase on the y axis means an increase in long range efficiency. This can only show the first two components. Based on the above, the we’d use the first component for quarter backs, the second for wide receivers, and the third for tight ends and running backs. However, since WRs, TEs, and RBs are much more similar in position (which the model concurs via the boxed region in quadrant I) than QBs, those three positions were included and ranked for PC2 and PC3. This allows us to more effectively see the primary position and players the model decides to pick for each category. In summary, principal component one was used for quarter backs, principal components two and three were used for all other positions at first. An overall score was then calculated using PC2 and PC3 only. Players with the highest overall scores would load significantly well to PC2 and PC3. These players would be both the best of the best in both long-range and driving efficiency. This allows us to see what positions the model picks for long-range (PC2) and driving (PC3) efficiency. Note that this tells us what position would be the best at both but <em>does not</em> tell us if they are the best at both.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
@@ -1315,7 +1320,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 3 TE              -0.287 </code></pre>
 </div>
 </div>
-<p>We see that running backs and wide receivers on average have positive scores for both, meaning that they contribute positively to the second and third components (long and driving efficiency). Surprisingly enough, tight tends on average are negative in both regards. The model rarely picks tight ends at all across all three of these dimensions. The model tries to pick the best overall QBs via the lowest component scores for PC1, the best wide receivers for PC2, and the best RBs for PC3. That processed was followed with plans of addressing the ‘tight end’ problem afterwards. The model’s results for QBs, WRs, and RBs are below.</p>
+<p>We see that running backs and wide receivers on average have positive scores for both, meaning that they contribute positively to the second and third components (long and driving efficiency). Surprisingly, tight tends on average are negative in both regards. The model rarely selects tight ends across all three of these dimensions. The results from the model show that the best overall QBs via the lowest component scores should be selected for PC1, the best wide receivers for PC2, and the best RBs for PC3. Only a very select few tight ends are chosen for PC2 and PC3. Of the top 30 highest-performing players in long-range efficiency (PC2), 3 of them were tight ends and only 1 of them was in the top 10 - Travis Kelce. Of the top 30 highest-performing players in driving efficiency (PC3), only Taysom Hill (TE), made the cut. Since fantasy league members must select players for every position, the best approach would be to select QBs, WRs, and RBs only for PC1, PC2, and PC3 respectively and then address tight ends afterwards. That same process was followed to compare the model’s picks using against their actuals for 2022. The results for the three positions are shown below.</p>
 </section>
 <section id="model-picks" class="level3">
 <h3 class="anchored" data-anchor-id="model-picks">Model Picks</h3>
@@ -1325,23 +1330,23 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 3%">
 <col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 8%">
 <col style="width: 11%">
-<col style="width: 11%">
-<col style="width: 13%">
-<col style="width: 13%">
-<col style="width: 11%">
-<col style="width: 16%">
-<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;">Rank</th>
-<th style="text-align: right;">PositionRank</th>
-<th style="text-align: left;">Player</th>
-<th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_OvrRank</th>
 <th style="text-align: right;">Actual_PositionRank</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">Actual_FantasyPointsPPR</th>
+<th style="text-align: right;">PositionRank</th>
 <th style="text-align: right;">Model_PositionRank</th>
 <th style="text-align: left;">Model_Player</th>
 <th style="text-align: right;">Model_FantasyPointsPPR</th>
@@ -1471,23 +1476,23 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 3%">
-<col style="width: 8%">
-<col style="width: 12%">
-<col style="width: 11%">
-<col style="width: 13%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 15%">
 <col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;">Rank</th>
-<th style="text-align: right;">PositionRank</th>
-<th style="text-align: left;">Player</th>
-<th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_OvrRank</th>
 <th style="text-align: right;">Actual_PositionRank</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">Actual_FantasyPointsPPR</th>
+<th style="text-align: right;">PositionRank</th>
 <th style="text-align: right;">Model_PositionRank</th>
 <th style="text-align: left;">Model_Player</th>
 <th style="text-align: right;">Model_FantasyPointsPPR</th>
@@ -1544,66 +1549,66 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <td style="text-align: right;">5</td>
 <td style="text-align: left;">CeeDee Lamb</td>
 <td style="text-align: right;">301.6</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: left;">Travis Kelce</td>
-<td style="text-align: right;">316.3</td>
-<td style="text-align: right;">302.4248</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">299.6</td>
+<td style="text-align: right;">291.2316</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">16</td>
 <td style="text-align: right;">6</td>
 <td style="text-align: left;">A.J. Brown</td>
 <td style="text-align: right;">299.6</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">6</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">A.J. Brown</td>
-<td style="text-align: right;">299.6</td>
-<td style="text-align: right;">291.2316</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">301.6</td>
+<td style="text-align: right;">284.9864</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">26</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
 <td style="text-align: right;">267.6</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">7</td>
-<td style="text-align: left;">CeeDee Lamb</td>
-<td style="text-align: right;">301.6</td>
-<td style="text-align: right;">284.9864</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">259.2</td>
+<td style="text-align: right;">248.4996</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">27</td>
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">Jaylen Waddle</td>
 <td style="text-align: right;">259.2</td>
+<td style="text-align: right;">7</td>
 <td style="text-align: right;">8</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">Jaylen Waddle</td>
-<td style="text-align: right;">259.2</td>
-<td style="text-align: right;">248.4996</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">267.6</td>
+<td style="text-align: right;">248.0896</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">28</td>
 <td style="text-align: right;">9</td>
 <td style="text-align: left;">DeVonta Smith</td>
 <td style="text-align: right;">254.6</td>
-<td style="text-align: right;">7</td>
 <td style="text-align: right;">9</td>
-<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
-<td style="text-align: right;">267.6</td>
-<td style="text-align: right;">248.0896</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">254.6</td>
+<td style="text-align: right;">246.5056</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">32</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: left;">Amari Cooper</td>
 <td style="text-align: right;">246.0</td>
-<td style="text-align: right;">9</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: left;">DeVonta Smith</td>
-<td style="text-align: right;">254.6</td>
-<td style="text-align: right;">246.5056</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">246.0</td>
+<td style="text-align: right;">237.7820</td>
 </tr>
 </tbody>
 </table>
@@ -1616,23 +1621,23 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 3%">
 <col style="width: 8%">
-<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 14%">
+<col style="width: 7%">
+<col style="width: 11%">
 <col style="width: 11%">
 <col style="width: 13%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 15%">
-<col style="width: 9%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: right;">Rank</th>
-<th style="text-align: right;">PositionRank</th>
-<th style="text-align: left;">Player</th>
-<th style="text-align: right;">FantasyPointsPPR</th>
+<th style="text-align: right;">Actual_OvrRank</th>
 <th style="text-align: right;">Actual_PositionRank</th>
+<th style="text-align: left;">Player</th>
+<th style="text-align: right;">Actual_FantasyPointsPPR</th>
+<th style="text-align: right;">PositionRank</th>
 <th style="text-align: right;">Model_PositionRank</th>
 <th style="text-align: left;">Model_Player</th>
 <th style="text-align: right;">Model_FantasyPointsPPR</th>
@@ -1641,127 +1646,183 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Austin Ekeler</td>
+<td style="text-align: right;">372.7</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Jamaal Williams</td>
+<td style="text-align: right;">225.9</td>
+<td style="text-align: right;">106.06931</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Christian McCaffrey</td>
+<td style="text-align: right;">356.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Derrick Henry</td>
+<td style="text-align: right;">302.8</td>
+<td style="text-align: right;">88.05878</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Josh Jacobs</td>
+<td style="text-align: right;">328.3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Josh Jacobs</td>
+<td style="text-align: right;">328.3</td>
+<td style="text-align: right;">83.52732</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Derrick Henry</td>
+<td style="text-align: right;">302.8</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Nick Chubb</td>
+<td style="text-align: right;">281.4</td>
+<td style="text-align: right;">82.29713</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">22</td>
 <td style="text-align: right;">5</td>
+<td style="text-align: left;">Saquon Barkley</td>
+<td style="text-align: right;">284.0</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">Justin Jefferson</td>
-<td style="text-align: right;">368.7</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Justin Jefferson</td>
-<td style="text-align: right;">368.7</td>
-<td style="text-align: right;">343.4864</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Austin Ekeler</td>
+<td style="text-align: right;">372.7</td>
+<td style="text-align: right;">82.07121</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Tyreek Hill</td>
-<td style="text-align: right;">347.2</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Davante Adams</td>
-<td style="text-align: right;">335.5</td>
-<td style="text-align: right;">321.2936</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Nick Chubb</td>
+<td style="text-align: right;">281.4</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Ezekiel Elliott</td>
+<td style="text-align: right;">185.8</td>
+<td style="text-align: right;">76.05968</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">Davante Adams</td>
-<td style="text-align: right;">335.5</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">Tyreek Hill</td>
-<td style="text-align: right;">347.2</td>
-<td style="text-align: right;">319.6640</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">Stefon Diggs</td>
-<td style="text-align: right;">316.6</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">Stefon Diggs</td>
-<td style="text-align: right;">316.6</td>
-<td style="text-align: right;">303.8524</td>
-</tr>
-<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Rhamondre Stevenson</td>
+<td style="text-align: right;">249.1</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">CeeDee Lamb</td>
-<td style="text-align: right;">301.6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">Travis Kelce</td>
-<td style="text-align: right;">316.3</td>
-<td style="text-align: right;">302.4248</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Miles Sanders</td>
+<td style="text-align: right;">216.7</td>
+<td style="text-align: right;">74.20003</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">A.J. Brown</td>
-<td style="text-align: right;">299.6</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: left;">A.J. Brown</td>
-<td style="text-align: right;">299.6</td>
-<td style="text-align: right;">291.2316</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Tony Pollard</td>
+<td style="text-align: right;">248.8</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Saquon Barkley</td>
+<td style="text-align: right;">284.0</td>
+<td style="text-align: right;">68.97659</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">26</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
-<td style="text-align: right;">267.6</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">CeeDee Lamb</td>
-<td style="text-align: right;">301.6</td>
-<td style="text-align: right;">284.9864</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Aaron Jones</td>
+<td style="text-align: right;">248.6</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Kenneth Walker III</td>
+<td style="text-align: right;">202.5</td>
+<td style="text-align: right;">60.82183</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">Jaylen Waddle</td>
-<td style="text-align: right;">259.2</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">Jaylen Waddle</td>
-<td style="text-align: right;">259.2</td>
-<td style="text-align: right;">248.4996</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">DeVonta Smith</td>
-<td style="text-align: right;">254.6</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
-<td style="text-align: right;">267.6</td>
-<td style="text-align: right;">248.0896</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">32</td>
+<td style="text-align: right;">35</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: left;">Amari Cooper</td>
-<td style="text-align: right;">246.0</td>
-<td style="text-align: right;">9</td>
+<td style="text-align: left;">Joe Mixon</td>
+<td style="text-align: right;">239.5</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: left;">DeVonta Smith</td>
-<td style="text-align: right;">254.6</td>
-<td style="text-align: right;">246.5056</td>
+<td style="text-align: left;">Tony Pollard</td>
+<td style="text-align: right;">248.8</td>
+<td style="text-align: right;">60.40856</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-</section>
-</section>
-</section>
-<section id="cont" class="level1">
-<h1>cont</h1>
+<section id="model-accuracy" class="level4">
+<h4 class="anchored" data-anchor-id="model-accuracy">Model Accuracy</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">FantasyPosition</th>
+<th style="text-align: right;">MAE</th>
+<th style="text-align: left;">Top10</th>
+<th style="text-align: left;">FantasyError</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">QB</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: left;">70%</td>
+<td style="text-align: left;">5.1%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RB</td>
+<td style="text-align: right;">5.8</td>
+<td style="text-align: left;">60%</td>
+<td style="text-align: left;">4.5%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WR</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: left;">100%</td>
+<td style="text-align: left;">2.3%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The table shows model accuracy against 2022 actual data. Starting with the mean absolute error, this measures the average difference in rankings for total fantasy points between the model and the actual year. On average, across the three positions, the model is off by 3 - very good for fantasy purposes. Even those who not the sport extremely well will draft players based on emotion, sentiment, or loyalty in some fashion, and having these insights and potential edge (if there is then evidence the scores generalizes well to future seasons) will definitely be an advantage. There are still some areas for improvement, such as the model only accurately selecting 7 of the top 10 players in fantasy points for quarter backs, and 6 of 10 for running backs. Normally, process steps would be reviewed for different ways to improve the model, but in the interest of time that will not be done here. Now that I’m currently in a position where I like the results, what does the next step look like and how can we apply this for the 2024 draft given that draft day is in 24 hours? This is the hardest part. SVD via PCA is commonly done in the post exploratory phase as a part of an ensemble of methods in which predictive models/machine learning methods are then layered on top of it depending on the goal of the research. With my goal of creating the fantasy team with the highest likelihood (albeit unknown) of obtaining the most fantasy points, I outlined different approaches one could take given where I am in the process and knowing that I only have 24 hours left.</p>
+<p><strong>1. Using 2022 PCA Scores to Rank Players and Compare to 2023 Actual</strong></p>
+<p>Process</p>
+<p>PCA on 2022 Data: Perform PCA on 2022 in-game stats. Obtain principal component (PC) scores for each player, focusing on the first few principal components (e.g., PC1, PC2). Rank players based on their PC scores (e.g., higher scores on PC1 may indicate better performance).</p>
+<p>Ranking and Testing: Compare the PCA-derived ranks from 2022 to the actual fantasy points scored by each player in 2023. Evaluate the accuracy of these ranks by calculating metrics like precision or correlation between PCA ranks and actual points. Generalization:</p>
+<p>If 2022 PCA ranks generalize well to 2023 performance, use the same method on 2023 data. Apply this PCA-based ranking approach to the 2024 player pool to predict future performance.</p>
+<p><strong>2. Combining 2022 and 2023 Data for PCA and Regression</strong></p>
+<p>Process</p>
+<p>Data Preparation: Combine the 2022 and 2023 data sets, including in-game stats and calculated fantasy points. Standardize the data to ensure comparability. PCA on Combined Data:</p>
+<p>Perform PCA on the combined data set to capture the underlying structure across both years. Extract PC scores for each player, focusing on the first few components (e.g., PC1, PC2, PC3). Regression Analysis:</p>
+<p>Use the PC scores as features in a regression model along with other in-game stats (e.g., games started, targets). Train the model on 2022 and 2023 data to predict total fantasy points. Projection for 2024:</p>
+<p>Input 2024 projection data into the trained regression model to predict total fantasy points for each player in 2024. Rank players based on these predictions.</p>
+<p><strong>3. Using 2024 Projection Data to Calculate PCA Scores</strong></p>
+<p>Process</p>
+<p>PCA on 2024 Projection Data: Perform PCA on the 2024 projected in-game stats. Obtain PC scores for each player based on the projections. Ranking Based on Projections:</p>
+<p>Rank players based on their PC scores from the 2024 projection data. Use these rankings to guide draft decisions.</p>
+<p>Assumptions: This approach assumes that the 2024 projections are accurate enough to reflect actual performance, so PC scores from projections should correlate with final fantasy points.</p>
+<p><strong>4. Weighted PCA Combining Historical and Projected Data</strong></p>
+<p>Process</p>
+<p>Weighting and Combining Data: Assign weights to the 2022, 2023, and 2024 (projected) data. For example, use a higher weight for more recent years like 2023. Combine the data sets into a single matrix, with projections and historical data weighted accordingly.</p>
+<p>PCA on Weighted Data: Perform PCA on the weighted data set to capture the combined effect of historical and projected performance. Obtain PC scores for each player, reflecting a blend of past performance and future projections. Ranking and Drafting:</p>
+<p>Rank players based on the weighted PC scores. Use these ranks to inform drafting decisions.</p>
 
 
+</section>
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
