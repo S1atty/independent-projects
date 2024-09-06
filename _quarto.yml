@@ -44,6 +44,6 @@ format:
     theme: cosmo
     mainfont: Garamond;
     toc: true
-    toc-depth: 2
+    toc-depth: 50
     css: styles.css
 

@@ -49,3 +49,18 @@
 .dropdown-menu .dropdown-item {
   color: #b56e7e; /* Replace with your desired text color */
 }
+
+/* Ensure all TOC sections are visible */
+.toc .toc-section {
+  display: block !important;
+}
+
+.toc .toc-section .toc-section {
+  display: block !important;
+}
+
+/* Adjust TOC section padding and margins if needed */
+.toc .toc-section {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}

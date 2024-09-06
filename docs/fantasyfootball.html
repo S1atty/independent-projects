@@ -176,20 +176,52 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="20">
     <h2 id="toc-title">On this page</h2>
    
-  <ul class="collapse">
+  <ul>
   <li><a href="#data-sets" id="toc-data-sets" class="nav-link active" data-scroll-target="#data-sets">Data Sets</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
   <li><a href="#processing" id="toc-processing" class="nav-link" data-scroll-target="#processing">Processing</a></li>
   <li><a href="#yoy-ppr-trend-for-top-nfl-teams" id="toc-yoy-ppr-trend-for-top-nfl-teams" class="nav-link" data-scroll-target="#yoy-ppr-trend-for-top-nfl-teams">YoY PPR Trend for Top NFL Teams</a></li>
   <li><a href="#nfl-season" id="toc-nfl-season" class="nav-link" data-scroll-target="#nfl-season">2022 NFL season</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration">Data Exploration</a></li>
   <li><a href="#analysis-svd-pca" id="toc-analysis-svd-pca" class="nav-link" data-scroll-target="#analysis-svd-pca">Analysis SVD PCA</a></li>
   <li><a href="#principal-components---in-game-stats" id="toc-principal-components---in-game-stats" class="nav-link" data-scroll-target="#principal-components---in-game-stats">Principal Components - In-Game Stats</a></li>
-  <li><a href="#principal-components---fantasy-weights" id="toc-principal-components---fantasy-weights" class="nav-link" data-scroll-target="#principal-components---fantasy-weights">Principal Components - Fantasy Weights</a></li>
+  <li><a href="#principal-components---fantasy-weights" id="toc-principal-components---fantasy-weights" class="nav-link" data-scroll-target="#principal-components---fantasy-weights">Principal Components - Fantasy Weights</a>
+  <ul>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#dimension-definitions" id="toc-dimension-definitions" class="nav-link" data-scroll-target="#dimension-definitions">Dimension Definitions</a></li>
+  <li><a href="#model-picks" id="toc-model-picks" class="nav-link" data-scroll-target="#model-picks">Model Picks</a>
+  <ul>
+  <li><a href="#pc1---qbs" id="toc-pc1---qbs" class="nav-link" data-scroll-target="#pc1---qbs">PC1 - QBs</a></li>
+  <li><a href="#pc2---wr" id="toc-pc2---wr" class="nav-link" data-scroll-target="#pc2---wr">PC2 - WR</a></li>
+  <li><a href="#pc3---rb" id="toc-pc3---rb" class="nav-link" data-scroll-target="#pc3---rb">PC3 - RB</a></li>
+  <li><a href="#model-accuracy" id="toc-model-accuracy" class="nav-link" data-scroll-target="#model-accuracy">Model Accuracy</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#nfl-seasons" id="toc-nfl-seasons" class="nav-link" data-scroll-target="#nfl-seasons">2023 | 2022 NFL seasons</a>
+  <ul>
+  <li><a href="#results-1" id="toc-results-1" class="nav-link" data-scroll-target="#results-1">Results</a></li>
+  <li><a href="#model-picks-1" id="toc-model-picks-1" class="nav-link" data-scroll-target="#model-picks-1">Model Picks</a>
+  <ul>
+  <li><a href="#approach-1---empirical-threshold" id="toc-approach-1---empirical-threshold" class="nav-link" data-scroll-target="#approach-1---empirical-threshold">Approach 1 - Empirical Threshold</a>
+  <ul>
+  <li><a href="#qbs" id="toc-qbs" class="nav-link" data-scroll-target="#qbs">QBs</a></li>
+  <li><a href="#wrs" id="toc-wrs" class="nav-link" data-scroll-target="#wrs">WRs</a></li>
+  <li><a href="#rbs" id="toc-rbs" class="nav-link" data-scroll-target="#rbs">RBs</a></li>
+  </ul></li>
+  <li><a href="#approach-2---all-scores-most-accurate" id="toc-approach-2---all-scores-most-accurate" class="nav-link" data-scroll-target="#approach-2---all-scores-most-accurate">Approach 2 - All Scores (Most Accurate)</a>
+  <ul>
+  <li><a href="#qbs-1" id="toc-qbs-1" class="nav-link" data-scroll-target="#qbs-1">QBs</a></li>
+  <li><a href="#wrs-1" id="toc-wrs-1" class="nav-link" data-scroll-target="#wrs-1">WRs</a></li>
+  <li><a href="#rbs-1" id="toc-rbs-1" class="nav-link" data-scroll-target="#rbs-1">RBs</a></li>
+  <li><a href="#tes" id="toc-tes" class="nav-link" data-scroll-target="#tes">TEs</a></li>
+  <li><a href="#top-75-projected-players" id="toc-top-75-projected-players" class="nav-link" data-scroll-target="#top-75-projected-players">Top 75 Projected Players</a></li>
+  </ul></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -374,10 +406,6 @@ window.Quarto = {
 <section id="yoy-ppr-trend-for-top-nfl-teams" class="level1">
 <h1>YoY PPR Trend for Top NFL Teams</h1>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'Year'. You can override using the
-`.groups` argument.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1125,10 +1153,6 @@ X1 3.56</code></pre>
 </div>
 <p>This seems to be consistent at a higher level when the top three teams for the 2022 regular season are compared.</p>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'Team'. You can override using the
-`.groups` argument.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1818,6 +1842,2487 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <p>Weighting and Combining Data: Assign weights to the 2022, 2023, and 2024 (projected) data. For example, use a higher weight for more recent years like 2023. Combine the data sets into a single matrix, with projections and historical data weighted accordingly.</p>
 <p>PCA on Weighted Data: Perform PCA on the weighted data set to capture the combined effect of historical and projected performance. Obtain PC scores for each player, reflecting a blend of past performance and future projections. Ranking and Drafting:</p>
 <p>Rank players based on the weighted PC scores. Use these ranks to inform drafting decisions.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="nfl-seasons" class="level1">
+<h1>2023 | 2022 NFL seasons</h1>
+<p>The weighted PCA approach on both the ’22 and ’23 NFL regular season was used to select my fantasy team. After matching corresponding players in 2023, both years were joined such that statistics from both years were available for each observation per player. A weighted average of the <code>scoring_</code> variables were then calculated consisting of a third of their statistics from ’22 and two-thirds from ’23, emphasizing recent seasons at a 2:1 ratio. This weight only applies to the athletes that played at least one game in both years. A total of 39 athletes that had season ending injuries in ’22 but played in ’23 were omitted from the data. No weight was applied to the 142 rook athletes in 2023. 100% of their ’23 NFL season was incorporated into their component scores for rook athletes, given that there is no other history (besides this one) for a baseline. Using combine data was considered, but was not used in the interest of time. Exploratory analysis showed that the both the mean and spread of the underlying distributions for all in-game statistics were extremely similar between ’23 and ’24. For ’23 fantasy points, the mean was 83.1 (sd = 87.3).</p>
+<section id="results-1" class="level2">
+<h2 class="anchored" data-anchor-id="results-1">Results</h2>
+<p>Parallel and scree tests were performed on the weighted averages of the variables used for <code>FantasyPointsPPR.</code> The parallel test showed three components were sufficient but as many as four could be used according to the scree test. The calculated eigen values of the first three components cumulatively explain 90.1% of the total variation within the data.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The standardized loadings were then plotted on a patter correlation matrix to define the components. The loading score for each component were extremely similar in value to ones obtained in the Fantasy Weights section. Components were defined using these definitions.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>rotation: maximum variance</p>
+<p><strong>PC1 Definition: Low Performing QBs</strong><br>
+Attributes: (-) Passing Yards, (-) Passing Touchdowns, (+) Fumbles, (+) Interceptions<br>
+</p>
+<ol type="1">
+<li>PC1 would be attributed to the worst overall performing quarter backs. The significantly negative loadings for passing yards and touch downs mean that quarter backs that load high to this component are unable to score touch downs. Additionally, they load extremely high for fumbles and interceptions, a confirmation of their under performance in relevant categories. PC1 would only be attributed to quarter backs since these in-game stats are generally relevant to them alone. When calculating scores for PC1, the highest-performing or best overall quarter backs would have the lowest scores, since they would negatively contribute to this component.</li>
+</ol>
+<p><strong>PC2 Definition: High-Performing Distance Efficiency</strong><br>
+Attributes: + Receiving Touchdowns, + Receiving Yards, + Receptions<br>
+</p>
+<ol start="2" type="1">
+<li>PC2 can be attributed to total overall offensive efficiency given that we load extremely high for receiving touchdowns, receiving yards, and receptions. Players that load high to this category are likely wide receivers since wide receivers are more used for long range plays. The key distinction to make here is that this describes the overall long range efficiency only, since rushing yards and rushing touch downs are not accounted for in this component. Additionally, <em>overall</em> long range efficiency would better describe this component, since this must be a combination of quarter backs and the offensive line. Wide receivers, running backs, and tight ends will generally only score more touch downs and have more yards with a better quarter back.</li>
+</ol>
+<p><strong>PC3 Definition: High-Performing Driving Efficiency</strong><br>
+Attributes: + Rushing Touchdowns, + Rushing Yards<br>
+</p>
+<ol start="3" type="1">
+<li>PC3 would be attributed to overall driving efficiency in the same fashion. Likewise, this is also a combination of the offense line and the quarterback, considering that high performing drivers will still be unable to score touch downs in some fashion if their quarter back cannot perform. I would expect running backs and tight ends to load high to this category.</li>
+</ol>
+<p>The annotations show what regions in each component would isolate the best (or worst) quarter backs for PC1 and the best long-range players for PC2. The benefit of plotting components as functions of each other is to understand the variability between two dimensions individually. Comparing PC1 and PC2 in this manner may not be necessary considering how we’ve defined the components, but visualizing it this way highlights any outliers and spread of the data. The ellipses are the regions that represent the 95% confidence interval for each fantasy position. Looking at PC1 and its associated eigen vectors, it is evident that the best quarter backs would be those that have high values along the x-axis (note that quarter backs are the only group spread differently than the others, evidence that this component are attributes of them). Although the individual component scores for these quarter backs will be negative (as they negatively contribute to this component), these are orthogonal projections, so the fact that it is ‘positive’ on the x axis here is meaningless. The interpretation would be identical if we flipped it over the y axis. The three quarter backs we <em>definitely</em> want to obtain are the three outliers closest to the top of the annotated box. These quarter backs would be something akin to the ‘best of the best’. The other important part of this relates to PC2. The underlying variables that contribute the most to this component are receptions, receiving yards, and receiving touch downs. This is the ‘long-range’ cateogry (rushing yards and tds are not accounted for here). In the previous biplot, wide receivers completely dominated this region when it came to individual component scores of athletes. While that is somewhat the case here, notice that running backs are not far behind. Athletes highest in y values are still the wide receivers, but there is a good region of running backs [2,2.5] on the x axis that contribute just as well as wide receivers.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Understanding the variability between two dimensions individually would be the most beneficial between PC2 and PC3 since it would easily highlight players that are the best at both. The dynamic sport of football and the physical build of players makes it extremely difficult to be an efficient driving scorer and an efficient passing scorer (receiving). Running backs tend to do well in the driving aspect; they have stockier frames making easier to drive through defenses and gain yardages that way. Wide receivers do well on the receiving end - they have slimmer frames leading to elusive plays to gain the most yardage (hail marys’ as an polar example). Players that contribute equally well to PC2 and PC3 are wraps for fantasy (granted they have a good quarter back).</p>
+<p>The same trend identified in the component definitions are seen here. The region with the highest x values are wide receivers (tip of 95% CI extends out the most) with a handful of outliers near the max. The region with the highest y values, representing PC3, is nearly reserved for running backs (except for a couple exceptions). Notice that there are almost no players that positively contribute to PC3. I can physically count by hand the six players that positively contribute for PC3 that are not running backs. There are two parts of this graph to pay attention to. Firstly, the red box indicates the top of the 95% confidence interval for running backs ie the best of the best for PC3. Players in this region should be selected in the fantasy draft. More importantly, there is one identified that contributes extremely well to both PC2 and PC3. The vertical line separates the top six NFL athletes for long range efficiency, who are wide receivers (using a weighted average of ’22 and ’23 seasons), but there is only one running back out of the entire NFL offense that is in this category but also one of the best in driving efficiency. Take a guess whom that is.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fantasyfootball_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="model-picks-1" class="level2">
+<h2 class="anchored" data-anchor-id="model-picks-1">Model Picks</h2>
+<p>There are two different ways of calculating overall scores (ie principal component scores) for each player to identify the players that should be drafted for this season. The first is to only use variables that contribute within the empirical range (+/-.75). Usually, the empirical range is only used to define what the principal components are or represent. Generally all scores should be used when calculating scores, the benefit being that it captures the combined variance of all the variables and the overall score is the more accurate reflection. The one drawback with this approach is that it complicates the model. The benefit of using only variables that are outside the empirical threshold is that it simplifies the model and is easier to interpret. Note that when interpreting the visualizations in this analysis, specifically the biplots, all component scores need to be included in the calculation. I will show the picks using both methods.</p>
+<section id="approach-1---empirical-threshold" class="level3">
+<h3 class="anchored" data-anchor-id="approach-1---empirical-threshold">Approach 1 - Empirical Threshold</h3>
+<section id="qbs" class="level4">
+<h4 class="anchored" data-anchor-id="qbs">QBs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 28%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Josh Allen</td>
+<td style="text-align: right;">392.6</td>
+<td style="text-align: right;">-336.8850</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Patrick Mahomes</td>
+<td style="text-align: right;">280.2</td>
+<td style="text-align: right;">-331.6486</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Jared Goff</td>
+<td style="text-align: right;">289.1</td>
+<td style="text-align: right;">-323.6598</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">Tua Tagovailoa</td>
+<td style="text-align: right;">270.4</td>
+<td style="text-align: right;">-316.1377</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Dak Prescott</td>
+<td style="text-align: right;">342.8</td>
+<td style="text-align: right;">-302.7733</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">Trevor Lawrence</td>
+<td style="text-align: right;">262.5</td>
+<td style="text-align: right;">-296.4182</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Jalen Hurts</td>
+<td style="text-align: right;">356.8</td>
+<td style="text-align: right;">-277.1566</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">C.J. Stroud</td>
+<td style="text-align: right;">276.0</td>
+<td style="text-align: right;">-275.1716</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">Derek Carr</td>
+<td style="text-align: right;">241.1</td>
+<td style="text-align: right;">-270.6667</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">Geno Smith</td>
+<td style="text-align: right;">227.3</td>
+<td style="text-align: right;">-270.3990</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Baker Mayfield</td>
+<td style="text-align: right;">274.1</td>
+<td style="text-align: right;">-251.3108</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">Justin Herbert</td>
+<td style="text-align: right;">234.2</td>
+<td style="text-align: right;">-250.4118</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">Russell Wilson</td>
+<td style="text-align: right;">256.9</td>
+<td style="text-align: right;">-248.3591</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Brock Purdy</td>
+<td style="text-align: right;">295.6</td>
+<td style="text-align: right;">-247.5300</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Lamar Jackson</td>
+<td style="text-align: right;">331.2</td>
+<td style="text-align: right;">-241.6355</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">Kirk Cousins</td>
+<td style="text-align: right;">149.7</td>
+<td style="text-align: right;">-233.3930</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">Matthew Stafford</td>
+<td style="text-align: right;">243.1</td>
+<td style="text-align: right;">-225.1303</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Joe Burrow</td>
+<td style="text-align: right;">147.2</td>
+<td style="text-align: right;">-222.2560</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Jordan Love</td>
+<td style="text-align: right;">319.1</td>
+<td style="text-align: right;">-218.7511</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">Justin Fields</td>
+<td style="text-align: right;">230.2</td>
+<td style="text-align: right;">-200.9537</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="wrs" class="level4">
+<h4 class="anchored" data-anchor-id="wrs">WRs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 22%">
+<col style="width: 26%">
+<col style="width: 27%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">376.4</td>
+<td style="text-align: right;">352.7382</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">403.2</td>
+<td style="text-align: right;">344.4119</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">330.9</td>
+<td style="text-align: right;">298.3283</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">289.6</td>
+<td style="text-align: right;">289.3462</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Puka Nacua</td>
+<td style="text-align: right;">298.5</td>
+<td style="text-align: right;">282.0636</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">265.4</td>
+<td style="text-align: right;">281.3340</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">273.8</td>
+<td style="text-align: right;">280.2885</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mike Evans</td>
+<td style="text-align: right;">282.5</td>
+<td style="text-align: right;">256.9248</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">Ja’Marr Chase</td>
+<td style="text-align: right;">262.7</td>
+<td style="text-align: right;">250.8549</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">202.2</td>
+<td style="text-align: right;">249.3281</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">D.J. Moore</td>
+<td style="text-align: right;">286.5</td>
+<td style="text-align: right;">245.1010</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Brandon Aiyuk</td>
+<td style="text-align: right;">249.2</td>
+<td style="text-align: right;">237.1919</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">227.6</td>
+<td style="text-align: right;">232.4062</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">Keenan Allen</td>
+<td style="text-align: right;">278.9</td>
+<td style="text-align: right;">231.6001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Michael Pittman Jr.</td>
+<td style="text-align: right;">250.2</td>
+<td style="text-align: right;">230.7656</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">227.0</td>
+<td style="text-align: right;">228.1088</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">D.K. Metcalf</td>
+<td style="text-align: right;">225.4</td>
+<td style="text-align: right;">221.4407</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">Jordan Addison</td>
+<td style="text-align: right;">221.3</td>
+<td style="text-align: right;">215.5321</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">Chris Olave</td>
+<td style="text-align: right;">231.3</td>
+<td style="text-align: right;">213.8417</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">103</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: left;">Jaylen Waddle</td>
+<td style="text-align: right;">198.6</td>
+<td style="text-align: right;">212.2413</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="rbs" class="level4">
+<h4 class="anchored" data-anchor-id="rbs">RBs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 22%">
+<col style="width: 26%">
+<col style="width: 27%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Raheem Mostert</td>
+<td style="text-align: right;">267.7</td>
+<td style="text-align: right;">82.59469</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Derrick Henry</td>
+<td style="text-align: right;">246.7</td>
+<td style="text-align: right;">81.92272</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Christian McCaffrey</td>
+<td style="text-align: right;">391.3</td>
+<td style="text-align: right;">80.64146</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">David Montgomery</td>
+<td style="text-align: right;">207.2</td>
+<td style="text-align: right;">67.30746</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">Jahmyr Gibbs</td>
+<td style="text-align: right;">242.1</td>
+<td style="text-align: right;">65.44326</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">Gus Edwards</td>
+<td style="text-align: right;">187.0</td>
+<td style="text-align: right;">61.04759</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Travis Etienne</td>
+<td style="text-align: right;">282.4</td>
+<td style="text-align: right;">60.79753</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Joe Mixon</td>
+<td style="text-align: right;">267.0</td>
+<td style="text-align: right;">56.20920</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">Kenneth Walker III</td>
+<td style="text-align: right;">199.4</td>
+<td style="text-align: right;">56.13834</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Josh Jacobs</td>
+<td style="text-align: right;">181.1</td>
+<td style="text-align: right;">55.55920</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">Najee Harris</td>
+<td style="text-align: right;">195.5</td>
+<td style="text-align: right;">53.17002</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Kyren Williams</td>
+<td style="text-align: right;">255.0</td>
+<td style="text-align: right;">52.86670</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">De’Von Achane</td>
+<td style="text-align: right;">190.7</td>
+<td style="text-align: right;">52.77974</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">Saquon Barkley</td>
+<td style="text-align: right;">223.2</td>
+<td style="text-align: right;">51.71806</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">Austin Ekeler</td>
+<td style="text-align: right;">185.4</td>
+<td style="text-align: right;">50.16511</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">Tony Pollard</td>
+<td style="text-align: right;">222.6</td>
+<td style="text-align: right;">49.13565</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">James Conner</td>
+<td style="text-align: right;">201.5</td>
+<td style="text-align: right;">48.63644</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">Isiah Pacheco</td>
+<td style="text-align: right;">213.9</td>
+<td style="text-align: right;">44.36051</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">Kareem Hunt</td>
+<td style="text-align: right;">118.5</td>
+<td style="text-align: right;">43.57351</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: left;">Jonathan Taylor</td>
+<td style="text-align: right;">156.4</td>
+<td style="text-align: right;">41.33364</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="approach-2---all-scores-most-accurate" class="level3">
+<h3 class="anchored" data-anchor-id="approach-2---all-scores-most-accurate">Approach 2 - All Scores (Most Accurate)</h3>
+<section id="qbs-1" class="level4">
+<h4 class="anchored" data-anchor-id="qbs-1">QBs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">FantasyPosition2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+<th style="text-align: right;">pc2</th>
+<th style="text-align: right;">pc3</th>
+<th style="text-align: right;">ovr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Trevor Lawrence</td>
+<td style="text-align: right;">262.5</td>
+<td style="text-align: right;">-5.930527</td>
+<td style="text-align: right;">-0.0503780</td>
+<td style="text-align: right;">0.9867315</td>
+<td style="text-align: right;">6.866880</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Josh Allen</td>
+<td style="text-align: right;">392.6</td>
+<td style="text-align: right;">-5.632699</td>
+<td style="text-align: right;">-0.5109040</td>
+<td style="text-align: right;">2.7710344</td>
+<td style="text-align: right;">7.892830</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Tua Tagovailoa</td>
+<td style="text-align: right;">270.4</td>
+<td style="text-align: right;">-5.516695</td>
+<td style="text-align: right;">-0.3038964</td>
+<td style="text-align: right;">-1.1058169</td>
+<td style="text-align: right;">4.106982</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Jared Goff</td>
+<td style="text-align: right;">289.1</td>
+<td style="text-align: right;">-5.085457</td>
+<td style="text-align: right;">-0.3948707</td>
+<td style="text-align: right;">-0.9800167</td>
+<td style="text-align: right;">3.710570</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Patrick Mahomes</td>
+<td style="text-align: right;">280.2</td>
+<td style="text-align: right;">-4.833287</td>
+<td style="text-align: right;">-0.6241090</td>
+<td style="text-align: right;">-0.6092024</td>
+<td style="text-align: right;">3.599976</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Bryce Young</td>
+<td style="text-align: right;">156.4</td>
+<td style="text-align: right;">-4.451232</td>
+<td style="text-align: right;">-0.1338657</td>
+<td style="text-align: right;">0.0545880</td>
+<td style="text-align: right;">4.371955</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Jalen Hurts</td>
+<td style="text-align: right;">356.8</td>
+<td style="text-align: right;">-4.432219</td>
+<td style="text-align: right;">-0.5431606</td>
+<td style="text-align: right;">3.7384047</td>
+<td style="text-align: right;">7.627463</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Russell Wilson</td>
+<td style="text-align: right;">256.9</td>
+<td style="text-align: right;">-4.291836</td>
+<td style="text-align: right;">-0.3730684</td>
+<td style="text-align: right;">0.4534387</td>
+<td style="text-align: right;">4.372207</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Dak Prescott</td>
+<td style="text-align: right;">342.8</td>
+<td style="text-align: right;">-4.268934</td>
+<td style="text-align: right;">-0.6583281</td>
+<td style="text-align: right;">-0.7678610</td>
+<td style="text-align: right;">2.842745</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Geno Smith</td>
+<td style="text-align: right;">227.3</td>
+<td style="text-align: right;">-4.244071</td>
+<td style="text-align: right;">-0.4634977</td>
+<td style="text-align: right;">-0.4912202</td>
+<td style="text-align: right;">3.289353</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Baker Mayfield</td>
+<td style="text-align: right;">274.1</td>
+<td style="text-align: right;">-4.164113</td>
+<td style="text-align: right;">-0.4451368</td>
+<td style="text-align: right;">-0.5684088</td>
+<td style="text-align: right;">3.150567</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">C.J. Stroud</td>
+<td style="text-align: right;">276.0</td>
+<td style="text-align: right;">-4.162973</td>
+<td style="text-align: right;">-0.3520566</td>
+<td style="text-align: right;">0.1391058</td>
+<td style="text-align: right;">3.950022</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Derek Carr</td>
+<td style="text-align: right;">241.1</td>
+<td style="text-align: right;">-4.133636</td>
+<td style="text-align: right;">-0.5409597</td>
+<td style="text-align: right;">-1.2287010</td>
+<td style="text-align: right;">2.363976</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Lamar Jackson</td>
+<td style="text-align: right;">331.2</td>
+<td style="text-align: right;">-4.000711</td>
+<td style="text-align: right;">-0.3771609</td>
+<td style="text-align: right;">1.9823330</td>
+<td style="text-align: right;">5.605883</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Kirk Cousins</td>
+<td style="text-align: right;">149.7</td>
+<td style="text-align: right;">-3.982572</td>
+<td style="text-align: right;">-0.3888610</td>
+<td style="text-align: right;">-0.7017827</td>
+<td style="text-align: right;">2.891928</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Justin Fields</td>
+<td style="text-align: right;">230.2</td>
+<td style="text-align: right;">-3.805593</td>
+<td style="text-align: right;">-0.4159731</td>
+<td style="text-align: right;">2.3390141</td>
+<td style="text-align: right;">5.728634</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Justin Herbert</td>
+<td style="text-align: right;">234.2</td>
+<td style="text-align: right;">-3.506486</td>
+<td style="text-align: right;">-0.5899363</td>
+<td style="text-align: right;">-0.3464946</td>
+<td style="text-align: right;">2.570056</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Desmond Ridder</td>
+<td style="text-align: right;">177.1</td>
+<td style="text-align: right;">-3.472084</td>
+<td style="text-align: right;">-0.2480811</td>
+<td style="text-align: right;">0.7297931</td>
+<td style="text-align: right;">3.953796</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Brock Purdy</td>
+<td style="text-align: right;">295.6</td>
+<td style="text-align: right;">-3.450934</td>
+<td style="text-align: right;">-0.6593599</td>
+<td style="text-align: right;">-0.7621931</td>
+<td style="text-align: right;">2.029381</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Joshua Dobbs</td>
+<td style="text-align: right;">200.7</td>
+<td style="text-align: right;">-3.447070</td>
+<td style="text-align: right;">-0.2262667</td>
+<td style="text-align: right;">1.3141742</td>
+<td style="text-align: right;">4.534978</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="wrs-1" class="level4">
+<h4 class="anchored" data-anchor-id="wrs-1">WRs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">FantasyPosition2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+<th style="text-align: right;">pc2</th>
+<th style="text-align: right;">pc3</th>
+<th style="text-align: right;">ovr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">376.4</td>
+<td style="text-align: right;">-0.3031218</td>
+<td style="text-align: right;">4.716303</td>
+<td style="text-align: right;">-0.5487987</td>
+<td style="text-align: right;">4.470626</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">403.2</td>
+<td style="text-align: right;">-0.4854760</td>
+<td style="text-align: right;">4.692007</td>
+<td style="text-align: right;">-0.0351089</td>
+<td style="text-align: right;">5.142374</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">330.9</td>
+<td style="text-align: right;">-0.1663705</td>
+<td style="text-align: right;">3.840439</td>
+<td style="text-align: right;">-0.4728162</td>
+<td style="text-align: right;">3.533993</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">289.6</td>
+<td style="text-align: right;">-0.5945953</td>
+<td style="text-align: right;">3.807959</td>
+<td style="text-align: right;">-0.4452682</td>
+<td style="text-align: right;">3.957286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">265.4</td>
+<td style="text-align: right;">-0.0177478</td>
+<td style="text-align: right;">3.688254</td>
+<td style="text-align: right;">-0.6829619</td>
+<td style="text-align: right;">3.023040</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">273.8</td>
+<td style="text-align: right;">-0.2824399</td>
+<td style="text-align: right;">3.676930</td>
+<td style="text-align: right;">-0.5407565</td>
+<td style="text-align: right;">3.418613</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Mike Evans</td>
+<td style="text-align: right;">282.5</td>
+<td style="text-align: right;">0.0250674</td>
+<td style="text-align: right;">3.403765</td>
+<td style="text-align: right;">-0.7424778</td>
+<td style="text-align: right;">2.636220</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Puka Nacua</td>
+<td style="text-align: right;">298.5</td>
+<td style="text-align: right;">-0.0068304</td>
+<td style="text-align: right;">3.328935</td>
+<td style="text-align: right;">-0.3826797</td>
+<td style="text-align: right;">2.953086</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Ja’Marr Chase</td>
+<td style="text-align: right;">262.7</td>
+<td style="text-align: right;">-0.1969554</td>
+<td style="text-align: right;">3.170455</td>
+<td style="text-align: right;">-0.5266913</td>
+<td style="text-align: right;">2.840720</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">D.J. Moore</td>
+<td style="text-align: right;">286.5</td>
+<td style="text-align: right;">-0.0951553</td>
+<td style="text-align: right;">3.049821</td>
+<td style="text-align: right;">-0.3409322</td>
+<td style="text-align: right;">2.804044</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">202.2</td>
+<td style="text-align: right;">-0.0982413</td>
+<td style="text-align: right;">2.953212</td>
+<td style="text-align: right;">-0.4560280</td>
+<td style="text-align: right;">2.595426</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Brandon Aiyuk</td>
+<td style="text-align: right;">249.2</td>
+<td style="text-align: right;">-0.2161881</td>
+<td style="text-align: right;">2.947975</td>
+<td style="text-align: right;">-0.5240996</td>
+<td style="text-align: right;">2.640064</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">227.6</td>
+<td style="text-align: right;">-0.2012139</td>
+<td style="text-align: right;">2.883505</td>
+<td style="text-align: right;">-0.4985185</td>
+<td style="text-align: right;">2.586200</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Jordan Addison</td>
+<td style="text-align: right;">221.3</td>
+<td style="text-align: right;">0.0814369</td>
+<td style="text-align: right;">2.838005</td>
+<td style="text-align: right;">-0.6917207</td>
+<td style="text-align: right;">2.064848</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Keenan Allen</td>
+<td style="text-align: right;">278.9</td>
+<td style="text-align: right;">-0.2985197</td>
+<td style="text-align: right;">2.814913</td>
+<td style="text-align: right;">-0.4333948</td>
+<td style="text-align: right;">2.680038</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">D.K. Metcalf</td>
+<td style="text-align: right;">225.4</td>
+<td style="text-align: right;">-0.0958922</td>
+<td style="text-align: right;">2.727303</td>
+<td style="text-align: right;">-0.5632479</td>
+<td style="text-align: right;">2.259947</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">227.0</td>
+<td style="text-align: right;">-0.2007380</td>
+<td style="text-align: right;">2.725753</td>
+<td style="text-align: right;">-0.5441609</td>
+<td style="text-align: right;">2.382330</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Michael Pittman Jr.</td>
+<td style="text-align: right;">250.2</td>
+<td style="text-align: right;">-0.2537675</td>
+<td style="text-align: right;">2.649202</td>
+<td style="text-align: right;">-0.3237992</td>
+<td style="text-align: right;">2.579170</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Rashee Rice</td>
+<td style="text-align: right;">212.5</td>
+<td style="text-align: right;">-0.2912444</td>
+<td style="text-align: right;">2.624851</td>
+<td style="text-align: right;">-0.4591774</td>
+<td style="text-align: right;">2.456918</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Tyler Lockett</td>
+<td style="text-align: right;">202.4</td>
+<td style="text-align: right;">-0.0591655</td>
+<td style="text-align: right;">2.479823</td>
+<td style="text-align: right;">-0.5037002</td>
+<td style="text-align: right;">2.035288</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="rbs-1" class="level4">
+<h4 class="anchored" data-anchor-id="rbs-1">RBs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 12%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">FantasyPosition2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+<th style="text-align: right;">pc2</th>
+<th style="text-align: right;">pc3</th>
+<th style="text-align: right;">pc2_3</th>
+<th style="text-align: right;">ovr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Derrick Henry</td>
+<td style="text-align: right;">246.7</td>
+<td style="text-align: right;">0.6250369</td>
+<td style="text-align: right;">-0.2218642</td>
+<td style="text-align: right;">5.484161</td>
+<td style="text-align: right;">5.262297</td>
+<td style="text-align: right;">4.637260</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Christian McCaffrey</td>
+<td style="text-align: right;">391.3</td>
+<td style="text-align: right;">0.4013481</td>
+<td style="text-align: right;">1.8335669</td>
+<td style="text-align: right;">5.448814</td>
+<td style="text-align: right;">7.282381</td>
+<td style="text-align: right;">6.881033</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Raheem Mostert</td>
+<td style="text-align: right;">267.7</td>
+<td style="text-align: right;">0.4636988</td>
+<td style="text-align: right;">0.1289391</td>
+<td style="text-align: right;">4.955696</td>
+<td style="text-align: right;">5.084635</td>
+<td style="text-align: right;">4.620936</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">David Montgomery</td>
+<td style="text-align: right;">207.2</td>
+<td style="text-align: right;">0.4868309</td>
+<td style="text-align: right;">-0.2935361</td>
+<td style="text-align: right;">4.303271</td>
+<td style="text-align: right;">4.009735</td>
+<td style="text-align: right;">3.522904</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Jahmyr Gibbs</td>
+<td style="text-align: right;">242.1</td>
+<td style="text-align: right;">0.4996770</td>
+<td style="text-align: right;">0.3529346</td>
+<td style="text-align: right;">4.210136</td>
+<td style="text-align: right;">4.563071</td>
+<td style="text-align: right;">4.063394</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Travis Etienne</td>
+<td style="text-align: right;">282.4</td>
+<td style="text-align: right;">0.5419388</td>
+<td style="text-align: right;">0.3888151</td>
+<td style="text-align: right;">4.170200</td>
+<td style="text-align: right;">4.559015</td>
+<td style="text-align: right;">4.017076</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Josh Jacobs</td>
+<td style="text-align: right;">181.1</td>
+<td style="text-align: right;">0.4088426</td>
+<td style="text-align: right;">0.1086206</td>
+<td style="text-align: right;">4.079000</td>
+<td style="text-align: right;">4.187621</td>
+<td style="text-align: right;">3.778778</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Najee Harris</td>
+<td style="text-align: right;">195.5</td>
+<td style="text-align: right;">0.3923408</td>
+<td style="text-align: right;">0.0011078</td>
+<td style="text-align: right;">3.866405</td>
+<td style="text-align: right;">3.867513</td>
+<td style="text-align: right;">3.475172</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Saquon Barkley</td>
+<td style="text-align: right;">223.2</td>
+<td style="text-align: right;">0.4194728</td>
+<td style="text-align: right;">0.5619764</td>
+<td style="text-align: right;">3.819895</td>
+<td style="text-align: right;">4.381871</td>
+<td style="text-align: right;">3.962399</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Kenneth Walker III</td>
+<td style="text-align: right;">199.4</td>
+<td style="text-align: right;">0.8418188</td>
+<td style="text-align: right;">-0.2145180</td>
+<td style="text-align: right;">3.681405</td>
+<td style="text-align: right;">3.466887</td>
+<td style="text-align: right;">2.625068</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Joe Mixon</td>
+<td style="text-align: right;">267.0</td>
+<td style="text-align: right;">0.8432436</td>
+<td style="text-align: right;">0.6461894</td>
+<td style="text-align: right;">3.639524</td>
+<td style="text-align: right;">4.285713</td>
+<td style="text-align: right;">3.442470</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Gus Edwards</td>
+<td style="text-align: right;">187.0</td>
+<td style="text-align: right;">0.2995327</td>
+<td style="text-align: right;">-0.5424543</td>
+<td style="text-align: right;">3.615719</td>
+<td style="text-align: right;">3.073265</td>
+<td style="text-align: right;">2.773732</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Tony Pollard</td>
+<td style="text-align: right;">222.6</td>
+<td style="text-align: right;">0.5111218</td>
+<td style="text-align: right;">0.3409509</td>
+<td style="text-align: right;">3.584017</td>
+<td style="text-align: right;">3.924968</td>
+<td style="text-align: right;">3.413847</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Austin Ekeler</td>
+<td style="text-align: right;">185.4</td>
+<td style="text-align: right;">-0.5707807</td>
+<td style="text-align: right;">1.3815793</td>
+<td style="text-align: right;">3.452847</td>
+<td style="text-align: right;">4.834426</td>
+<td style="text-align: right;">5.405207</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Kyren Williams</td>
+<td style="text-align: right;">255.0</td>
+<td style="text-align: right;">0.3486863</td>
+<td style="text-align: right;">0.0282645</td>
+<td style="text-align: right;">3.410003</td>
+<td style="text-align: right;">3.438268</td>
+<td style="text-align: right;">3.089581</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">James Conner</td>
+<td style="text-align: right;">201.5</td>
+<td style="text-align: right;">0.6828011</td>
+<td style="text-align: right;">0.0453300</td>
+<td style="text-align: right;">3.383136</td>
+<td style="text-align: right;">3.428466</td>
+<td style="text-align: right;">2.745665</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">De’Von Achane</td>
+<td style="text-align: right;">190.7</td>
+<td style="text-align: right;">0.4989313</td>
+<td style="text-align: right;">0.2176291</td>
+<td style="text-align: right;">3.301692</td>
+<td style="text-align: right;">3.519321</td>
+<td style="text-align: right;">3.020389</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Isiah Pacheco</td>
+<td style="text-align: right;">213.9</td>
+<td style="text-align: right;">0.3420606</td>
+<td style="text-align: right;">0.1033635</td>
+<td style="text-align: right;">3.232460</td>
+<td style="text-align: right;">3.335823</td>
+<td style="text-align: right;">2.993763</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Bijan Robinson</td>
+<td style="text-align: right;">246.3</td>
+<td style="text-align: right;">-0.3539197</td>
+<td style="text-align: right;">1.3855412</td>
+<td style="text-align: right;">2.966462</td>
+<td style="text-align: right;">4.352003</td>
+<td style="text-align: right;">4.705923</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Jonathan Taylor</td>
+<td style="text-align: right;">156.4</td>
+<td style="text-align: right;">0.4246229</td>
+<td style="text-align: right;">-0.2457184</td>
+<td style="text-align: right;">2.863067</td>
+<td style="text-align: right;">2.617349</td>
+<td style="text-align: right;">2.192726</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For those who guessed right, <em>Christian McCaffrey</em> is the answer.</p>
+</section>
+<section id="tes" class="level4">
+<h4 class="anchored" data-anchor-id="tes">TEs</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">FantasyPosition2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+<th style="text-align: right;">pc2</th>
+<th style="text-align: right;">pc3</th>
+<th style="text-align: right;">ovr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Travis Kelce</td>
+<td style="text-align: right;">219.4</td>
+<td style="text-align: right;">-0.2133567</td>
+<td style="text-align: right;">3.1057079</td>
+<td style="text-align: right;">-0.4818508</td>
+<td style="text-align: right;">2.8372138</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Evan Engram</td>
+<td style="text-align: right;">230.3</td>
+<td style="text-align: right;">-0.2972325</td>
+<td style="text-align: right;">2.3973868</td>
+<td style="text-align: right;">-0.2920871</td>
+<td style="text-align: right;">2.4025322</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Sam LaPorta</td>
+<td style="text-align: right;">239.3</td>
+<td style="text-align: right;">0.0767959</td>
+<td style="text-align: right;">3.0292120</td>
+<td style="text-align: right;">-0.6581878</td>
+<td style="text-align: right;">2.2942282</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">T.J. Hockenson</td>
+<td style="text-align: right;">219.0</td>
+<td style="text-align: right;">-0.1485518</td>
+<td style="text-align: right;">2.5070454</td>
+<td style="text-align: right;">-0.4193009</td>
+<td style="text-align: right;">2.2362962</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">David Njoku</td>
+<td style="text-align: right;">201.2</td>
+<td style="text-align: right;">-0.3304756</td>
+<td style="text-align: right;">2.1529480</td>
+<td style="text-align: right;">-0.3574485</td>
+<td style="text-align: right;">2.1259750</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">George Kittle</td>
+<td style="text-align: right;">203.2</td>
+<td style="text-align: right;">0.0267449</td>
+<td style="text-align: right;">2.4249183</td>
+<td style="text-align: right;">-0.6040932</td>
+<td style="text-align: right;">1.7940803</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Taysom Hill</td>
+<td style="text-align: right;">143.5</td>
+<td style="text-align: right;">0.2438536</td>
+<td style="text-align: right;">0.1052642</td>
+<td style="text-align: right;">1.8031478</td>
+<td style="text-align: right;">1.6645584</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Cole Kmet</td>
+<td style="text-align: right;">181.1</td>
+<td style="text-align: right;">0.0798679</td>
+<td style="text-align: right;">1.9127208</td>
+<td style="text-align: right;">-0.5253569</td>
+<td style="text-align: right;">1.3074959</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Dalton Schultz</td>
+<td style="text-align: right;">150.5</td>
+<td style="text-align: right;">-0.0836174</td>
+<td style="text-align: right;">1.6206742</td>
+<td style="text-align: right;">-0.4195161</td>
+<td style="text-align: right;">1.2847755</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">153</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Dalton Kincaid</td>
+<td style="text-align: right;">150.3</td>
+<td style="text-align: right;">-0.0344514</td>
+<td style="text-align: right;">1.3914214</td>
+<td style="text-align: right;">-0.3206329</td>
+<td style="text-align: right;">1.1052399</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Mark Andrews</td>
+<td style="text-align: right;">135.4</td>
+<td style="text-align: right;">0.1009389</td>
+<td style="text-align: right;">1.6365008</td>
+<td style="text-align: right;">-0.5263595</td>
+<td style="text-align: right;">1.0092024</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Logan Thomas</td>
+<td style="text-align: right;">126.8</td>
+<td style="text-align: right;">-0.1186648</td>
+<td style="text-align: right;">1.0050809</td>
+<td style="text-align: right;">-0.3121230</td>
+<td style="text-align: right;">0.8116226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">152</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Dallas Goedert</td>
+<td style="text-align: right;">136.3</td>
+<td style="text-align: right;">0.1665166</td>
+<td style="text-align: right;">1.2309859</td>
+<td style="text-align: right;">-0.4434369</td>
+<td style="text-align: right;">0.6210324</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Trey McBride</td>
+<td style="text-align: right;">181.5</td>
+<td style="text-align: right;">0.1669158</td>
+<td style="text-align: right;">1.2074113</td>
+<td style="text-align: right;">-0.4238810</td>
+<td style="text-align: right;">0.6166145</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Gerald Everett</td>
+<td style="text-align: right;">111.1</td>
+<td style="text-align: right;">0.0617898</td>
+<td style="text-align: right;">1.0534025</td>
+<td style="text-align: right;">-0.3961426</td>
+<td style="text-align: right;">0.5954702</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Jake Ferguson</td>
+<td style="text-align: right;">177.1</td>
+<td style="text-align: right;">0.2593189</td>
+<td style="text-align: right;">1.2356744</td>
+<td style="text-align: right;">-0.5091075</td>
+<td style="text-align: right;">0.4672480</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">171</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Cade Otton</td>
+<td style="text-align: right;">116.5</td>
+<td style="text-align: right;">0.0853025</td>
+<td style="text-align: right;">0.9294406</td>
+<td style="text-align: right;">-0.4083558</td>
+<td style="text-align: right;">0.4357823</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Hunter Henry</td>
+<td style="text-align: right;">119.9</td>
+<td style="text-align: right;">0.1898953</td>
+<td style="text-align: right;">1.0679713</td>
+<td style="text-align: right;">-0.5090276</td>
+<td style="text-align: right;">0.3690484</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">159</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Jonnu Smith</td>
+<td style="text-align: right;">124.2</td>
+<td style="text-align: right;">0.0733171</td>
+<td style="text-align: right;">0.7195733</td>
+<td style="text-align: right;">-0.3668343</td>
+<td style="text-align: right;">0.2794219</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">187</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Tyler Conklin</td>
+<td style="text-align: right;">123.1</td>
+<td style="text-align: right;">0.2403092</td>
+<td style="text-align: right;">0.8833609</td>
+<td style="text-align: right;">-0.3962861</td>
+<td style="text-align: right;">0.2467656</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="top-75-projected-players" class="level4">
+<h4 class="anchored" data-anchor-id="top-75-projected-players">Top 75 Projected Players</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Rank2023</th>
+<th style="text-align: right;">PositionRank2023</th>
+<th style="text-align: left;">FantasyPosition2023</th>
+<th style="text-align: left;">Player2023</th>
+<th style="text-align: right;">FantasyPointsPPR2023</th>
+<th style="text-align: right;">pc1</th>
+<th style="text-align: right;">pc2</th>
+<th style="text-align: right;">pc3</th>
+<th style="text-align: right;">overall</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Josh Allen</td>
+<td style="text-align: right;">392.6</td>
+<td style="text-align: right;">-5.6326994</td>
+<td style="text-align: right;">-0.5109040</td>
+<td style="text-align: right;">2.7710344</td>
+<td style="text-align: right;">7.892830</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Jalen Hurts</td>
+<td style="text-align: right;">356.8</td>
+<td style="text-align: right;">-4.4322185</td>
+<td style="text-align: right;">-0.5431606</td>
+<td style="text-align: right;">3.7384047</td>
+<td style="text-align: right;">7.627463</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Christian McCaffrey</td>
+<td style="text-align: right;">391.3</td>
+<td style="text-align: right;">0.4013481</td>
+<td style="text-align: right;">1.8335669</td>
+<td style="text-align: right;">5.4488141</td>
+<td style="text-align: right;">6.881033</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Trevor Lawrence</td>
+<td style="text-align: right;">262.5</td>
+<td style="text-align: right;">-5.9305269</td>
+<td style="text-align: right;">-0.0503780</td>
+<td style="text-align: right;">0.9867315</td>
+<td style="text-align: right;">6.866880</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Justin Fields</td>
+<td style="text-align: right;">230.2</td>
+<td style="text-align: right;">-3.8055928</td>
+<td style="text-align: right;">-0.4159731</td>
+<td style="text-align: right;">2.3390141</td>
+<td style="text-align: right;">5.728634</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Lamar Jackson</td>
+<td style="text-align: right;">331.2</td>
+<td style="text-align: right;">-4.0007105</td>
+<td style="text-align: right;">-0.3771609</td>
+<td style="text-align: right;">1.9823330</td>
+<td style="text-align: right;">5.605883</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Austin Ekeler</td>
+<td style="text-align: right;">185.4</td>
+<td style="text-align: right;">-0.5707807</td>
+<td style="text-align: right;">1.3815793</td>
+<td style="text-align: right;">3.4528471</td>
+<td style="text-align: right;">5.405207</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">CeeDee Lamb</td>
+<td style="text-align: right;">403.2</td>
+<td style="text-align: right;">-0.4854760</td>
+<td style="text-align: right;">4.6920067</td>
+<td style="text-align: right;">-0.0351089</td>
+<td style="text-align: right;">5.142374</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Bijan Robinson</td>
+<td style="text-align: right;">246.3</td>
+<td style="text-align: right;">-0.3539197</td>
+<td style="text-align: right;">1.3855412</td>
+<td style="text-align: right;">2.9664622</td>
+<td style="text-align: right;">4.705923</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Derrick Henry</td>
+<td style="text-align: right;">246.7</td>
+<td style="text-align: right;">0.6250369</td>
+<td style="text-align: right;">-0.2218642</td>
+<td style="text-align: right;">5.4841608</td>
+<td style="text-align: right;">4.637260</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Raheem Mostert</td>
+<td style="text-align: right;">267.7</td>
+<td style="text-align: right;">0.4636988</td>
+<td style="text-align: right;">0.1289391</td>
+<td style="text-align: right;">4.9556958</td>
+<td style="text-align: right;">4.620936</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Joshua Dobbs</td>
+<td style="text-align: right;">200.7</td>
+<td style="text-align: right;">-3.4470700</td>
+<td style="text-align: right;">-0.2262667</td>
+<td style="text-align: right;">1.3141742</td>
+<td style="text-align: right;">4.534978</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Tyreek Hill</td>
+<td style="text-align: right;">376.4</td>
+<td style="text-align: right;">-0.3031218</td>
+<td style="text-align: right;">4.7163028</td>
+<td style="text-align: right;">-0.5487987</td>
+<td style="text-align: right;">4.470626</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Russell Wilson</td>
+<td style="text-align: right;">256.9</td>
+<td style="text-align: right;">-4.2918365</td>
+<td style="text-align: right;">-0.3730684</td>
+<td style="text-align: right;">0.4534387</td>
+<td style="text-align: right;">4.372207</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Bryce Young</td>
+<td style="text-align: right;">156.4</td>
+<td style="text-align: right;">-4.4512322</td>
+<td style="text-align: right;">-0.1338657</td>
+<td style="text-align: right;">0.0545880</td>
+<td style="text-align: right;">4.371955</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Tua Tagovailoa</td>
+<td style="text-align: right;">270.4</td>
+<td style="text-align: right;">-5.5166950</td>
+<td style="text-align: right;">-0.3038964</td>
+<td style="text-align: right;">-1.1058169</td>
+<td style="text-align: right;">4.106982</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Jahmyr Gibbs</td>
+<td style="text-align: right;">242.1</td>
+<td style="text-align: right;">0.4996770</td>
+<td style="text-align: right;">0.3529346</td>
+<td style="text-align: right;">4.2101362</td>
+<td style="text-align: right;">4.063394</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Travis Etienne</td>
+<td style="text-align: right;">282.4</td>
+<td style="text-align: right;">0.5419388</td>
+<td style="text-align: right;">0.3888151</td>
+<td style="text-align: right;">4.1702001</td>
+<td style="text-align: right;">4.017076</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Saquon Barkley</td>
+<td style="text-align: right;">223.2</td>
+<td style="text-align: right;">0.4194728</td>
+<td style="text-align: right;">0.5619764</td>
+<td style="text-align: right;">3.8198951</td>
+<td style="text-align: right;">3.962399</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">A.J. Brown</td>
+<td style="text-align: right;">289.6</td>
+<td style="text-align: right;">-0.5945953</td>
+<td style="text-align: right;">3.8079589</td>
+<td style="text-align: right;">-0.4452682</td>
+<td style="text-align: right;">3.957286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Desmond Ridder</td>
+<td style="text-align: right;">177.1</td>
+<td style="text-align: right;">-3.4720844</td>
+<td style="text-align: right;">-0.2480811</td>
+<td style="text-align: right;">0.7297931</td>
+<td style="text-align: right;">3.953796</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">C.J. Stroud</td>
+<td style="text-align: right;">276.0</td>
+<td style="text-align: right;">-4.1629726</td>
+<td style="text-align: right;">-0.3520566</td>
+<td style="text-align: right;">0.1391058</td>
+<td style="text-align: right;">3.950022</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Rachaad White</td>
+<td style="text-align: right;">267.9</td>
+<td style="text-align: right;">-0.1212895</td>
+<td style="text-align: right;">1.0935208</td>
+<td style="text-align: right;">2.6639608</td>
+<td style="text-align: right;">3.878771</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Josh Jacobs</td>
+<td style="text-align: right;">181.1</td>
+<td style="text-align: right;">0.4088426</td>
+<td style="text-align: right;">0.1086206</td>
+<td style="text-align: right;">4.0790000</td>
+<td style="text-align: right;">3.778778</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Jared Goff</td>
+<td style="text-align: right;">289.1</td>
+<td style="text-align: right;">-5.0854574</td>
+<td style="text-align: right;">-0.3948707</td>
+<td style="text-align: right;">-0.9800167</td>
+<td style="text-align: right;">3.710570</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Patrick Mahomes</td>
+<td style="text-align: right;">280.2</td>
+<td style="text-align: right;">-4.8332872</td>
+<td style="text-align: right;">-0.6241090</td>
+<td style="text-align: right;">-0.6092024</td>
+<td style="text-align: right;">3.599976</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Amon-Ra St.&nbsp;Brown</td>
+<td style="text-align: right;">330.9</td>
+<td style="text-align: right;">-0.1663705</td>
+<td style="text-align: right;">3.8404387</td>
+<td style="text-align: right;">-0.4728162</td>
+<td style="text-align: right;">3.533993</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">David Montgomery</td>
+<td style="text-align: right;">207.2</td>
+<td style="text-align: right;">0.4868309</td>
+<td style="text-align: right;">-0.2935361</td>
+<td style="text-align: right;">4.3032708</td>
+<td style="text-align: right;">3.522904</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Najee Harris</td>
+<td style="text-align: right;">195.5</td>
+<td style="text-align: right;">0.3923408</td>
+<td style="text-align: right;">0.0011078</td>
+<td style="text-align: right;">3.8664052</td>
+<td style="text-align: right;">3.475172</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Joe Mixon</td>
+<td style="text-align: right;">267.0</td>
+<td style="text-align: right;">0.8432436</td>
+<td style="text-align: right;">0.6461894</td>
+<td style="text-align: right;">3.6395240</td>
+<td style="text-align: right;">3.442470</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Stefon Diggs</td>
+<td style="text-align: right;">273.8</td>
+<td style="text-align: right;">-0.2824399</td>
+<td style="text-align: right;">3.6769298</td>
+<td style="text-align: right;">-0.5407565</td>
+<td style="text-align: right;">3.418613</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Tony Pollard</td>
+<td style="text-align: right;">222.6</td>
+<td style="text-align: right;">0.5111218</td>
+<td style="text-align: right;">0.3409509</td>
+<td style="text-align: right;">3.5840175</td>
+<td style="text-align: right;">3.413847</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Geno Smith</td>
+<td style="text-align: right;">227.3</td>
+<td style="text-align: right;">-4.2440714</td>
+<td style="text-align: right;">-0.4634977</td>
+<td style="text-align: right;">-0.4912202</td>
+<td style="text-align: right;">3.289353</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Baker Mayfield</td>
+<td style="text-align: right;">274.1</td>
+<td style="text-align: right;">-4.1641128</td>
+<td style="text-align: right;">-0.4451368</td>
+<td style="text-align: right;">-0.5684088</td>
+<td style="text-align: right;">3.150567</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Kyren Williams</td>
+<td style="text-align: right;">255.0</td>
+<td style="text-align: right;">0.3486863</td>
+<td style="text-align: right;">0.0282645</td>
+<td style="text-align: right;">3.4100032</td>
+<td style="text-align: right;">3.089581</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Davante Adams</td>
+<td style="text-align: right;">265.4</td>
+<td style="text-align: right;">-0.0177478</td>
+<td style="text-align: right;">3.6882542</td>
+<td style="text-align: right;">-0.6829619</td>
+<td style="text-align: right;">3.023040</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">De’Von Achane</td>
+<td style="text-align: right;">190.7</td>
+<td style="text-align: right;">0.4989313</td>
+<td style="text-align: right;">0.2176291</td>
+<td style="text-align: right;">3.3016915</td>
+<td style="text-align: right;">3.020389</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Breece Hall</td>
+<td style="text-align: right;">290.5</td>
+<td style="text-align: right;">0.4299343</td>
+<td style="text-align: right;">0.9361875</td>
+<td style="text-align: right;">2.5124310</td>
+<td style="text-align: right;">3.018684</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Alvin Kamara</td>
+<td style="text-align: right;">233.0</td>
+<td style="text-align: right;">0.2613167</td>
+<td style="text-align: right;">0.9099540</td>
+<td style="text-align: right;">2.3692392</td>
+<td style="text-align: right;">3.017876</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Isiah Pacheco</td>
+<td style="text-align: right;">213.9</td>
+<td style="text-align: right;">0.3420606</td>
+<td style="text-align: right;">0.1033635</td>
+<td style="text-align: right;">3.2324599</td>
+<td style="text-align: right;">2.993763</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Zach Wilson</td>
+<td style="text-align: right;">119.9</td>
+<td style="text-align: right;">-3.1409041</td>
+<td style="text-align: right;">-0.2181354</td>
+<td style="text-align: right;">0.0470994</td>
+<td style="text-align: right;">2.969868</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Puka Nacua</td>
+<td style="text-align: right;">298.5</td>
+<td style="text-align: right;">-0.0068304</td>
+<td style="text-align: right;">3.3289353</td>
+<td style="text-align: right;">-0.3826797</td>
+<td style="text-align: right;">2.953086</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">James Cook</td>
+<td style="text-align: right;">232.7</td>
+<td style="text-align: right;">0.0039261</td>
+<td style="text-align: right;">0.6829741</td>
+<td style="text-align: right;">2.2223857</td>
+<td style="text-align: right;">2.901434</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Kirk Cousins</td>
+<td style="text-align: right;">149.7</td>
+<td style="text-align: right;">-3.9825717</td>
+<td style="text-align: right;">-0.3888610</td>
+<td style="text-align: right;">-0.7017827</td>
+<td style="text-align: right;">2.891928</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Dak Prescott</td>
+<td style="text-align: right;">342.8</td>
+<td style="text-align: right;">-4.2689340</td>
+<td style="text-align: right;">-0.6583281</td>
+<td style="text-align: right;">-0.7678610</td>
+<td style="text-align: right;">2.842745</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Ja’Marr Chase</td>
+<td style="text-align: right;">262.7</td>
+<td style="text-align: right;">-0.1969554</td>
+<td style="text-align: right;">3.1704554</td>
+<td style="text-align: right;">-0.5266913</td>
+<td style="text-align: right;">2.840720</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Travis Kelce</td>
+<td style="text-align: right;">219.4</td>
+<td style="text-align: right;">-0.2133567</td>
+<td style="text-align: right;">3.1057079</td>
+<td style="text-align: right;">-0.4818508</td>
+<td style="text-align: right;">2.837214</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Deebo Samuel</td>
+<td style="text-align: right;">243.7</td>
+<td style="text-align: right;">0.0619510</td>
+<td style="text-align: right;">1.8188859</td>
+<td style="text-align: right;">1.0762716</td>
+<td style="text-align: right;">2.833207</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">D.J. Moore</td>
+<td style="text-align: right;">286.5</td>
+<td style="text-align: right;">-0.0951553</td>
+<td style="text-align: right;">3.0498205</td>
+<td style="text-align: right;">-0.3409322</td>
+<td style="text-align: right;">2.804044</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Gus Edwards</td>
+<td style="text-align: right;">187.0</td>
+<td style="text-align: right;">0.2995327</td>
+<td style="text-align: right;">-0.5424543</td>
+<td style="text-align: right;">3.6157193</td>
+<td style="text-align: right;">2.773732</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">D’Andre Swift</td>
+<td style="text-align: right;">199.3</td>
+<td style="text-align: right;">0.3774701</td>
+<td style="text-align: right;">0.3239584</td>
+<td style="text-align: right;">2.8181302</td>
+<td style="text-align: right;">2.764619</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">James Conner</td>
+<td style="text-align: right;">201.5</td>
+<td style="text-align: right;">0.6828011</td>
+<td style="text-align: right;">0.0453300</td>
+<td style="text-align: right;">3.3831360</td>
+<td style="text-align: right;">2.745665</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Brian Robinson Jr.</td>
+<td style="text-align: right;">198.1</td>
+<td style="text-align: right;">0.0431989</td>
+<td style="text-align: right;">0.4319358</td>
+<td style="text-align: right;">2.3335611</td>
+<td style="text-align: right;">2.722298</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Keenan Allen</td>
+<td style="text-align: right;">278.9</td>
+<td style="text-align: right;">-0.2985197</td>
+<td style="text-align: right;">2.8149132</td>
+<td style="text-align: right;">-0.4333948</td>
+<td style="text-align: right;">2.680038</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Gardner Minshew II</td>
+<td style="text-align: right;">196.2</td>
+<td style="text-align: right;">-3.0404792</td>
+<td style="text-align: right;">-0.4137321</td>
+<td style="text-align: right;">0.0498471</td>
+<td style="text-align: right;">2.676594</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Jordan Love</td>
+<td style="text-align: right;">319.1</td>
+<td style="text-align: right;">-3.3025585</td>
+<td style="text-align: right;">-0.5680836</td>
+<td style="text-align: right;">-0.0879753</td>
+<td style="text-align: right;">2.646500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Brandon Aiyuk</td>
+<td style="text-align: right;">249.2</td>
+<td style="text-align: right;">-0.2161881</td>
+<td style="text-align: right;">2.9479753</td>
+<td style="text-align: right;">-0.5240996</td>
+<td style="text-align: right;">2.640064</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Mike Evans</td>
+<td style="text-align: right;">282.5</td>
+<td style="text-align: right;">0.0250674</td>
+<td style="text-align: right;">3.4037655</td>
+<td style="text-align: right;">-0.7424778</td>
+<td style="text-align: right;">2.636220</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Kenneth Walker III</td>
+<td style="text-align: right;">199.4</td>
+<td style="text-align: right;">0.8418188</td>
+<td style="text-align: right;">-0.2145180</td>
+<td style="text-align: right;">3.6814052</td>
+<td style="text-align: right;">2.625068</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Justin Jefferson</td>
+<td style="text-align: right;">202.2</td>
+<td style="text-align: right;">-0.0982413</td>
+<td style="text-align: right;">2.9532125</td>
+<td style="text-align: right;">-0.4560280</td>
+<td style="text-align: right;">2.595426</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">119</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Aaron Jones</td>
+<td style="text-align: right;">134.9</td>
+<td style="text-align: right;">-0.0110174</td>
+<td style="text-align: right;">0.5499441</td>
+<td style="text-align: right;">2.0267188</td>
+<td style="text-align: right;">2.587680</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">DeVonta Smith</td>
+<td style="text-align: right;">227.6</td>
+<td style="text-align: right;">-0.2012139</td>
+<td style="text-align: right;">2.8835052</td>
+<td style="text-align: right;">-0.4985185</td>
+<td style="text-align: right;">2.586200</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Michael Pittman Jr.</td>
+<td style="text-align: right;">250.2</td>
+<td style="text-align: right;">-0.2537675</td>
+<td style="text-align: right;">2.6492020</td>
+<td style="text-align: right;">-0.3237992</td>
+<td style="text-align: right;">2.579170</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Justin Herbert</td>
+<td style="text-align: right;">234.2</td>
+<td style="text-align: right;">-3.5064863</td>
+<td style="text-align: right;">-0.5899363</td>
+<td style="text-align: right;">-0.3464946</td>
+<td style="text-align: right;">2.570056</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Jayden Reed</td>
+<td style="text-align: right;">217.2</td>
+<td style="text-align: right;">0.0040611</td>
+<td style="text-align: right;">2.3128995</td>
+<td style="text-align: right;">0.1713347</td>
+<td style="text-align: right;">2.480173</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Rashee Rice</td>
+<td style="text-align: right;">212.5</td>
+<td style="text-align: right;">-0.2912444</td>
+<td style="text-align: right;">2.6248509</td>
+<td style="text-align: right;">-0.4591774</td>
+<td style="text-align: right;">2.456918</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Garrett Wilson</td>
+<td style="text-align: right;">213.2</td>
+<td style="text-align: right;">-0.3663950</td>
+<td style="text-align: right;">2.3745819</td>
+<td style="text-align: right;">-0.2904359</td>
+<td style="text-align: right;">2.450541</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Courtland Sutton</td>
+<td style="text-align: right;">190.2</td>
+<td style="text-align: right;">-0.4686553</td>
+<td style="text-align: right;">2.3359688</td>
+<td style="text-align: right;">-0.3842928</td>
+<td style="text-align: right;">2.420331</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Evan Engram</td>
+<td style="text-align: right;">230.3</td>
+<td style="text-align: right;">-0.2972325</td>
+<td style="text-align: right;">2.3973868</td>
+<td style="text-align: right;">-0.2920871</td>
+<td style="text-align: right;">2.402532</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">117</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Rhamondre Stevenson</td>
+<td style="text-align: right;">145.7</td>
+<td style="text-align: right;">0.3129451</td>
+<td style="text-align: right;">0.2561569</td>
+<td style="text-align: right;">2.4567995</td>
+<td style="text-align: right;">2.400011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: left;">RB</td>
+<td style="text-align: left;">Ezekiel Elliott</td>
+<td style="text-align: right;">174.5</td>
+<td style="text-align: right;">0.4740323</td>
+<td style="text-align: right;">0.1785218</td>
+<td style="text-align: right;">2.6903599</td>
+<td style="text-align: right;">2.394849</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">Amari Cooper</td>
+<td style="text-align: right;">227.0</td>
+<td style="text-align: right;">-0.2007380</td>
+<td style="text-align: right;">2.7257529</td>
+<td style="text-align: right;">-0.5441609</td>
+<td style="text-align: right;">2.382330</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">QB</td>
+<td style="text-align: left;">Derek Carr</td>
+<td style="text-align: right;">241.1</td>
+<td style="text-align: right;">-4.1336365</td>
+<td style="text-align: right;">-0.5409597</td>
+<td style="text-align: right;">-1.2287010</td>
+<td style="text-align: right;">2.363976</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">TE</td>
+<td style="text-align: left;">Sam LaPorta</td>
+<td style="text-align: right;">239.3</td>
+<td style="text-align: right;">0.0767959</td>
+<td style="text-align: right;">3.0292120</td>
+<td style="text-align: right;">-0.6581878</td>
+<td style="text-align: right;">2.294228</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">WR</td>
+<td style="text-align: left;">D.K. Metcalf</td>
+<td style="text-align: right;">225.4</td>
+<td style="text-align: right;">-0.0958922</td>
+<td style="text-align: right;">2.7273030</td>
+<td style="text-align: right;">-0.5632479</td>
+<td style="text-align: right;">2.259947</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 
 
 </section>
