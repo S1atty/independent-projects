@@ -1455,10 +1455,14 @@ qb_table <-
 combine %>%
   filter(FantasyPosition2023=="QB") %>%
   mutate(pc1 = (-0.96567341*weighted_PassingYards)+(-0.94166132*weighted_PassingTDs)+
-           (0.94020552*weighted_Interceptions)+(0.87794884*weighted_Fumbles)+(0.80126198*weighted_FumblesLost)) %>%
-  select(Rank2023,PositionRank2023,Player2023,FantasyPointsPPR2023,pc1) %>%
+           (0.94020552*weighted_Interceptions)+(0.87794884*weighted_Fumbles)+(0.80126198*weighted_FumblesLost),
+         pc2 =  (0.962317103*weighted_Receptions)+(0.980608513*weighted_ReceivingTDs)+(0.980608513*weighted_ReceivingYards),
+         pc3 = (weighted_RushingYards*0.96620788)+(weighted_RushingTDs*0.93854323),
+         ovr = -pc1+pc2+pc3) %>%
+  select(Rank2023,PositionRank2023,Team2023,Player2023,FantasyPointsPPR2023,pc1,pc2,pc3,ovr) %>%
   arrange(pc1) %>%
-  tibble() 
+  mutate(ModelRank = row_number(), .before = Rank2023) %>%
+  tibble()
 knitr::kable(qb_table[1:20,])
 ```
 
@@ -1467,34 +1471,67 @@ knitr::kable(qb_table[1:20,])
 ```{r}
 wr_table <- 
 combine %>%
-  group_by(Player2023) %>%
   filter(FantasyPosition2023=="WR") %>%
-  mutate(pc2 = (0.962317103*weighted_Receptions)+(0.980608513*weighted_ReceivingTDs)+(0.980608513*weighted_ReceivingYards)) %>%
-  select(Rank2023,PositionRank2023,Player2023,FantasyPointsPPR2023,pc2) %>%
-  arrange(desc(pc2)) 
+  mutate(pc1 = (-0.96567341*weighted_PassingYards)+(-0.94166132*weighted_PassingTDs)+
+           (0.94020552*weighted_Interceptions)+(0.87794884*weighted_Fumbles)+(0.80126198*weighted_FumblesLost),
+         pc2 =  (0.962317103*weighted_Receptions)+(0.980608513*weighted_ReceivingTDs)+(0.980608513*weighted_ReceivingYards),
+         pc3 = (weighted_RushingYards*0.96620788)+(weighted_RushingTDs*0.93854323),
+         ovr = -pc1+pc2+pc3) %>%
+  select(Rank2023,PositionRank2023,Team2023,Player2023,FantasyPointsPPR2023,pc1,pc2,pc3,ovr) %>%
+  arrange(desc(pc2)) %>%
+  mutate(ModelRank = row_number(), .before = Rank2023) %>%
+  tibble()
 knitr::kable(wr_table[1:20,])
 
 ```
 
 #### RBs
 
+For those who guessed right, *Christian McCaffrey* is the answer. Analysis shows that he is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.   
+
+
 ```{r}
 rb_table <- 
 combine %>%
   filter(FantasyPosition2023=="RB") %>%
-  mutate(pc3 = (weighted_RushingYards*0.96620788)+(weighted_RushingTDs*0.93854323)) %>%
-  select(Rank2023,PositionRank2023,Player2023,FantasyPointsPPR2023,pc3) %>%
+  mutate(pc1 = (-0.96567341*weighted_PassingYards)+(-0.94166132*weighted_PassingTDs)+
+           (0.94020552*weighted_Interceptions)+(0.87794884*weighted_Fumbles)+(0.80126198*weighted_FumblesLost),
+         pc2 =  (0.962317103*weighted_Receptions)+(0.980608513*weighted_ReceivingTDs)+(0.980608513*weighted_ReceivingYards),
+         pc3 = (weighted_RushingYards*0.96620788)+(weighted_RushingTDs*0.93854323),
+         ovr = -pc1+pc2+pc3) %>%
+  select(Rank2023,PositionRank2023,Team2023,Player2023,FantasyPointsPPR2023,pc1,pc2,pc3,ovr) %>%
   arrange(desc(pc3)) %>%
-  tibble() 
+  mutate(ModelRank = row_number(), .before = Rank2023) %>%
+  tibble()
 knitr::kable(rb_table[1:20,])
 
 ```
 
+#### Top 75
+
+Based on the functional nature of football and analysis thus far, a top 75 list wouldn't be meaningful, since each component and position is unique to its own. For those that are curious, however, a ranking such as this can, in theory, be created by combining all component scores. 
+
+```{r}
+top75_table <- 
+combine %>%
+ # filter(FantasyPosition2023=="RB") %>%
+  mutate(pc1 = (-0.96567341*weighted_PassingYards)+(-0.94166132*weighted_PassingTDs)+
+           (0.94020552*weighted_Interceptions)+(0.87794884*weighted_Fumbles)+(0.80126198*weighted_FumblesLost),
+         pc2 =  (0.962317103*weighted_Receptions)+(0.980608513*weighted_ReceivingTDs)+(0.980608513*weighted_ReceivingYards),
+         pc3 = (weighted_RushingYards*0.96620788)+(weighted_RushingTDs*0.93854323),
+         ovr = -pc1+pc2+pc3) %>%
+  select(Rank2023,PositionRank2023,Team2023,FantasyPosition2023,Player2023,FantasyPointsPPR2023,pc1,pc2,pc3,ovr) %>%
+  arrange(desc(ovr)) %>%
+  mutate(ModelRank = row_number(), .before = Rank2023) %>%
+  tibble()
+knitr::kable(top75_table[1:75,])
+
+```
 
 ### Approach 2 - All Scores (Most Accurate)
 #### QBs
 
-```{r}
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 qb_pctable <- 
 combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1509,7 +1546,7 @@ knitr::kable(qb_pctable[1:20,])
 ```
 
 #### WRs
-```{r}
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 wr_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1524,7 +1561,7 @@ knitr::kable(wr_pctable[1:20,])
 ```
 
 #### RBs
-```{r}
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 rb_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1542,7 +1579,7 @@ knitr::kable(rb_pctable[1:20,])
 For those who guessed right, *Christian McCaffrey* is the answer. 
 
 #### TEs
-```{r}
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 te_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1559,7 +1596,7 @@ knitr::kable(te_pctable[1:20,])
 
 #### Top 75 Projected Players
 
-```{r}
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 top75_table <- 
 combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
