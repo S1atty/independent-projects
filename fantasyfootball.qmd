@@ -1487,7 +1487,7 @@ knitr::kable(wr_table[1:20,])
 
 #### RBs
 
-For those who guessed right, *Christian McCaffrey* is the answer. Analysis shows that he is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.   
+Model favors **Christian McCaffrey** is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.   
 
 
 ```{r}
@@ -1579,7 +1579,7 @@ knitr::kable(rb_pctable[1:20,])
 For those who guessed right, *Christian McCaffrey* is the answer. 
 
 #### TEs
-```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE}
 te_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
