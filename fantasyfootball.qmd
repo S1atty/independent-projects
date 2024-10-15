@@ -1528,10 +1528,12 @@ knitr::kable(top75_table[1:75,])
 
 ```
 
+
+
+```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 ### Approach 2 - All Scores (Most Accurate)
 #### QBs
 
-```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
 qb_pctable <- 
 combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1545,8 +1547,10 @@ combine %>%
 knitr::kable(qb_pctable[1:20,])
 ```
 
-#### WRs
+
 ```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
+#### WRs
+
 wr_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1560,8 +1564,12 @@ wr_pctable <-
 knitr::kable(wr_pctable[1:20,])
 ```
 
-#### RBs
+
 ```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
+#### RBs
+
+#For those who guessed right, *Christian McCaffrey* is the answer. 
+
 rb_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1576,10 +1584,10 @@ rb_pctable <-
 knitr::kable(rb_pctable[1:20,])
 ```
 
-For those who guessed right, *Christian McCaffrey* is the answer. 
 
-#### TEs
 ```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE}
+#### TEs
+
 te_pctable <- 
   combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
@@ -1594,9 +1602,10 @@ knitr::kable(te_pctable[1:20,])
 
 ```
 
-#### Top 75 Projected Players
+
 
 ```{r, echo = FALSE, eval = FALSE, include = FALSE, warning=FALSE }
+#### Top 75 Projected Players
 top75_table <- 
 combine %>%
   mutate(pc1=pc_weight_total$scores[,1],
