@@ -1487,7 +1487,7 @@ knitr::kable(wr_table[1:20,])
 
 #### RBs
 
-Model favors **Christian McCaffrey** is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.   
+**Christian McCaffrey** is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.   
 
 
 ```{r}
