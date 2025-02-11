@@ -14,13 +14,13 @@ website:
         href: index.qmd
       # - text: "Independent Projects"
       #   href: index.qmd
-      - text: "Analytical Projects"
+      - text: "Healthcare | Academic"
         menu:
           - text: "Patient Satisfaction"
             href: ptsatisfaction.qmd
-          - text: "FFS Medicare Benefeciaries"
-            href: ffsgvmedicare.qmd
-      - text: "Concepts"
+          # - text: "FFS Medicare Benefeciaries"
+            # href: ffsgvmedicare.qmd
+      - text: "Decision Science"
         menu: 
           - text: "Fantasy Football"
             href: fantasyfootball.qmd

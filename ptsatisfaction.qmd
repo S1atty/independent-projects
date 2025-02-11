@@ -1,5 +1,5 @@
 ---
-title: "Forecasting Patient Satisfaction for Emergency Department Encounters"
+title: "Patient Satisfaction Predictions for Emergency Department Encounters Using Multivariate Regression"
 author: "Tomi Akisanya"
 output: html_document
 editor_options: 
@@ -22,7 +22,7 @@ library(dplyr)
 
 ## Abstract
 
-Patient satisfaction can be an indication of quality care and aid in predicting health outcomes and patient retention. Although subjective, it is crucial for healthcare administrators to understand and meet patients' expectations, translate it to patient-oriented care within delivery models, and improve population health as a result. This project investigates features associated with higher patient satisfaction scores for ER encounters and developing models to predict them.
+Patient satisfaction can be an indication of quality care and aid in predicting health outcomes and patient retention. Although subjective, it is crucial for healthcare administrators to understand and meet patients' expectations, translate it to patient-oriented care within delivery models, and improve population health as a result. The project requirement was to use a multivariate regression model, though a Poisson regression would have been more appropriate given the count-based nature of the response variable. This project investigates features associated with higher patient satisfaction scores for ER encounters and developing models to predict them.
 
 ## Data
 
@@ -64,7 +64,7 @@ mydata <- mydata[mydata$disdate!="1900-01-01" & mydata$survey_id!=1418129390,] #
 
 ## Population of Interest
 
-The population of interest is the patient population for emergency encounters at NM with disproportionate social determinants of health.
+The population of interest is the patient population for emergency encounters at NM with disproportionately lower social determinants of health.
 
 ## Exclusion Criteria
 
@@ -75,7 +75,7 @@ A waterfall approach was used to define the population of interest. Social deter
 [^2]: Naouri D, Ranchon G, Vuagnat A, Schmidt J, El Khoury C, Yordanov Y; French Society of Emergency Medicine. Factors associated with inappropriate use of emergency departments: findings from a cross-sectional national study in France. BMJ Qual Saf. 2020 Jun;29(6):449-464. doi: 10.1136/bmjqs-2019-009396. Epub 2019 Oct 30. PMID: 31666304; PMCID: PMC7323738.
 
 ```{r}
-waterfall <- mydata[mydata$disdate!="1900-01-01" & mydata$survey_id!=1418129390,] #erroneous record; clearly incorrect entry 
+waterfall <- mydata[mydata$disdate!="1900-01-01" & mydata$survey_id!=1418129390,] #erroneous record; 
 waterfall %<>% filter(age >= 16, 
                       payor %in% c("Medicare","Medicaid","Self-Pay")) #4603
 
@@ -110,9 +110,9 @@ waterfall %<>% mutate(family_friends = (E1+E2+E3)/3,
                       personal_issues = (F1+F2+F41)/3,
                       insurance = (A2+A3+A28)/3, 
                       overall = (E1+E2+E3+D4+D65+C1+C2+C4+C5+C75+B1+B3+B4+B5+B76+A4+A5+A86+F1+F2+F41+A2+A3+A28)/25)
-# additional variables will most likely remove due to multicollinearity
+# additional variables contributing to multicollinearity will be removed 
 
-waterfall %<>% mutate(response_time = recdate - disdate, .before = distrib) # length of time b/w disch and receiving survey
+waterfall %<>% mutate(response_time = recdate - disdate, .before = distrib) # length of time b/w discharge and receiving survey
 
 waterfall %<>% filter(response_time>=0) # filter out retroactive response times 
 
@@ -279,7 +279,7 @@ train %>%
 
 F2 was therefore used as the initial predictive variable and subsequent variables were added in a 'stepwise' fashion while assessing the change in R^2^ and MSE. Variables within the same category exhibited a high degree of underlying collinearity and summary statistics were calculated for the means of the top two responses or the total responses per group to remediate covariance. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, decreasing the Alkaline Information Criterion while maintaining parsimony and 2) missing responses are a notable characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.
 
-```{r}
+```{r, echo = FALSE, include = FALSE}
 
 train %<>%
   mutate(across(c(16:46), ~ (.)^(1/6), .names = "{col}_rt"), .before = family_friends) 
@@ -309,7 +309,7 @@ where β~1~ describes change in ŷ for a one unit change in the root mean satis
 
 Our model produced a MSE = 0.015 (RMSE = 0.123) with statistically significant results for all predictors. **The RMSE quantifies the models predictive capability in the context of regression such that it measures the average difference between the observed values and the predicted values of our model. In other words, the model predicts overall satisfaction within .12 of the actual satisfaction scores for the training data set.** Although robust and promising, true confirmation of performance is assessed on the training data set via precision grades below. 
 
-```{r}
+```{r, echo = F}
 
 model <- lm(F68_rt~personal_issues_3_rt+nurses_3+C4_rt, data = train)
 anova(model)
@@ -325,7 +325,7 @@ anova(model2)
 
 *If* the data was obtained via random sampling, the model then could be used as an estimate for the true target population's overall satisfaction. Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey's test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.
 
-```{r}
+```{r, echo = F}
 
 residualPlots(model)
 
@@ -347,7 +347,7 @@ Survey IDs 1344260683 and 1439794901 had the highest influence on the overall mo
 
 After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x~3~, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) \> P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 1.2e-48 (215,1) the affect of x~3~ on the model is statistically significant.
 
-```{r}
+```{r, echo = F}
 
 modelx <- lm(F68_rt~personal_issues_3+nurses_3, data = train)
 -2*(logLik(modelx)-logLik(model)) # 5455.716, df = 4
@@ -402,7 +402,7 @@ test_table <- data.frame(yi = test$F68_rt,
 
 The grades are only one of many test diagnostics used to measure how well a given model fits a subset of data (model fit) **and** how well it fits unseen data. The risk in the former is fitting a model too well. There are two common scenarios that both are operational and are forms overfitting and underfitting. The first being that the trained model fits very well on the initial data. These models will exhibit properties that are 'too good to be true' such as an RMSE ~ 0 or a predictive accuracy ~100%. The issue then becomes a lack of flexibility - mainly components of lack of parsimony, very few observations, or unrecognized bias in data (not to be confused with modeling bias). These models often perform very poorly on new data. With regard to the latter, underfitting is less common and exhibits the converse process. Upon initial assessment, the grades *look* promising. The absolute value of the difference between the predicted and observed values are reported as proportions and easier to interpret below. The model predicted satisfaction score for each patient is within 91% of the actual score. 1.9% of patient satisfaction scores were off by greater than 25% on the polar opposite (F -). Visualizing the models outputs reveals the ostensible performance of the model. 
 
-```{r, eval = TRUE, echo = TRUE, include = TRUE}
+```{r, eval = TRUE, echo = FALSE, include = TRUE}
 # Prediction Grade
 forward.pct <- abs(test$F68_rt-fittedtest)/test$F68_rt;
 
@@ -411,7 +411,7 @@ ifelse(forward.pct<=0.15,'Grade B: (0.10,0.15]',
 ifelse(forward.pct<=0.25,'Grade C: (0.15,0.25]',
 'Grade F-: (0.25+]')))
 forward.Table <- table(forward.PredictionGrade)
-forward.Table/sum(forward.Table)
+knitr::kable(forward.Table/sum(forward.Table))
  
 ```
 

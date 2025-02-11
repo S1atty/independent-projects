@@ -8,7 +8,7 @@
 
 <meta name="author" content="Tomi Akisanya">
 
-<title>Forecasting Patient Satisfaction for Emergency Department Encounters</title>
+<title>Patient Satisfaction Predictions for Emergency Department Encounters Using Multivariate Regression</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -152,25 +152,21 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-analytical-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Analytical Projects</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-healthcare--academic" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Healthcare | Academic</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-analytical-projects">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-healthcare--academic">    
         <li>
     <a class="dropdown-item" href="./ptsatisfaction.html">
  <span class="dropdown-text">Patient Satisfaction</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="./ffsgvmedicare.html">
- <span class="dropdown-text">FFS Medicare Benefeciaries</span></a>
-  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-concepts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Concepts</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-science" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Decision Science</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-concepts">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-science">    
         <li>
     <a class="dropdown-item" href="./fantasyfootball.html">
  <span class="dropdown-text">Fantasy Football</span></a>
@@ -242,7 +238,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Forecasting Patient Satisfaction for Emergency Department Encounters</h1>
+<h1 class="title">Patient Satisfaction Predictions for Emergency Department Encounters Using Multivariate Regression</h1>
 </div>
 
 
@@ -272,7 +268,7 @@ window.Quarto = {
 </div>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>Patient satisfaction can be an indication of quality care and aid in predicting health outcomes and patient retention. Although subjective, it is crucial for healthcare administrators to understand and meet patients’ expectations, translate it to patient-oriented care within delivery models, and improve population health as a result. This project investigates features associated with higher patient satisfaction scores for ER encounters and developing models to predict them.</p>
+<p>Patient satisfaction can be an indication of quality care and aid in predicting health outcomes and patient retention. Although subjective, it is crucial for healthcare administrators to understand and meet patients’ expectations, translate it to patient-oriented care within delivery models, and improve population health as a result. The project requirement was to use a multivariate regression model, though a Poisson regression would have been more appropriate given the count-based nature of the response variable. This project investigates features associated with higher patient satisfaction scores for ER encounters and developing models to predict them.</p>
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
@@ -280,13 +276,13 @@ window.Quarto = {
 </section>
 <section id="population-of-interest" class="level2">
 <h2 class="anchored" data-anchor-id="population-of-interest">Population of Interest</h2>
-<p>The population of interest is the patient population for emergency encounters at NM with disproportionate social determinants of health.</p>
+<p>The population of interest is the patient population for emergency encounters at NM with disproportionately lower social determinants of health.</p>
 </section>
 <section id="exclusion-criteria" class="level2">
 <h2 class="anchored" data-anchor-id="exclusion-criteria">Exclusion Criteria</h2>
 <p>A waterfall approach was used to define the population of interest. Social determinants, which include environmental and non-health related factors such as socio-economic status, can account for 30-55% of health outcomes<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Payer type was used as a proxy to define subsets of the population with disproportionate social determinants, with financial payers like Medicaid typically insuring low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, as this subset tends to misuse the ER for non-urgent care, serving as a viable proxy for lower health literacy.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race were responses indicating white or non-white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event covariates are used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata[mydata<span class="sc">$</span>disdate<span class="sc">!=</span><span class="st">"1900-01-01"</span> <span class="sc">&amp;</span> mydata<span class="sc">$</span>survey_id<span class="sc">!=</span><span class="dv">1418129390</span>,] <span class="co">#erroneous record; clearly incorrect entry </span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata[mydata<span class="sc">$</span>disdate<span class="sc">!=</span><span class="st">"1900-01-01"</span> <span class="sc">&amp;</span> mydata<span class="sc">$</span>survey_id<span class="sc">!=</span><span class="dv">1418129390</span>,] <span class="co">#erroneous record; </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">16</span>, </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                      payor <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Medicare"</span>,<span class="st">"Medicaid"</span>,<span class="st">"Self-Pay"</span>)) <span class="co">#4603</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -321,9 +317,9 @@ window.Quarto = {
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                      <span class="at">personal_issues =</span> (F1<span class="sc">+</span>F2<span class="sc">+</span>F41)<span class="sc">/</span><span class="dv">3</span>,</span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">insurance =</span> (A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">3</span>, </span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                      <span class="at">overall =</span> (E1<span class="sc">+</span>E2<span class="sc">+</span>E3<span class="sc">+</span>D4<span class="sc">+</span>D65<span class="sc">+</span>C1<span class="sc">+</span>C2<span class="sc">+</span>C4<span class="sc">+</span>C5<span class="sc">+</span>C75<span class="sc">+</span>B1<span class="sc">+</span>B3<span class="sc">+</span>B4<span class="sc">+</span>B5<span class="sc">+</span>B76<span class="sc">+</span>A4<span class="sc">+</span>A5<span class="sc">+</span>A86<span class="sc">+</span>F1<span class="sc">+</span>F2<span class="sc">+</span>F41<span class="sc">+</span>A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">25</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># additional variables will most likely remove due to multicollinearity</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># additional variables contributing to multicollinearity will be removed </span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">response_time =</span> recdate <span class="sc">-</span> disdate, <span class="at">.before =</span> distrib) <span class="co"># length of time b/w disch and receiving survey</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">response_time =</span> recdate <span class="sc">-</span> disdate, <span class="at">.before =</span> distrib) <span class="co"># length of time b/w discharge and receiving survey</span></span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(response_time<span class="sc">&gt;=</span><span class="dv">0</span>) <span class="co"># filter out retroactive response times </span></span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
@@ -464,23 +460,6 @@ window.Quarto = {
 </div>
 </div>
 <p>F2 was therefore used as the initial predictive variable and subsequent variables were added in a ‘stepwise’ fashion while assessing the change in R<sup>2</sup> and MSE. Variables within the same category exhibited a high degree of underlying collinearity and summary statistics were calculated for the means of the top two responses or the total responses per group to remediate covariance. This is preferable since 1) information can be easily summarized into one parameter instead of multiple, decreasing the Alkaline Information Criterion while maintaining parsimony and 2) missing responses are a notable characteristic of survey data and limiting the model to individual parameters can lead to inaccuracy for future data sets that have large proportions of missing responses to individual questions.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(<span class="dv">16</span><span class="sc">:</span><span class="dv">46</span>), <span class="sc">~</span> (.)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>), <span class="at">.names =</span> <span class="st">"{col}_rt"</span>), <span class="at">.before =</span> family_friends) </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_2 =</span> (A5_rt<span class="sc">+</span>C1_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">doctors_2 =</span> (C4_rt<span class="sc">+</span>C75_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_2 =</span> (E1_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">nurses_2 =</span> (B4_rt<span class="sc">+</span>B3_rt)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_2 =</span> (F2_rt<span class="sc">+</span>F41_rt)<span class="sc">/</span><span class="dv">2</span>, <span class="at">test_2 =</span> (D3_rt<span class="sc">+</span>D4_rt)<span class="sc">/</span><span class="dv">2</span>) <span class="co">#averages post-trans</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrival_3 =</span> (A5_rt<span class="sc">+</span>C1_rt<span class="sc">+</span>A86_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">doctors_3 =</span> (C4_rt<span class="sc">+</span>C75_rt<span class="sc">+</span>C5_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">family_friends_3 =</span> (E1_rt<span class="sc">+</span>E2_rt<span class="sc">+</span>E3_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">nurses_3 =</span> (B4_rt<span class="sc">+</span>B3_rt<span class="sc">+</span>B76_rt)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">personal_issues_3 =</span> (F2_rt<span class="sc">+</span>F41_rt<span class="sc">+</span>F1_rt)<span class="sc">/</span><span class="dv">3</span>, <span class="at">test_3 =</span> (D3_rt<span class="sc">+</span>D4_rt<span class="sc">+</span>D65_rt)<span class="sc">/</span><span class="dv">3</span>) <span class="co">#averages post-trans</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>train <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">personal_issues_3_rt =</span> personal_issues<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>),</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">F68_rt =</span> <span class="fu">sqrt</span>(F68))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
@@ -489,8 +468,6 @@ window.Quarto = {
 <p>where β<sub>1</sub> describes change in ŷ for a one unit change in the root mean satisfaction for the personal issues category, β<sub>2</sub> for a one unit change in the root mean satisfaction for the nurses category, and β<sub>3</sub> for a one unit change in the root indicator for Doctor’s concern for patients comfort while treating them. Interpretations for β<sub>0</sub> is omitted due to transformations and range of the data set. The Adjusted R<sup>2</sup> ~ .74, F(3,2045), p = 2.2e-16 using adjusted Type I error rate = .005.</p>
 <p>Our model produced a MSE = 0.015 (RMSE = 0.123) with statistically significant results for all predictors. <strong>The RMSE quantifies the models predictive capability in the context of regression such that it measures the average difference between the observed values and the predicted values of our model. In other words, the model predicts overall satisfaction within .12 of the actual satisfaction scores for the training data set.</strong> Although robust and promising, true confirmation of performance is assessed on the training data set via precision grades below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68_rt<span class="sc">~</span>personal_issues_3_rt<span class="sc">+</span>nurses_3<span class="sc">+</span>C4_rt, <span class="at">data =</span> train)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -506,7 +483,6 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p><em>If</em> the data was obtained via random sampling, the model then could be used as an estimate for the true target population’s overall satisfaction. Residual plots were used to test residual normality and linearity with P(F) = .57 on one degree of freedom for Tukey’s test for non-additivity. Residual values lie within three standard deviations with a few minor exceptions in the fitted values, prompting an opportunity for different optimization methods. The apparent uncaptured variation between the predictor variables calls for models suited for continuous ordinal data such as logistic, poisson, or generalized linear models that can capture different types of distributions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residualPlots</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -525,12 +501,9 @@ Tukey test              0.3667           0.7138</code></pre>
 <p>Survey IDs 1344260683 and 1439794901 had the highest influence on the overall model in comparison to the global average of Cook’s distance. Looking at the original data, the former had missing responses for four of the seven questions used to produce the model, highlighting a major flaw in this model - its predictive inaccuracy for patients with missing responses - as missing responses were filled with grand means after exclusion criteria were applied. Although missing at random, a better approach would be to fill in with median values or apply more conservative exclusion factors such as omitting observations with greater than 10% of responses missing. The latter was greatly considered, but the trade-off of small sample sizes and subsequent over fitting were outweighed.</p>
 <p>After confirming the absence of variance inflation, the Log Likelihood ratio test was done for the nested model excluding x<sub>3</sub>, as this was the only non-summary predictor. Wald statistics are limited for linear models such that P(Wald) &gt; P(LRT). Assuming null hypothesis is true where the nested model is just as adequate as the full model, p(χ) = 1.2e-48 (215,1) the affect of x<sub>3</sub> on the model is statistically significant.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>modelx <span class="ot">&lt;-</span> <span class="fu">lm</span>(F68_rt<span class="sc">~</span>personal_issues_3<span class="sc">+</span>nurses_3, <span class="at">data =</span> train)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(modelx)<span class="sc">-</span><span class="fu">logLik</span>(model)) <span class="co"># 5455.716, df = 4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'log Lik.' 214.9064 (df=4)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pchisq</span>(<span class="fl">214.9064</span>,<span class="dv">1</span>,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.168115e-48</code></pre>
 </div>
@@ -544,21 +517,33 @@ Tukey test              0.3667           0.7138</code></pre>
 <h3 class="anchored" data-anchor-id="variancebias-tradeoff">Variance/Bias Tradeoff</h3>
 <p>The grades are only one of many test diagnostics used to measure how well a given model fits a subset of data (model fit) <strong>and</strong> how well it fits unseen data. The risk in the former is fitting a model too well. There are two common scenarios that both are operational and are forms overfitting and underfitting. The first being that the trained model fits very well on the initial data. These models will exhibit properties that are ‘too good to be true’ such as an RMSE ~ 0 or a predictive accuracy ~100%. The issue then becomes a lack of flexibility - mainly components of lack of parsimony, very few observations, or unrecognized bias in data (not to be confused with modeling bias). These models often perform very poorly on new data. With regard to the latter, underfitting is less common and exhibits the converse process. Upon initial assessment, the grades <em>look</em> promising. The absolute value of the difference between the predicted and observed values are reported as proportions and easier to interpret below. The model predicted satisfaction score for each patient is within 91% of the actual score. 1.9% of patient satisfaction scores were off by greater than 25% on the polar opposite (F -). Visualizing the models outputs reveals the ostensible performance of the model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prediction Grade</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>forward.pct <span class="ot">&lt;-</span> <span class="fu">abs</span>(test<span class="sc">$</span>F68_rt<span class="sc">-</span>fittedtest)<span class="sc">/</span>test<span class="sc">$</span>F68_rt;</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>forward.PredictionGrade <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(forward.pct<span class="sc">&lt;=</span><span class="fl">0.10</span>,<span class="st">'Grade A: [0,0.10]'</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ifelse</span>(forward.pct<span class="sc">&lt;=</span><span class="fl">0.15</span>,<span class="st">'Grade B: (0.10,0.15]'</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ifelse</span>(forward.pct<span class="sc">&lt;=</span><span class="fl">0.25</span>,<span class="st">'Grade C: (0.15,0.25]'</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="st">'Grade F-: (0.25+]'</span>)))</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>forward.Table <span class="ot">&lt;-</span> <span class="fu">table</span>(forward.PredictionGrade)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>forward.Table<span class="sc">/</span><span class="fu">sum</span>(forward.Table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>forward.PredictionGrade
-   Grade A: [0,0.10] Grade B: (0.10,0.15] Grade C: (0.15,0.25] 
-          0.91767554           0.03753027           0.02542373 
-   Grade F-: (0.25+] 
-          0.01937046 </code></pre>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">forward.PredictionGrade</th>
+<th style="text-align: right;">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Grade A: [0,0.10]</td>
+<td style="text-align: right;">0.9176755</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grade B: (0.10,0.15]</td>
+<td style="text-align: right;">0.0375303</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grade C: (0.15,0.25]</td>
+<td style="text-align: right;">0.0254237</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grade F-: (0.25+]</td>
+<td style="text-align: right;">0.0193705</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <section id="predicted-vs-residuals" class="level4">
