@@ -2,8 +2,6 @@
 title: "About"
 ---
 
-About this site
+Planning and Performance Consultant @ Strata Decision Technology, MS Health Analytics Candidate @ Northwestern University, avid poker player, voracious reader, frequent traveler, film enthusiast, ardent music lover and dedicated gym-goer with a profound fear of the Lord
 
-```{r}
-1 + 1
-```
+So to seek one's own glory is not glory

@@ -1401,7 +1401,7 @@ fviz_pca_biplot(s,
   geom_rect(aes(xmin = 7.5, ymin = 0, xmax = 15.3, ymax = 2.65), 
             color = "red4", 
             alpha = 0, 
-            show.legend = FALSE) +  # Hide legend for this rect
+            show.legend = FALSE) + 
   annotate("text", label = "Best Offensive long range players", x = 7.8, y = 7.3, color = "red4")+
   annotate("text", label = "*WRs/RBs with WRs dominating", x = 9.8, y = 7, color = "red4", size = 2)+
   geom_curve(aes(xend = 2.5, yend = 4.1, x = 6, y = 7.1),
