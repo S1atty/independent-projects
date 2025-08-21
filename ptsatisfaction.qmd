@@ -8,6 +8,7 @@ settings:
 ---
 
 ```{r, echo = TRUE, eval = TRUE, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, echo = F, error = FALSE, cache=FALSE, warning = FALSE,message= FALSE)
 library(tidyverse)
 # library(lessR)
 library(ggplot2)
@@ -140,7 +141,7 @@ For any missing responses afterwards, the missing values were replaced with the 
 
 ### Model Validation Setup
 
-```{r, eval = TRUE, echo = TRUE, include = TRUE}
+```{r, eval = TRUE, echo = F, include = TRUE}
 
 set.seed(555)
 

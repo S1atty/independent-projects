@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -286,48 +252,6 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="exclusion-criteria">Exclusion Criteria</h2>
 <p>A waterfall approach was used to define the population of interest. Social determinants, which include environmental and non-health related factors such as socio-economic status, can account for 30-55% of health outcomes<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Payer type was used as a proxy to define subsets of the population with disproportionate social determinants, with financial payers like Medicaid typically insuring low-income individuals. Self-pay and Medicaid payers were also included in the drop-down conditions, as this subset tends to misuse the ER for non-urgent care, serving as a viable proxy for lower health literacy.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Patterns of ER misuse are also more likely to be younger and of non-hispanic black race, however, the only information available an race were responses indicating white or non-white. While sub-setting race to only non-whites would align more with the population of interest, this information was retained to maintain the basis of interpretation and prevent over specification of models in the event covariates are used. The age at which we thought individuals could best understand and articulate aspects of the emergency department setting was 16 years old. Records younger than that were omitted.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>waterfall <span class="ot">&lt;-</span> mydata[mydata<span class="sc">$</span>disdate<span class="sc">!=</span><span class="st">"1900-01-01"</span> <span class="sc">&amp;</span> mydata<span class="sc">$</span>survey_id<span class="sc">!=</span><span class="dv">1418129390</span>,] <span class="co">#erroneous record; </span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">16</span>, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                      payor <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Medicare"</span>,<span class="st">"Medicaid"</span>,<span class="st">"Self-Pay"</span>)) <span class="co">#4603</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(er_disch_time)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(er_admit_time))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(waterfall))){</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(waterfall[i,]))<span class="sc">&gt;</span><span class="dv">8</span>){</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    waterfall <span class="ot">&lt;-</span> waterfall[<span class="sc">-</span>i,]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>} <span class="co">#4101</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(<span class="fu">ncol</span>((waterfall)))){</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(waterfall[,i]))<span class="sc">/</span><span class="dv">4101</span><span class="sc">&gt;</span>.<span class="dv">25</span>){</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  print(names(mydata[,i]))</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    waterfall <span class="ot">&lt;-</span> waterfall[,<span class="sc">-</span>i]</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># } #44 variable removed A87 / D2 / D52  = 4099 obs of 45 var</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="fu">mean</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>), .)))</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">family_friends =</span> (E1<span class="sc">+</span>E2<span class="sc">+</span>E3)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                      <span class="at">tests =</span> (D4<span class="sc">+</span>D65<span class="sc">+</span>D3)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                      <span class="at">doctors =</span> (C2<span class="sc">+</span>C4<span class="sc">+</span>C5<span class="sc">+</span>C75)<span class="sc">/</span><span class="dv">4</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nurses =</span> (B1<span class="sc">+</span>B3<span class="sc">+</span>B4<span class="sc">+</span>B5<span class="sc">+</span>B76)<span class="sc">/</span><span class="dv">5</span>, </span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                      <span class="at">arrival =</span> (A4<span class="sc">+</span>A5<span class="sc">+</span>A86<span class="sc">+</span>C1)<span class="sc">/</span><span class="dv">4</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                      <span class="at">personal_issues =</span> (F1<span class="sc">+</span>F2<span class="sc">+</span>F41)<span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                      <span class="at">insurance =</span> (A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">3</span>, </span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                      <span class="at">overall =</span> (E1<span class="sc">+</span>E2<span class="sc">+</span>E3<span class="sc">+</span>D4<span class="sc">+</span>D65<span class="sc">+</span>C1<span class="sc">+</span>C2<span class="sc">+</span>C4<span class="sc">+</span>C5<span class="sc">+</span>C75<span class="sc">+</span>B1<span class="sc">+</span>B3<span class="sc">+</span>B4<span class="sc">+</span>B5<span class="sc">+</span>B76<span class="sc">+</span>A4<span class="sc">+</span>A5<span class="sc">+</span>A86<span class="sc">+</span>F1<span class="sc">+</span>F2<span class="sc">+</span>F41<span class="sc">+</span>A2<span class="sc">+</span>A3<span class="sc">+</span>A28)<span class="sc">/</span><span class="dv">25</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># additional variables contributing to multicollinearity will be removed </span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">response_time =</span> recdate <span class="sc">-</span> disdate, <span class="at">.before =</span> distrib) <span class="co"># length of time b/w discharge and receiving survey</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(response_time<span class="sc">&gt;=</span><span class="dv">0</span>) <span class="co"># filter out retroactive response times </span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(waterfall) <span class="co"># final sample 2875 observations of 51 variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2875   54</code></pre>
 </div>
@@ -344,21 +268,9 @@ window.Quarto = {
 <section id="model-validation-setup" class="level3">
 <h3 class="anchored" data-anchor-id="model-validation-setup">Model Validation Setup</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 70/30 test split </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>waterfall <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">valid =</span> <span class="fu">runif</span>(survey_id,<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&lt;=</span> .<span class="dv">7</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> waterfall <span class="sc">%&gt;%</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(valid <span class="sc">&gt;</span> .<span class="dv">7</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2049   55</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 826  55</code></pre>
 </div>
