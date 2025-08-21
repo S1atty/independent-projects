@@ -48,6 +48,9 @@ po/*~
 # RStudio Connect folder
 rsconnect
 
+# Folders
+/archive
+
 # Ignore Medicare Variation Data directory
 Medicare Variation Data/
 

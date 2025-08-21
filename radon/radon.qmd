@@ -1,0 +1,617 @@
+---
+title: "Developing Neural Networks to Predict Lung Cancer Mortality from Environmental and Social Risk Factors"
+author: "Tomi Akisanya"
+output: 
+  html_document:
+    css: |
+      .math.display { text-align: center; }
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: false 
+    # df_print: paged
+    md_extensions: +hard_line_breaks
+editor_options:
+  chunk_output_type: console
+  canonical: TRUE
+---
+
+```{r setup,eval = T, echo = FALSE, include=FALSE, warning=FALSE, error=FALSE, message=FALSE}
+knitr::opts_chunk$set(eval = TRUE, echo = F, error = FALSE, cache=FALSE, warning = FALSE,message= FALSE, fig.height = 2.5, fig.width = 5)
+load_packages <- c(
+  "stats", "data.table", "tibblify", "jsonlite", "tidymodels", "httr2", "rvest", "scales", "rvest", "here", "glue", "boot", "tools", "utils",
+  "magrittr", "readxl", "readr", "openxlsx", "janitor", "tidyverse", "dplyr"
+)
+
+# Load all packages
+invisible(lapply(load_packages, library, character.only = TRUE, quietly = FALSE))
+
+install.packages("infotheo")
+
+# Load custom functions
+# if (file.exists("scripts/functions.R")) {
+#   source("scripts/functions.R")
+# }
+
+# Pretty printing and options
+registerS3method(
+  "print",
+  "data.frame",
+  function(x, ...) {
+    print(as_tibble(x), ...)
+  }
+)
+
+options(
+  tibble.print_min = 10,
+  repr.matrix.max.rows = 10
+)
+
+tidymodels::tidymodels_prefer()
+library(probably)
+library(gridExtra)
+library(DataExplorer)
+library(ggbeeswarm)
+library(boot)
+library(future)
+library(patchwork)
+library(infotheo)
+```
+
+```{r, echo=F}
+library(keras3)
+library(tensorflow)
+
+path <- here("radon/data")
+
+main_summary <- function(data, name){
+  data[, names(data) %in% name] %>% 
+    skimr::skim() 
+}
+
+missing_colvar <- function(data){
+  missing_data <- 
+    colSums(is.na(data))[which(colSums(is.na(data)) != 0)] %>% 
+    data.frame() %>% 
+    data.frame(x = row.names(.)) %>% 
+    mutate(
+      missing_rate = round(./dim(data)[1], 6) 
+    ) %>%
+    rename(obs_missing = ".") %>% 
+    arrange(desc(missing_rate)) 
+  return(missing_data) 
+}
+
+
+# Response (Y) = lung cancer mortality (per 100k) 
+# obs is county lcm 
+
+# SVI: certain social conditions, including high poverty, low percentage of vehicle access, or crowded households, may affect that community’s ability to prevent human suffering and financial loss in the event of disaster
+
+radon <- read_csv(here(path, "radon.csv"))
+svi <- read_csv(list.files(here(path), "SVI.*csv", full.names = T))
+zone <- read_xls(here(path, "radon_zones-spreadsheet.xls"))
+
+# dim(radon) # 2881 x 12 
+# dim(svi) # 3142 x 123 
+
+```
+
+## Overview
+
+The objective is to predict **lung cancer mortality (per 100,000)**. Smoking history, indoor radon-levels, and Social Vulnerability Indexes (SVI) data are used to develop a neural network to predict the response variable. in The radon data, administered by NIH and NCI, contains lung cancer mortality rates per county. This data is supplemented with county social vulnerability indexes (SVI) administered by the CDC.
+
+We obtain additional data from the Environmental Protection Agency (EPA) for feature engineering. The data set contains two additional features, `regions` which denote the one of ten regions the county belongs to, and `zone`, which identify regions with the highest potential for elevated indoor radon levels. Counties may belong in one of three zones where:
+
+-   *zone 1* indicates the highest potential (\> 4 pCi/L)
+-   *zone 2* indicates moderate potential (between 2 and 4 pCi/L)
+-   *zone 3* indicates low potential (2 pCi/L)
+
+Radon, SVI, and EPA data sets contain county level observations and are merged by `code` in radon data, `fips` in svi data, and `county name_state` in zone data. The radon data set is kept intact. Any counties missing SVI or zone data are temporarily filled with NAs and handle in proceeding sections. The combined data contains 2881 observations and 135 features.
+
+```{r, echo = F}
+
+names(radon) <- radon %>% 
+  rename(senior = `Age Over 65`, lcm = `Lung Cancer Mortality`) %>% 
+  names() %>% 
+  str_to_lower() %>% 
+  gsub("\\b\\s\\b","_", `.`) %>%
+  gsub("ian_hh_","_",`.`)
+
+names(svi) <- str_to_lower(names(svi))
+
+# missing_colvar(radon)
+# missing_colvar(svi)
+
+radon$code <- ifelse(str_length(radon$code)==4, paste0("0",radon$code), radon$code)
+
+zone %<>% select(1,2,Region, Zone)
+names(zone) <- c("state", "label", "region", "zone")
+
+zone %<>%
+  mutate(
+    label = paste0(gsub("\\b\\s\\b","_",str_sub(label, 2, str_length(label))),"_", str_extract(state, "\\w\\w$"))
+  ) %>%
+  filter(!is.na(region), region != ".")
+
+radon$county <- paste0(radon$county,"_",radon$state)
+
+radonsvi <- radon %>%
+  left_join(svi, by = join_by("code"=="fips"), keep = F) %>%
+  select(-contains('.y')) %>%
+  rename(state = state.x, county = county.x) %>%
+  left_join(zone, by = join_by("county"=="label"), suffix = c("_r","_z"), keep = T)  %>%
+  # filter(is.na(zone)) # 27 zones missing 
+  rename(state = state_r) %>%
+  select(-state_z) %>%
+  select(code:radon_rank, region, zone, st:length(.))
+
+```
+
+70/20/10 proportions are used for the training, validation, and testing split. The training, validation, and testing data contains 1814, 778, and 289 observations respectively.
+
+```{r}
+
+set.seed(5)
+radonsvi_index <- initial_split(radonsvi, prop = .9)
+radonsvi_train_valid <- training(radonsvi_index)
+radonsvi_test <- testing(radonsvi_index)
+
+train_valid_split <- initial_split(radonsvi_train_valid, prop = 0.7)
+radonsvi_train <- training(train_valid_split)
+radonsvi_valid <- testing(train_valid_split)
+
+# dim(radonsvi_train) # 1814 x 132 
+# dim(radonsvi_valid) # 778 x 132
+# dim(radonsvi_test) # 289 x 132 
+```
+
+## Missing Values
+
+Shannon County is the only county missing SVI data, and is missing values for key demographic features. The missing value for `med_income`, `area_sqmi`, `e_totpop`, `e_hu`, and `e_hh` are obtained online and manually filled. Shannon County has an extremely small population size, such that SVI would be intractable. These values are missing at random and imputed using k-nearest neighbors.
+
+20 counties in the training set are missing EPA `region` and `zone`. For `region`, these values are manually filled with the counties' true EPA region using mappings from the EPA. For `zone`, these values are grouped into a new 'Not Applicable' factor level.
+
+```{r, include = F}
+# radonsvi_train %>%
+#   filter(!complete.cases(.)) # 20 counties w/ missing EPA regions and zones  
+
+# -- for regions: before missing values, fix the counties that do not have FPA region from zone data. these regions standardization used by EPA and federal agencies 
+
+missing_regions_df <- data.frame(# have GTP get rest, these are standard FPA regions 
+  county = c(
+    "St. Landry Parish", "St. Charles Parish", "St. Charles County", "Shannon County",
+    "St. Francis County", "St. Mary's County", "St. Clair County (MI)", "St. Lawrence County",
+    "St. Martin Parish", "St. Mary Parish", "St. Johns County", "St. Clair County (MO)",
+    "La Salle County", "St. James Parish", "Ste. Genevieve County", "St. Croix County",
+    "St. Louis County", "St. Joseph County", "St. John the Baptist Parish", "St. Lucie County"
+  ),
+  state = c(
+    "LA", "LA", "MO", "SD", "AR", "MD", "MI", "NY", "LA", "LA",
+    "FL", "MO", "IL", "LA", "MO", "WI", "MN", "IN", "LA", "FL"
+  ),
+  epa_region = c(
+    6, 6, 7, 8, 6, 3, 5, 2, 6, 6,
+    4, 7, 5, 6, 7, 5, 5, 5, 6, 4
+  )
+)
+
+radonsvi_train$region[!complete.cases(radonsvi_train)] <- missing_regions_df$epa_region
+
+# -- for zones:  'not available' 
+
+radonsvi_train$zone[is.na(radonsvi_train$zone)] <- "Not Available"
+
+
+# --  1 observation (Shannon County, MI pop = 7k) within radon data that has no SVI index and other radon fields missing (med_income) 
+# since this is missing at random (population size) , will use linear interoplation for missing values 
+
+radonsvi_train %>% filter(!complete.cases(.)) %>% t() # Shannon County, MI pop 7k too small for SVI data 
+# will use linear interpolation 
+
+radonsvi_train[radonsvi_train$code == "46113", ]
+
+shannon_county_df <- data.frame(
+  med_income = 59000,
+  area_sqmi = 1003.8,
+  e_totpop = 7137,
+  e_hu = 3522,
+  e_hh = 2802
+)
+
+radonsvi_train[radonsvi_train$code == "46113", names(radonsvi_train) %in% names(shannon_county_df)] <- shannon_county_df
+# missing values from SVI are MAR - missing due to pop sz; impute a Not Available for char var, and linear interpolation for rest
+
+# zero estimates are -999 and tot pop field = 0 in SVI 
+
+radonsvi_train %>%
+  filter(if_any(everything(), \(x) x == -999)) # code == 35039
+
+radonsvi_train[radonsvi_train$code == "35039", which(names(radonsvi_train) == "e_pov"):length(radonsvi_train)] <- NA # for -999;  impute linear inter opelation
+```
+
+## Exploratory Analysis
+
+Summary statistics for the response variable, lung cancer mortality (`lcm`), are shown below $\mu = 78.1 (17.8)$ `lcm` is distributed normally right-skew, with heavy left tails and wide right tails.
+
+```{r, fig.align ='center', fig.height=5}
+psych::describe(radonsvi_train$lcm) %>% 
+  mutate(across(everything(), \(x) round(x, 2))) %>% 
+  knitr::kable()
+
+hist(radonsvi_train$lcm, main = "Lung Cancer Mortaility per 100,000", xlab = "", ylab = "")
+```
+
+**Factor Variables**
+
+Redundant demographic features are removed with the exception of `Code`, `state`, `region`, and `zone`. Features with the `f_` prefix are feature flags indicating, whether for a given social vulnerability, a county is in the 90th percentile. We treat these as factor variables. The `f_theme*` is a summary related similar social vulnerabilities. It is the sum of the social vulnerabilities within a given theme (e.g. socioeconomic). These summary features, prefixed as `f_theme*` within the data are removed since they are additive (presumably no gain in information) and helps reduce convergence and training time.
+
+```{r, include = F, fig.width=10, fig.height=2.5}
+# radonsvi_train[, sapply(radonsvi_train, is.character)] # code is UI, keep: code, state, region, zone
+```
+
+The EPA `region` and `zone` are shown. There appears to be a linear positive correlation between zone and `lcm`. We also observe that the mean lcm of the radon data set is identical to the mean `lcm` of zone 2. We expect this feature to increase our predictive capcity of `lcm`.
+
+```{r, echo = F,  fig.align = 'center', fig.height = 5, fig.width = 8}
+p_lcm <- list()
+for (i in c("region", "zone")){
+  p_lcm[[i]] <- radonsvi_train %>%
+    filter(
+      complete.cases(.), !!sym(i) != -999
+    ) %>% 
+    mutate(!!sym(i) := as.factor(!!sym(i))) %>%
+    group_by(!!sym(i)) %>%
+    summarize(
+      n = n(), 
+      mean.lcm = mean(lcm)
+    ) %>% 
+    ggplot(aes(y = !!sym(i), x = mean.lcm))+
+    geom_col()+
+    scale_y_discrete(name = glue("{i}"))+
+    scale_x_continuous(n.breaks =12) + 
+    geom_vline(xintercept = 78.1, color = "red") + 
+    theme(axis.title = element_blank())+
+    theme_minimal()
+} 
+
+gridExtra::grid.arrange(p_lcm[[1]], p_lcm[[2]], ncol = 2)
+```
+
+For example, there appears to be a relationship between county area square mile, zone, and lung cancer mortality. Smaller counties in higher zones (2 or 3) will have a higher saturation of radon and increase mortality. Square mileage alone is negatively correlated (lognormal) with lung cancer mortality. With the inclusion of the zone, the relationship between `area_sqmi` and `lcm` shifts right. Zone 1 has the lowest radon levels and subsequently lower mortality rates for the same area square mile as other zones.
+
+```{r, fig.align = 'center', fig.height=5, fig.width = 5}
+
+radonsvi_train %>%
+  filter(zone != "Not Available") %>% 
+  mutate(zone = as.factor(zone)) %>%
+  ggplot(aes(x = area_sqmi, y = lcm, color = zone, fill = zone), size = .7) + 
+  geom_point() +
+  scale_x_continuous(limits = c(0,5000), name = "Area SqMi")+
+  scale_y_continuous(name = "Lung Cancer Mortality") + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+
+```
+
+Interaction is tested between radon and area square mileage respective of lung cancer mortality. Although neural networks can capture non-linear patterns via activation functions, incorporating interaction terms reduces convergence and training time.
+
+> H0: There is no interaction between radon levels and the area square mileage.
+>
+> HA: The full model explains the variability in lung cancer mortality better than the null model, that is lung cancer mortality is dependent on the interaction between radon levels and square mileage.
+
+```{r}
+
+modelh0 <- lm(lcm ~ radon + area_sqmi, data = radonsvi_train)
+modelha <- lm(lcm ~ radon + area_sqmi + radon:area_sqmi, data = radonsvi_train)
+
+anova(modelh0, modelha) %>%
+  knitr::kable()
+```
+
+With $p = .0133$ we can conclude that there is interaction between the two variables, as the residual sum of squares decreases significantly by including the interaction terms. A new feature is created to include these effects during model training.
+
+The relationship between smoking and radon levels with `lcm` is shown below. We observe that between radon and smoking, smoking is a greater risk factor of `lcm`. The proportion of the population per county that currently smokes explains 30.25% of the variability among `lcm` alone. Interestingly enough, radon is observed to be negatively correlated with `lcm`. The county rank in radon level is also negatively correlated, which is seemingly a contradiction. Counties ranked lower in radon levels are observed to have higher mortality rates. It is possible the correlates are masked by interaction between other features, such as the area (sq mi.) of the county shown above. Despite lower radon levels, the distribution of radon levels also needs to be accounted for. This is just an example. Proper diagnosis of this issue is done by analyzing interaction terms within the data.
+
+```{r, fig.height = 5, fig.width = 5, fig.align='center'}
+.55^2
+# ever_smoke, currently_smoke, radon
+smoke_radon <- radonsvi_train %>%
+  select(lcm, contains(c("smoke", "radon")))
+
+GGally::ggscatmat(smoke_radon, columns = c("lcm", "currently_smoke", "ever_smoke", "radon", "radon_rank"))
+
+```
+
+**Numeric**
+
+We visually identified the features to log transform. Features with prefixes `mp_`, `m_`, `ep_`, and `e_`. However, `ep_disabl`, `ep_age65`, and `ep_age17` are normally distributed and do not need log transformation.
+
+```{r, include = F}
+
+eda_workflow <- names(radonsvi_train[, sapply(radonsvi_train, is.numeric)]) 
+eda_workflow <- unique(gsub("_\\w*","",eda_workflow))
+eda_workflow <- eda_workflow[which(eda_workflow == "e"):length(eda_workflow)]
+
+for (i in eda_workflow){
+  radonsvi_train %>%
+    select(starts_with(glue("{i}_"))) %>%
+    skimr::skim() 
+}
+
+```
+
+## Colinearity
+
+Features are grouped based on prefixes and then plotted in the correlation matrix shown below.
+
+```{r, include = T, fig.align='center', fig.width=10, fig.height=10, fig.margin = F}
+
+radon_numeric <- radonsvi_train[, sapply(radonsvi_train, is.numeric)]
+
+prefix_radon <- unique(gsub("_\\w*","",names(radon_numeric)))
+prefix_radon <- prefix_radon[which(prefix_radon=="m"):(length(prefix_radon)-1)]
+
+par(
+  mfrow = c(3,3), 
+  mar = c(2, 2, 1, 1), 
+  oma = c(0, 0, 0, 0)
+)
+
+for (i in seq_along(paste0(prefix_radon,"_"))){
+  var <- eda_workflow[[i]]
+  cor(radonsvi_train %>% select(starts_with(paste0(var,"_"))), radonsvi_train %>% select(starts_with(paste0(var,"_"))),  use = "pairwise.complete.obs") %>%
+    corrplot::corrplot() %>%
+    assign(glue("corrp{i}"), `.`)
+}
+
+
+```
+
+```{=latex}
+\vskip{-100cm}
+```
+
+There's seemingly high co-linearity within estimate `e_` and margin of error `m_` MOE features. Within the first plot, the estimates are features of fundamentally different measures. For example, `e_age65` and `e_age17` are estimates of two separate and mostly unrelated age groups. The co-linearity within the estimates plot is most likely due to all of these features increasing as a function of population. For example, the total count of individuals uninsured, mobile homes, or unemployment will be larger in more populous counties. The same logic applies to MOE and these variables are not removed. `mort_rank` is removed due to data leakage. The table below summarizes features within the data.
+
+```{r}
+data.frame(
+  Variable = paste0(c("e","m","ep","mp","epl","f"),"_nohsdp"), 
+  Description = paste0(c("","(MOE)","percentage","(percentage MOE)","percentile","(percentile MOE)"), rep(" persons of 25 with no high school diploma",6))
+) %>%
+  knitr::kable()
+```
+
+MOE estimates are standardized into coefficients of variation `cv_*` and are kept as additional features for training. Features with a mean `cv_*` \> 1 (shown below) are removed. Observations where `cv_*` \> 1 are removed (44).
+
+```{r}
+
+radonsvi_train %>%
+  mutate(
+    across(starts_with("m_"), ~ {
+      estimate_col <- get(str_replace(cur_column(), "m_", "e_"))
+      ifelse(estimate_col == 0, 0, .x / estimate_col)  
+    }, .names = '{sub("\\\\w_", "cv_", {.col})}'), 
+    across(starts_with('cv_'), \(x) pmax(x, 1e-15))
+  ) %>%
+  select(contains('cv')) %>%
+  # pivot_longer(everything(), names_to = "var", values_to = "cv") %>%
+  summarize(
+    across(everything(), \(x) mean(x, na.rm = T))
+  ) %>%
+  select(where(\(x) any(x > .3))) %>% # remove these vars
+  knitr::kable()
+
+rm_data <- list()
+rm_data$vars <- c("code", "location", "label", "st_abbr", "st", "mort_rank", "cv_limeng", "cv_munit", "cv_crowd", "cv_groupq")
+
+rtn <- radonsvi_train[, sapply(radonsvi_train, is.numeric)]
+
+rm_data$obs <- radonsvi_train %>%
+  mutate(
+    across(starts_with("m_"), ~ {
+      estimate_col <- get(str_replace(cur_column(), "m_", "e_"))
+      ifelse(estimate_col == 0, 0, .x / estimate_col)  
+    }, .names = '{sub("\\\\w_", "cv_", {.col})}'), 
+    across(starts_with('cv_'), \(x) pmax(x, 1e-15))
+  ) %>%
+  select(code, starts_with("cv_")) %>%
+  select(
+    !any_of(rm_data$vars[7:length(rm_data$vars)])
+  ) %>% 
+  filter(if_any(2:length(.), \(x) x > 1)) %>%  # remove these vars (44) 
+  pull(code)
+
+```
+
+## Model Performance
+
+Five different model architectures are trained to predict `lcm`:
+
+1.  Baseline: simple dense neural network with 1 hidden layer (32 neurons) applying Relu activation
+    -   used to establish baseline performance and compare against
+2.  L2 Regularization with Dropout and Early Stopping: dense network, 2 hidden layers, 30% dropout, and early stopping
+    -   used to reduce over fitting by randomly turning 30% of neurons in the preceding layer off
+3.  L2 Regularization: same architecture used in #2 with Tanh activation functions
+    -   test whether bounded activation improves generalization compared to Relu
+4.  Huber Loss Function: dense network using Huber Loss instead of MSE
+    -   Provides robustness to outliers by combining L1 and L2 loss characteristics
+
+10-fold cross validation was used for all models to assess variance-bias on the hold out sets. Model 2 performed the best and was selected for final evaluation on the test set. The results are shown below.
+
+```{r, eval = T, include = F, fig.align = 'center', echo = T}
+
+preprocess <- recipe(lcm ~ ., data = radonsvi_train)
+
+process <-  preprocess %>%
+  step_filter(!code %in% rm_data$code) %>% 
+  step_mutate(
+    across(c(starts_with("f_"), zone, where(is.character)),as.factor), 
+    across(starts_with(c("e_","m_","mp_")), as.numeric), 
+    zone = if_else(is.na(zone), "Not Available", zone), 
+    across(starts_with("m_"), ~ {
+      estimate_col <- get(str_replace(cur_column(), "m_", "e_"))
+      ifelse(estimate_col == 0, 0, .x / estimate_col)  
+    }, .names = '{sub("\\\\w_", "cv_", {.col})}'), 
+    across(starts_with('cv_'), \(x) pmax(x, 1e-15))
+  ) %>%
+  step_mutate(
+    across(c(zone, region), \(x) if_else(x == "1", "0", x)) 
+  ) %>%
+    step_select(
+    state, region, zone, where(is.numeric), -mort_rank , !contains(c("limeng", "munit", "crowd", "groupq")), !any_of(rm_data$vars) 
+  ) %>%
+  step_novel(all_nominal_predictors()) %>%
+  step_unknown(all_nominal_predictors()) %>%
+  step_relevel(
+     any_of(c("zone", "region", starts_with("f_"))), ref_level = "0"
+  ) %>% 
+  step_impute_mean(all_numeric_predictors()) %>% 
+  step_dummy(all_factor_predictors(), one_hot = T) %>% 
+  step_nzv(all_predictors()) %>%  
+  step_normalize(all_numeric_predictors())
+
+
+process %<>% prep(radonsvi_train)
+
+radon_proc <- process %>% bake(new_data = NULL)
+
+radontest_proc <- process %>%
+  bake(new_data = radonsvi_test)
+
+
+radon_train_x <- as.matrix(radon_proc[, -ncol(radon_proc)]) 
+radon_train_label <- radon_proc$lcm %>% as.matrix() 
+
+radon_test_x <- as.matrix(radontest_proc[, -ncol(radontest_proc)])
+radon_test_label <- as.matrix(radontest_proc[, -ncol(radontest_proc)])
+
+
+
+
+```
+
+```{r, include = F,  fig.align='center'}
+model_l2 <- keras_model_sequential() %>%
+  layer_dense(units = 64, activation = "relu", 
+              input_shape = c(ncol(radon_train_x)),
+              kernel_regularizer = regularizer_l2(0.001)) %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 32, activation = "relu",
+              kernel_regularizer = regularizer_l2(0.001)) %>%
+  layer_dense(units = 1)
+
+# model_l2
+cat(paste0(capture.output(summary(model_l2)), collapse = "\n"))
+```
+
+```{r, eval=T, include = F}
+set.seed(5) 
+model_l2 <- keras_model_sequential() %>%
+  layer_dense(units = 64, activation = "relu", 
+              input_shape = c(ncol(radon_train_x)),
+              kernel_regularizer = regularizer_l2(0.001)) %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 32, activation = "relu",
+              kernel_regularizer = regularizer_l2(0.001)) %>%
+  layer_dense(units = 1)
+
+model_l2 %>%
+  compile(
+    optimizer = "adam", loss = "mse", metrics = list(
+      keras$metrics$MeanSquaredLogarithmicError(),
+      keras$metrics$MeanAbsoluteError(),
+      keras$metrics$MeanAbsolutePercentageError()
+    ) 
+  )
+
+
+early_stop <- callback_early_stopping(
+  patience = 15, 
+  restore_best_weights = TRUE, 
+  monitor = "val_loss"
+)
+
+
+history_l2 <- model_l2 %>%
+  fit(
+    radon_train_x, 
+    radon_train_label, 
+    epochs = 100, 
+    batch_size = 32, 
+    validation_split = 0.2, 
+    callbacks = list(early_stop), 
+    verbose = T
+  )
+
+
+# EVALUATE TEST SET 
+test_predictions <- model_l2 %>% predict(radon_test_x)
+
+dir.create(here(path, "myfiles", "assignment2"))
+
+test_predictions %>% write_rds(here(path, "myfiles", "assignment2", "2p1_model_predictions.rds"))
+
+```
+
+```{r, fig.height = 7, fig.width=7, fig.align = 'center'}
+
+plot(history_l2, ylab = c("test", "test"))
+```
+
+The mean absolute error and root mean square error rounded two one significant figure are close in value. The $\text{MAE = 1.17}$ (per 100,000) indicates that the model's predictions are off by the true lung cancer mortality rate by 1.17 (per 100,000). The $\text{RMSE = 3.09}$ indicates that the there is low variability in the models predictions. On average, the model's variance adjusted error, or the difference in magnitude between the true values and predicted values after accounting for variability is 3.09 (per 100,000).
+
+The similarity between the RMSE and MAE indicates that there are very few occurrences of significant deviations in predicted values from the true value. The RMSE encapsulates variance by squaring the differences between the true values, and taking the square root to compare predictions on the same scale. The model is shown to have low bias, by generalizing well to unseen data $(MAE = \text{~} 1.17)$, without over or under fitting. The plot shown below, visualizes the error by plotting the models predictions against its true value.
+
+```{=latex}
+%\vspace{2cm}
+```
+
+```{r, eval=T, fig.height=5, fig.width=10, fig.align = 'center'}
+
+
+test_predictions <- read_rds(here(path, "myfiles", "assignment2", "2p1_model_predictions.rds")) 
+
+# ncol(radon_train_x)  # 7566
+# ncol(radon_test_x)   # 1478
+
+radon_test <- bind_cols(radon_test_x, data.frame(estimate = test_predictions)) %>%
+  select(estimate,lcm,  radon:length(.)) 
+
+eval_metrics <- metric_set(mae, rmse, rsq)
+
+eval_metrics(radon_test, truth = lcm, estimate = estimate) %>%
+  mutate(.estimate = round(.estimate, 4)) %>% 
+  knitr::kable()
+
+```
+
+```{=latex}
+%\vspace{2cm}
+```
+
+```{r, fig.align = 'center' ,fig.height = 3.5, fig.width = 7}
+test_predictions %>%
+  data.frame() %>%
+  bind_cols(radonsvi_test) %>%
+  rename(predicted = ".", true = lcm) %>% 
+  ggplot() + 
+  geom_line(aes(x = predicted, y = true)) + 
+  # geom_point(aes(x = 113.25, y = 65.7), shape = 21, fill = "blue", size = 2) + 
+  geom_abline(slope = 1, intercept = 0, color = "slategrey") + 
+  # scale_color_manual(values = c("gold"=="06037", rep("black", 288))) + 
+  scale_x_continuous(name = "Predicted", n.breaks = 8) + 
+  scale_y_continuous(name = "True", n.breaks = 8) + 
+  labs(title = "L2 LCM Predictions") + 
+  theme_minimal()
+  
+```
+
+Perfect predictions, or the most optimal 'calibration', would have $\beta_1 = 1$ overlayed on the black line $\hat{y}$. Distances between the line show dissimilarity or deviations between estimates and true values. A significant over prediction is observed in the trough within the range \[110, 120\] and is highlighted by the blue point. In fact, this value appears to weaken its predictive power for predicted values around that point, as the model is shown to over predict `lcm`. The average deviation for predicted values near the blue point is significantly higher than those \<110.
+
+It would be improper to classify blue prediction value as the only contributing factor to the higher deviations observed along this range. Other factors should be considered. Firstly, the observed deviations along this range may be a result of attributes of the test data, such as outliers, potentially inappropriate assumptions (i.e. imputation methods based on missing values), or improper weights applied. Improper weights can be both a result of exploration and feature engineering, or the model architecture chosen. For example, the true `lcm` for that observation \~ 65.7 whereas the model predicts almost \~2x (\~ 115). This county may have been identified in exploration as Zone 3, which is shown to have the highest radon levels (and presumably mortality rates), but without accounting for interaction between geo-spatial features (such as percentile of housing structures with 10 or more units), it is possible to observe lower than expected radon levels (and presumably `lcm`) due to this interaction.
+
+Model architecture is also a possible factor. L2 regularization as part of the model architecture may have kept features that do not add to predictive power, subsequently increasing noise, which may be exacerbated by social vulnerability features high margins of error. L1 regularization architecture was not used, so although we cannot compare the effect of feature engineering, this is something that may contribute to the observed results.
+
+```{=latex}
+\newpage
+```

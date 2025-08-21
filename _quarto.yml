@@ -14,13 +14,13 @@ website:
         href: index.qmd
       # - text: "Independent Projects"
       #   href: index.qmd
-      - text: "Healthcare | Academic"
+      - text: "Healthcare"
         menu:
+          - text: "Lung Cancer Mortality"
+            href: radon.qmd
           - text: "Patient Satisfaction"
             href: ptsatisfaction.qmd
-          # - text: "FFS Medicare Benefeciaries"
-            # href: ffsgvmedicare.qmd
-      - text: "Decision Science"
+      - text: "Sports"
         menu: 
           - text: "Fantasy Football"
             href: fantasyfootball.qmd

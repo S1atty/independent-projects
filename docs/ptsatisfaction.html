@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -34,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -102,7 +102,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -142,7 +142,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -152,10 +152,14 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-healthcare--academic" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Healthcare | Academic</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-healthcare" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Healthcare</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-healthcare--academic">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-healthcare">    
+        <li>
+    <a class="dropdown-item" href="./radon.qmd">
+ <span class="dropdown-text">Lung Cancer Mortality</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="./ptsatisfaction.html">
  <span class="dropdown-text">Patient Satisfaction</span></a>
@@ -163,10 +167,10 @@ window.Quarto = {
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-science" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Decision Science</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sports" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Sports</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-science">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sports">    
         <li>
     <a class="dropdown-item" href="./fantasyfootball.html">
  <span class="dropdown-text">Fantasy Football</span></a>
@@ -196,7 +200,7 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -397,7 +401,7 @@ window.Quarto = {
 <p>Pearson’s product correlation plot showed that overall satisfaction was strongly correlated with how well patients were informed about delays and other responses based on either doctors’ or nurses’ care setting.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 8%">
 <col style="width: 11%">
@@ -518,7 +522,7 @@ Tukey test              0.3667           0.7138</code></pre>
 <p>The grades are only one of many test diagnostics used to measure how well a given model fits a subset of data (model fit) <strong>and</strong> how well it fits unseen data. The risk in the former is fitting a model too well. There are two common scenarios that both are operational and are forms overfitting and underfitting. The first being that the trained model fits very well on the initial data. These models will exhibit properties that are ‘too good to be true’ such as an RMSE ~ 0 or a predictive accuracy ~100%. The issue then becomes a lack of flexibility - mainly components of lack of parsimony, very few observations, or unrecognized bias in data (not to be confused with modeling bias). These models often perform very poorly on new data. With regard to the latter, underfitting is less common and exhibits the converse process. Upon initial assessment, the grades <em>look</em> promising. The absolute value of the difference between the predicted and observed values are reported as proportions and easier to interpret below. The model predicted satisfaction score for each patient is within 91% of the actual score. 1.9% of patient satisfaction scores were off by greater than 25% on the polar opposite (F -). Visualizing the models outputs reveals the ostensible performance of the model.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">forward.PredictionGrade</th>
@@ -646,18 +650,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -689,7 +682,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -697,7 +712,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

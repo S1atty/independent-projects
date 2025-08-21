@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tomi Akisanya">
 
-<title>Singular Value Decomposition - Enhanced Principal Components to Optimize Fantasy Football Teams</title>
+<title>Principal Component Analysis to Inform Draft Selection for Fantasy Football Teams</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -68,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -108,7 +108,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -118,10 +118,14 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-healthcare--academic" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Healthcare | Academic</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-healthcare" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Healthcare</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-healthcare--academic">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-healthcare">    
+        <li>
+    <a class="dropdown-item" href="./radon.qmd">
+ <span class="dropdown-text">Lung Cancer Mortality</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="./ptsatisfaction.html">
  <span class="dropdown-text">Patient Satisfaction</span></a>
@@ -129,10 +133,10 @@ window.Quarto = {
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-decision-science" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Decision Science</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sports" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Sports</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-decision-science">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sports">    
         <li>
     <a class="dropdown-item" href="./fantasyfootball.html">
  <span class="dropdown-text">Fantasy Football</span></a>
@@ -162,7 +166,7 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -220,7 +224,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Singular Value Decomposition - Enhanced Principal Components to Optimize Fantasy Football Teams</h1>
+<h1 class="title">Principal Component Analysis to Inform Draft Selection for Fantasy Football Teams</h1>
 </div>
 
 
@@ -249,7 +253,7 @@ window.Quarto = {
 <p>The data contains in-game and Fantasy Football Points per Reception stats by NFL player from 2017 - 2023 for all 17 games of the regular season. Most leagues use a points per reception based metric to calculate fantasy points, or <code>FantasyPointsPPR.</code> Before converting to fantasy points, in-game stats may be weighted or counted differently. My league adopted the following criterion:</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 30%">
 <col style="width: 44%">
@@ -411,7 +415,7 @@ window.Quarto = {
 <p>The data was sub set for the 2022 season and then skimmed for to review distributions, counts, and other elements within the data set.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
@@ -457,7 +461,7 @@ window.Quarto = {
 </tbody>
 </table>
 <p><strong>Variable type: character</strong></p>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 19%">
 <col style="width: 13%">
@@ -504,7 +508,7 @@ window.Quarto = {
 </tbody>
 </table>
 <p><strong>Variable type: factor</strong></p>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 17%">
 <col style="width: 10%">
@@ -543,7 +547,7 @@ window.Quarto = {
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 22%">
 <col style="width: 9%">
@@ -1244,7 +1248,7 @@ Attributes: Rushing Attempts, Rushing Yards, Rushing TDs<br>
 <p>Now using the model’s picks for the top ten quarter backs, 70% of those selected in the top 10 were actually in the top ten during the 2022 regular season. The total fantasy points for the quarter backs picked by the model were 3131.2. The total fantasy points the top ten quarter backs actually had was 3302 which means the model was off by 5% in regard to quarter back selection. The difference for rank by position are shown below. Players with a negative delta are those that were ranked higher in the model but came in lower after the season. Using a conservative threshold, MAE &gt; 5, Top10 &lt; 70%, and Fantasy Error &gt; 5% will be used. If results are above or below this threshold, different measures should be taken to improve the model.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">FantasyPosition</th>
@@ -1341,7 +1345,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="pc1---qbs">PC1 - QBs</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 9%">
 <col style="width: 12%">
@@ -1487,7 +1491,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="pc2---wr">PC2 - WR</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 9%">
 <col style="width: 12%">
@@ -1632,7 +1636,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="pc3---rb">PC3 - RB</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 8%">
 <col style="width: 11%">
@@ -1777,7 +1781,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="model-accuracy">Model Accuracy</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">FantasyPosition</th>
@@ -1910,7 +1914,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="qbs">QBs</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 8%">
 <col style="width: 7%">
@@ -2187,7 +2191,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <h4 class="anchored" data-anchor-id="wrs">WRs</h4>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 7%">
 <col style="width: 7%">
@@ -2465,7 +2469,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <p><strong>Christian McCaffrey</strong> is favored as the first pick outside of drafting quarter backs. Although he is #3 pick for running backs, ideal picks for offensive players (although rare) would load high to principal components two and three. His combined component score for those dimensions are the highest of any offensive player included in the data.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 7%">
 <col style="width: 7%">
@@ -2743,7 +2747,7 @@ Attributes: + Rushing Touchdowns, + Rushing Yards<br>
 <p>Based on the functional nature of football and analysis thus far, a top 75 list wouldn’t be meaningful, since each component and position is unique to its own. For those that are curious, however, a ranking such as this can, in theory, be created by combining all component scores.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 6%">
 <col style="width: 5%">
@@ -3795,18 +3799,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -3838,7 +3831,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -3846,7 +3861,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

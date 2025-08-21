@@ -11,7 +11,7 @@ format:
 :::
 
 ::: {style="text-align: center;"}
-[**Independent Projects**]{style="font-size: 20px;"}
+[**Projects**]{style="font-size: 20px;"}
 
 [*Tomi Akisanya*]{style="font-size: 16px;"}
 :::

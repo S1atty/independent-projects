@@ -1,0 +1,24 @@
+{
+  "bioconductor.version": null,
+  "external.libraries": [
+    "/Users/tomiakisanya/Documents/Git/independent-projects/renv/library/macos/R-4.4/aarch64-apple-darwin20",
+    "/Users/tomiakisanya/Library/R/arm64/4.4/library",
+    "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library",
+    "/Users/tomiakisanya/Library/Caches/org.R-project.R/R/renv/sandbox/macos/R-4.4/aarch64-apple-darwin20/f7156815"
+  ],
+  "ignored.packages": [],
+  "package.dependency.fields": [
+    "Imports",
+    "Depends",
+    "LinkingTo"
+  ],
+  "ppm.enabled": null,
+  "ppm.ignored.urls": [],
+  "r.version": null,
+  "snapshot.type": "implicit",
+  "use.cache": true,
+  "vcs.ignore.cellar": true,
+  "vcs.ignore.library": true,
+  "vcs.ignore.local": true,
+  "vcs.manage.ignores": true
+}

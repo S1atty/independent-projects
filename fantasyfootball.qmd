@@ -1,5 +1,5 @@
 ---
-title: "Singular Value Decomposition - Enhanced Principal Components to Optimize Fantasy Football Teams"
+title: "Principal Component Analysis to Inform Draft Selection for Fantasy Football Teams"
 author: "Tomi Akisanya"
 format: 
   html:
@@ -756,17 +756,17 @@ fviz_pca_biplot(s,
             color = "grey30", 
             alpha = 0, 
             show.legend = FALSE) +  # Hide legend for this rect
-  annotate("text", label = "Best Overall QBs", x = -12, y = -0.5, color = "grey30") +
-  geom_rect(aes(xmin = 0.25, ymin = 1, xmax = 1, ymax = 1.75), 
+  annotate("text", label = "Best Distance Players", x = -12, y = -0.5, color = "grey30") +
+  geom_rect(aes(xmin = 0, xmax = 5, ymax = -7.5, ymin = -3), 
             color = "grey30", 
             alpha = 0, 
             show.legend = FALSE) +  # Hide legend for this rect
-  annotate("text", label = "Best Offensive \n long range players", x = -2.5, y = 2.5, color = "grey30") +
-  geom_curve(aes(xend = 0.8, yend = 1.85, x = -2.8, y = 2.8), 
-             color = "grey30", 
-             arrow = arrow(), 
-             curvature = -0.4, 
-             show.legend = FALSE) 
+  annotate("text", label = "High-Volume QBs", x = 3.5, y = -7.2, color = "grey30") 
+  # geom_curve(aes(xend = 0.8, yend = 1.85, x = -2.8, y = 2.8), 
+  #            color = "grey30", 
+  #            arrow = arrow(), 
+  #            curvature = -0.4, 
+  #            show.legend = FALSE) 
 
 ```
 
